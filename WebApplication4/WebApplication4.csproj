@@ -167,36 +167,17 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Migrations\201711201915279_initial.cs" />
+    <Compile Include="Migrations\201711201915279_initial.Designer.cs">
+      <DependentUpon>201711201915279_initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PostController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201711070739159_init-migration.cs" />
-    <Compile Include="Migrations\201711070739159_init-migration.Designer.cs">
-      <DependentUpon>201711070739159_init-migration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201711070747155_adding_posts.cs" />
-    <Compile Include="Migrations\201711070747155_adding_posts.Designer.cs">
-      <DependentUpon>201711070747155_adding_posts.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201711070811052_post-attributes.cs" />
-    <Compile Include="Migrations\201711070811052_post-attributes.Designer.cs">
-      <DependentUpon>201711070811052_post-attributes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201711070834477_add-post-to-context.cs" />
-    <Compile Include="Migrations\201711070834477_add-post-to-context.Designer.cs">
-      <DependentUpon>201711070834477_add-post-to-context.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201711071805085_user reference in post.cs" />
-    <Compile Include="Migrations\201711071805085_user reference in post.Designer.cs">
-      <DependentUpon>201711071805085_user reference in post.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201711071835494_generate-guid.cs" />
-    <Compile Include="Migrations\201711071835494_generate-guid.Designer.cs">
-      <DependentUpon>201711071835494_generate-guid.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -266,6 +247,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Classes\" />
     <Folder Include="Views\Post\" />
   </ItemGroup>
   <ItemGroup>
@@ -277,23 +259,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201711070739159_init-migration.resx">
-      <DependentUpon>201711070739159_init-migration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201711070747155_adding_posts.resx">
-      <DependentUpon>201711070747155_adding_posts.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201711070811052_post-attributes.resx">
-      <DependentUpon>201711070811052_post-attributes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201711070834477_add-post-to-context.resx">
-      <DependentUpon>201711070834477_add-post-to-context.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201711071805085_user reference in post.resx">
-      <DependentUpon>201711071805085_user reference in post.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201711071835494_generate-guid.resx">
-      <DependentUpon>201711071835494_generate-guid.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201711201915279_initial.resx">
+      <DependentUpon>201711201915279_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

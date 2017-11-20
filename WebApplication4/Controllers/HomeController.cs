@@ -13,6 +13,7 @@ namespace WebApplication4.Controllers
     public class HomeController : Controller
     {
         protected ApplicationDbContext ApplicationDbContext { get; set; }
+        
         protected UserManager<ApplicationUser> UserManager { get; set; }
 
         public HomeController()
@@ -22,7 +23,7 @@ namespace WebApplication4.Controllers
         }
         public ActionResult Index()
         {
-            var posts = this.ApplicationDbContext.Post.Include("User").ToList();
+            var posts = this.ApplicationDbContext.Post.Include("User").OrderBy(x => x.PostDateTime).ToList();
             var viewParameter = new HomeIndexViewModel(posts);
 
             return View(viewParameter);

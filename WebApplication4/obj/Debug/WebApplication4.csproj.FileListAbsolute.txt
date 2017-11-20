@@ -141,12 +141,7 @@ E:\Visual Studio Projects\social-network\WebApplication4\bin\Microsoft.Owin.Secu
 E:\Visual Studio Projects\social-network\WebApplication4\bin\Microsoft.Owin.Security.Twitter.xml
 E:\Visual Studio Projects\social-network\WebApplication4\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.csprojResolveAssemblyReference.cache
-E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.Migrations.initmigration.resources
-E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.Migrations.adding_posts.resources
-E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.Migrations.postattributes.resources
-E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.Migrations.addposttocontext.resources
-E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.Migrations.userreferenceinpost.resources
-E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.Migrations.generateguid.resources
-E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.csproj.GenerateResource.Cache
 E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.dll
 E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.pdb
+E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.Migrations.initial.resources
+E:\Visual Studio Projects\social-network\WebApplication4\obj\Debug\WebApplication4.csproj.GenerateResource.Cache
