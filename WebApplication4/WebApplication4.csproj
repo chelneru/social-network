@@ -167,10 +167,22 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Classes\Constants.cs" />
+    <Compile Include="Controllers\GlobalApplicationDataController.cs" />
+    <Compile Include="Controllers\UserProfilesController.cs" />
     <Compile Include="Migrations\201711201915279_initial.cs" />
     <Compile Include="Migrations\201711201915279_initial.Designer.cs">
       <DependentUpon>201711201915279_initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711221839470_added user addres in profile.cs" />
+    <Compile Include="Migrations\201711221839470_added user addres in profile.Designer.cs">
+      <DependentUpon>201711221839470_added user addres in profile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711261753012_addedImages.cs" />
+    <Compile Include="Migrations\201711261753012_addedImages.Designer.cs">
+      <DependentUpon>201711261753012_addedImages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Image.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -198,9 +210,22 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="packages.config" />
+    <None Include="Scripts\dropzone\basic.css" />
+    <None Include="Scripts\dropzone\basic.min.css" />
+    <None Include="Scripts\dropzone\dropzone-amd-module.js" />
+    <None Include="Scripts\dropzone\dropzone-amd-module.min.js" />
+    <None Include="Scripts\dropzone\dropzone.css" />
+    <None Include="Scripts\dropzone\dropzone.js" />
+    <None Include="Scripts\dropzone\dropzone.min.css" />
+    <None Include="Scripts\dropzone\dropzone.min.js" />
+    <None Include="Scripts\jquery-3.2.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.2.1.js" />
+    <Content Include="Scripts\jquery-3.2.1.min.js" />
+    <Content Include="Scripts\jquery-3.2.1.slim.js" />
+    <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.2.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.2.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -210,6 +235,8 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Content\js\UserProfile-Details.js" />
+    <Content Include="Views\UserProfiles\Gallery.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -244,10 +271,15 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\UserProfiles\Create.cshtml" />
+    <Content Include="Views\UserProfiles\Delete.cshtml" />
+    <Content Include="Views\UserProfiles\Details.cshtml" />
+    <Content Include="Views\UserProfiles\Edit.cshtml" />
+    <Content Include="Views\UserProfiles\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Classes\" />
+    <Folder Include="Views\GlobalApplicationData\" />
     <Folder Include="Views\Post\" />
   </ItemGroup>
   <ItemGroup>
@@ -256,11 +288,16 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201711201915279_initial.resx">
       <DependentUpon>201711201915279_initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711221839470_added user addres in profile.resx">
+      <DependentUpon>201711221839470_added user addres in profile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711261753012_addedImages.resx">
+      <DependentUpon>201711261753012_addedImages.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

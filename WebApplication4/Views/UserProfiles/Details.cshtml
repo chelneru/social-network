@@ -1,0 +1,93 @@
+﻿@model WebApplication4.Models.UserProfile
+
+@{
+    ViewBag.Title = "Details";
+}
+<style>
+    #dropZone {
+        background: gray;
+        border: black dashed 3px;
+        width: 200px;
+        padding: 50px;
+        text-align: center;
+        color: white;
+    }
+</style>
+<h2>Details</h2>
+
+<div>
+    <h4>UserProfile</h4>
+    <hr />
+    @if (Model.AvatarUrl != null)
+    {
+        <img src="@Model.AvatarUrl" alt="Unable to load avatar"/>
+
+    }
+    else
+    {
+        <img src="../../Content/images/default-avatar.jpg" alt="Unable to load default avatar"/>
+
+    }
+    <input type="file"><br>
+    <button class="upload-image-button">Upload Image</button>
+    <div class="jumbotron">
+        <form action="~/api/upload-photos/" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="background: none; border: none;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="current_user" value="@Model.ApplicationUser.Id"/>
+            <div class="fallback">
+                <input name="file" type="file" multiple />
+                <input type="submit" value="Upload" />
+            </div>
+        </form>
+    </div>
+    <dl class="dl-horizontal" user_id="@Model.ApplicationUser.Id">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JoinDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JoinDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+
+        <dd>asdasda<br></dd>
+
+@*        <dt>*@
+@*            @Html.DisplayNameFor(model => model.AvatarUrl)*@
+@*        </dt>*@
+
+        <dt>
+            @Html.DisplayNameFor(model => model.About)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.About)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BirthDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Gallery", "Gallery", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+<script type="text/javascript" src="../../Content/js/UserProfile-Details.js" ></script>

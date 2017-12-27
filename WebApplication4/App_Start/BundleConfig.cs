@@ -22,7 +22,12 @@ namespace WebApplication4
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
-
+            bundles.Add(new ScriptBundle("~/Scripts/dropzone/dropzonescripts").Include(
+                "~/Scripts/dropzone/dropzone.js"));
+            bundles.Add(new StyleBundle("~/Scripts/dropzone/dropzonescss").Include(
+                "~/Scripts/dropzone/basic.css",
+                "~/Scripts/dropzone/dropzone.css"));
+            
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));

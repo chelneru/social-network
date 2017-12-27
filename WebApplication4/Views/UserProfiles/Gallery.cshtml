@@ -1,0 +1,14 @@
+﻿@model IEnumerable<string>
+
+@{
+    ViewBag.Title = "Gallery";
+}
+
+<h2>Gallery</h2>
+
+<div class="gallery-container">
+    @foreach (var fullPath in Model)
+    {
+        <img src="@fullPath"/>
+    }
+</div>

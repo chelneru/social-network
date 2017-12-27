@@ -39,7 +39,7 @@ namespace WebApplication4.Models
 
         public System.Data.Entity.DbSet<Post> Post { get; set; }
         public System.Data.Entity.DbSet<UserProfile> UserProfile { get; set; }
-
+        public System.Data.Entity.DbSet<Image> Image { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

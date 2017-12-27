@@ -13,7 +13,7 @@ namespace WebApplication4.Controllers
     public class HomeController : Controller
     {
         protected ApplicationDbContext ApplicationDbContext { get; set; }
-        
+
         protected UserManager<ApplicationUser> UserManager { get; set; }
 
         public HomeController()
@@ -23,6 +23,20 @@ namespace WebApplication4.Controllers
         }
         public ActionResult Index()
         {
+
+            var user = User.Identity.GetUserId();
+            if (user != null)
+            {
+                //an user is logged in
+                var userProfile = ApplicationDbContext.UserProfile.First(x => x.ApplicationUser.Id == user);
+                System.Web.HttpContext.Current.Session["userAddress"] = userProfile.UserAddress; 
+
+            }
+            else
+            {
+                // no user is logged in
+                ViewBag.userAddress = '0';
+            }
             var posts = this.ApplicationDbContext.Post.Include("User").OrderBy(x => x.PostDateTime).ToList();
             var viewParameter = new HomeIndexViewModel(posts);
 

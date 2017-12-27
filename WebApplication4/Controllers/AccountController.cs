@@ -14,7 +14,7 @@ using WebApplication4.Models;
 namespace WebApplication4.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : GlobalApplicationDataController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
@@ -80,6 +80,7 @@ namespace WebApplication4.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

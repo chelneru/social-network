@@ -18,6 +18,8 @@ namespace WebApplication4.Models
         public string Location { get; set; }
         public string AvatarUrl { get; set; }
         public string About { get; set; }
+        [RegularExpression("^[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&\'\\(\\)\\*\\+,;=.]+$", ErrorMessage = "Invalid User Address Name")]
+        public string UserAddress { get; set; }
         [Required]
         public DateTime BirthDate { get; set; }
 
