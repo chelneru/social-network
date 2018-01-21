@@ -1,0 +1,65 @@
+﻿#dropZone {
+    background: gray;
+    border: black dashed 3px;
+    width: 200px;
+    padding: 50px;
+    text-align: center;
+    color: white;
+}
+
+.avatar-div:hover {
+    -moz-box-shadow: rgba(0, 0, 0, 0.8) 1px 0 100px 120px inset;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.8) 1px 0 100px 120px inset;
+    box-shadow: rgba(0, 0, 0, 0.8) 1px 0 100px 120px inset;
+    transition: box-shadow 0.1s ease-in;
+}
+
+    .avatar-div:hover .tip {
+        visibility: visible;
+    }
+
+.tip {
+    visibility: hidden;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color:white;
+    font-size: 25px;
+    width: 270px;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.avatar-div {
+    position: relative;
+}
+
+.avatar-div img {
+        max-width: 100%;
+        position: relative;
+        z-index: -1;
+}
+
+.dropzone .dz-preview:not(.dz-processing) .dz-progress {
+    visibility: hidden;
+}
+
+div.remove-div{
+    cursor:pointer !important;
+}
+div.remove-div span {
+    font-size:13px;
+}
+div.remove-div .icon {
+    width:15px;
+    height:15px;
+    cursor: pointer;
+    margin-left: 10px;
+
+}
+.dropzone .dz-preview.dz-image-preview {
+    background:transparent;
+}
+.dz-error-message {
+    top:171px !important;
+}

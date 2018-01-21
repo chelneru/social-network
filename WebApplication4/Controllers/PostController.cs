@@ -3,27 +3,31 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using WebApplication4.Models;
+using WebApplication4.DAL;
+using WebApplication4.ViewModels;
 
 namespace WebApplication4.Controllers
 {
     public class PostController : Controller
     {
-        private ApplicationDbContext ApplicationDbContext { get; set; }
-        private UserManager<ApplicationUser> UserManager { get; set; }
+        private UnitOfWork unitOfWork = new UnitOfWork();
 
-        public PostController()
+        //private ApplicationDbContext ApplicationDbContext { get; set; }
+        //private UserManager<ApplicationUser> UserManager { get; set; }
+
+        //public PostController()
+        //{
+        //    ApplicationDbContext = new ApplicationDbContext();
+        //    UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(ApplicationDbContext));
+        //}
+        public ActionResult Index()
         {
-            ApplicationDbContext = new ApplicationDbContext();
-            UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(ApplicationDbContext));
+            var list = unitOfWork.PostRepository.Get();
+            return View(list);
         }
-        //        // GET: Post
-        //        public ActionResult Index()
-        //        {
-        //            return View();
-        //        }
         //
         //        // GET: Post/Details/5
-        //        public ActionResult Details(int id)
+        //public ActionResult Details(int id)
         //        {
         //            return View();
         //        }
@@ -35,28 +39,35 @@ namespace WebApplication4.Controllers
         //        }
 
         // POST: Post/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="post"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Content")]Post model)
+        public ActionResult Create([Bind(Include = "Model.Content")]HomeIndexViewModel viewModel)
         {
 
-            model.UserId = System.Web.HttpContext.Current.User.Identity.GetUserId();
-            model.PostDateTime = DateTime.Now;
+            var post = new Post
+            {
+                UserId = User.Identity.GetUserId(),
+                User = unitOfWork.UserRepository.GetByID(User.Identity.GetUserId()),
+                Content = Request.Form.Get("Model.Content"),
+                PostDateTime = DateTime.Now,
+                Id = Guid.NewGuid()
+            };
+
+
             try
             {
-
-                var user = UserManager.FindById(User.Identity.GetUserId());
-                var newPost = new Post
+                if (ModelState.IsValid)
                 {
 
-                    Content = model.Content,
-                    PostDateTime = DateTime.Now,
-                    User = user
-
-                };
-                ApplicationDbContext.Post.Add(newPost);
-                ApplicationDbContext.SaveChanges();
+                    unitOfWork.PostRepository.Insert(post);
+                    unitOfWork.Save();
+                }
             }
             catch (Exception ex)
             {

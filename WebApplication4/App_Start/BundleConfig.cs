@@ -30,6 +30,7 @@ namespace WebApplication4
             
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/global.css",
                       "~/Content/site.css"));
         }
     }

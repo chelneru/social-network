@@ -1,0 +1,64 @@
+﻿@using WebApplication4.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = "";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/auth-page.css">
+<div class="background-container">
+    <div class="auth-panel">
+        <div class="panel-header">
+            <div class="panel-tab login-tab active-tab">Login</div><div class="panel-tab register-tab">Register</div>
+        </div>
+        <div class="login-form">
+                    @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="field-row">
+                            @Html.LabelFor(m => m.Email, new { @class = "label" })
+                            <div class="field-input">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            @Html.LabelFor(m => m.Password, new { @class = "label" })
+                            <div class="field-input">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-label" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="col-md-offset-2 col-md-10">
+                                <div class="checkbox">
+                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                    @Html.LabelFor(m => m.RememberMe)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Log in" class="login-button" />
+                            </div>
+                        </div>
+                       
+                        <p>
+                            @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                        </p>
+                    }
+        </div>
+        <div class="register-form">
+            <p>
+                @Html.ActionLink("Register as a new user", "Register")
+            </p>
+            </div>
+        </div>
+    </div>
+<script src="~/Scripts/jquery-3.2.1.min.js"></script>
+
+<script src="~/Content/js/auth-page.js"></script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

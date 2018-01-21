@@ -53,7 +53,7 @@ namespace WebApplication4.Controllers
             }
         }
 
-        //
+        [Route("login/", Name = "login")]
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
@@ -64,10 +64,11 @@ namespace WebApplication4.Controllers
 
         //
         // POST: /Account/Login
+        [Route("login/", Name = "login-post")]
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(LandingPageViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -76,7 +77,7 @@ namespace WebApplication4.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.loginModel.Email, model.loginModel.Password, model.loginModel.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -85,7 +86,7 @@ namespace WebApplication4.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.loginModel.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -136,11 +137,12 @@ namespace WebApplication4.Controllers
             }
         }
 
-        //
+       
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
         {
+     
             return View();
         }
 
@@ -149,19 +151,20 @@ namespace WebApplication4.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(LandingPageViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.registerModel.Name, Email = model.registerModel.Email };
                 try
                 {
                     var userProfile = new UserProfile
                     {
-                        Name = user.UserName,
+                        Name = model.registerModel.Name,
                         JoinDate = DateTime.Now,
                         BirthDate = new DateTime(1995, 08, 30),
-                        ApplicationUser = user
+                        User = user,
+                        UserAddress = user.Email.Substring(0, user.Email.IndexOf('@'))
                     };
                     var applicationDbContext = new ApplicationDbContext();
                     applicationDbContext.UserProfile.Add(userProfile);
@@ -183,7 +186,7 @@ namespace WebApplication4.Controllers
 
                 try
                 {
-                    var result = await UserManager.CreateAsync(user, model.Password);
+                    var result = await UserManager.CreateAsync(user, model.registerModel.Password);
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);

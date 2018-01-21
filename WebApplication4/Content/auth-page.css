@@ -1,0 +1,111 @@
+﻿
+  @font-face
+     {
+        font-family: 'Roboto'; 
+        src: url('/fonts/Roboto-Regular.ttf'); 
+     }
+  * {
+      font-family:Roboto;
+      font-size: 13px;
+  }
+
+.background-container {
+    display: block;
+    height: 580px;
+    padding-top: 100px
+}
+.auth-panel {
+    background-color: white;
+    border: 1px solid #eeeeee;
+    box-shadow: 3px 4px 12px 1px #1b73a7;
+    border-radius: 3px;
+    width: 30%;
+    margin: 0 auto;
+}
+
+.panel-header {
+    height: 70px;
+
+}
+.panel-header .panel-tab {
+    display: inline-block;
+    width: 50%;
+    text-align: center;
+    border: 1px solid #eeeeee;
+    padding: 20px;
+    transition: color 0.4s ease, background-color 0.4s ease;
+    cursor:pointer;
+}
+.register-form {
+    display:none;
+}
+.active-tab {
+    background-color: #3ca2e0;
+    border: 1px solid #3ca2e0;
+    color: white;
+}
+.form-label{
+    display:inline-block;
+
+}
+.field-input {
+    display:inline-block;
+    width: 70%;
+}
+.field-input input {
+    width: 93%;
+}
+.label {
+    display: inline-block;
+    width: 28%;
+}
+.field-row {
+    border: 1px solid #eeeeee;
+    padding: 20px 10px;
+}
+input {
+    padding: 0 5px 5px 5px;
+    border: none;
+    border-bottom: 1px solid black;
+}
+.login-form,.register-form{
+    margin-top: 20px;
+}
+.login-button {
+    width: 100%;
+    padding: 20px 10px;
+    border-bottom: none;
+    margin: 0 auto;
+    display: block;
+    color:white;
+    background-color: #3ca2e0;
+}
+input:focus {
+    outline: none;
+}
+
+.navbar {
+    display:none;
+}
+body {
+    padding: 0;
+    background-color: #3ca2e0;
+}
+footer {
+    background-color:transparent;
+}
+.label {
+    color: black;
+    font-size: 13px;
+    vertical-align: top;
+    text-align: left;
+    padding-left:21px;
+}
+.remember-input {
+    padding-left:21px; 
+}
+
+.forgot-password-div {
+    padding-left:21px;
+    padding:20px 31px ; 
+} 

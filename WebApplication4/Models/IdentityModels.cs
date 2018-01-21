@@ -15,6 +15,7 @@ namespace WebApplication4.Models
     public class ApplicationUser : IdentityUser
     {
         public virtual ICollection<Post> UserPosts { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
         public virtual UserProfile UserProfile { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -32,20 +33,28 @@ namespace WebApplication4.Models
         {
         }
 
+        public ApplicationDbContext(string nameOrConnectionString) : base(nameOrConnectionString)
+        {
+        }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
 
         public System.Data.Entity.DbSet<Post> Post { get; set; }
+        public System.Data.Entity.DbSet<Like> Like { get; set; }
         public System.Data.Entity.DbSet<UserProfile> UserProfile { get; set; }
-        public System.Data.Entity.DbSet<Image> Image { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Like>()
+           .HasRequired(d => d.User)
+           .WithMany(l => l.Likes);
 
             modelBuilder.Entity<UserProfile>()
-                .HasRequired(b => b.ApplicationUser)
-                .WithOptional(a => a.UserProfile);
+                .HasRequired(b => b.User)
+                .WithOptional(a => a.UserProfile)
+                .WillCascadeOnDelete(true);
 
             base.OnModelCreating(modelBuilder);
         }

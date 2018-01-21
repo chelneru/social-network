@@ -1,0 +1,80 @@
+﻿
+  @font-face
+     {
+        font-family: 'Roboto'; 
+        src: url('/fonts/Roboto-Regular.ttf'); 
+     }
+  * {
+      font-family:Roboto;
+      font-size: 13px;
+  }
+.background-container {
+    background-color:rgba(51, 204, 255,0.70);
+    width:100%;
+    height:100%;
+}
+.auth-panel {
+    background-color: white;
+    border-radius: 3px;
+    width: 30%;
+    height: 70%;
+    float: right;
+    margin-right: 10%;
+    margin-top: 5%;
+}
+body {
+    margin:0;
+}
+.panel-header {
+    height: 70px;
+
+}
+.panel-header .panel-tab {
+    display: inline-block;
+    width: 39%;
+    text-align: center;
+    border: 1px solid #eeee;
+    padding: 20px;
+    transition: color 0.4s ease, background-color 0.4s ease;
+}
+.register-form {
+    display:none;
+}
+.active-tab {
+    background-color: rgba(233, 150, 122,0.57);
+}
+.form-label{
+    display:inline-block;
+
+}
+.field-input {
+    display:inline-block;
+    width: 60%;
+}
+.field-input input {
+    width: 88%;
+}
+.label {
+    display: inline-block;
+    width: 29%;
+}
+.field-row {
+    border: 1px solid #eeeeee;
+    padding: 20px 10px;
+}
+input {
+    padding: 5px;
+    border: none;
+    border-bottom: 1px solid black;
+}
+.login-form{
+    margin-top: 20px;
+}
+.login-button{
+    width: 100%;
+    padding: 20px 10px; 
+    border-bottom: none;
+}
+input:focus {
+    outline: none;
+}

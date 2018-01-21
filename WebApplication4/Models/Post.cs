@@ -17,9 +17,10 @@ namespace WebApplication4.Models
         [Required]
         public DateTime PostDateTime { get; set; }
         [Required]
-
+        [ForeignKey("User")]
         public string UserId { get; set; }
-        [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
+        public virtual Post ParentPost { get; set; }
     }
 }
