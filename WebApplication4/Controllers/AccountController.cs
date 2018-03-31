@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using WebApplication4.DAL;
 using WebApplication4.Models;
 
 namespace WebApplication4.Controllers
@@ -18,7 +19,7 @@ namespace WebApplication4.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private UnitOfWork unitOfWork = new UnitOfWork();
         public AccountController()
         {
         }
@@ -59,7 +60,11 @@ namespace WebApplication4.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            var viewModel = new LandingPageViewModel
+            { loginModel = new LoginViewModel(),
+            registerModel = new RegisterViewModel()
+            };
+            return View(viewModel);
         }
 
         //
@@ -81,7 +86,7 @@ namespace WebApplication4.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-
+                  
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

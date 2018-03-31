@@ -1,0 +1,87 @@
+﻿@model WebApplication4.ViewModels.PhotoDetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+<br />
+
+<hr />
+<div>
+    <div class="dl-horizontal">
+        <div>
+            @Html.DisplayFor(model => model.Photo.UserProfile.Name) - @Model.Photo.PostDateTime.ToShortDateString()
+        </div>
+
+        <div>
+            @Html.DisplayFor(model => model.Photo.Description)
+        </div>
+        <div>
+            Votes : @Html.DisplayFor(model => model.Votes)
+        </div>
+        <div class="votes-container">
+            <div class="upvote">+1</div>
+            <div class="downvote">-1</div>
+        </div>
+    </div>
+    <div class="post message-div" id="@Model.Photo.Id">
+            <span>
+                Posted by <a href="/user/@Model.Photo.UserProfile.UserAddress"><b>@Model.Photo.UserProfile.Name</b></a> - <b>
+                    @if (@Model.Photo.PostDateTime.ToShortDateString() == DateTime.Today.ToShortDateString())
+            {@Model.Photo.PostDateTime.ToShortTimeString()}
+else
+{
+        @Model.Photo.PostDateTime.ToShortDateString()
+}
+                </b>
+            </span>
+
+            <div class="vote-div">
+                <div class="votes-action downvote @if (@Model.CurrentUserVote < 0) {<text>voted</text> }"><img src="~/Content/images/arrow-down-on-black-circular-background.svg" /></div>
+                <div class="votes">@Model.Photo.PhotoLikes</div>
+                <div class="votes-action upvote @if (@Model.CurrentUserVote > 0) {<text>voted</text> }"><img src="~/Content/images/arrow-up-on-a-black-circle-background.svg" /></div>
+            </div>
+        <img src="@Model.Photo.LocalPath"/>
+            <div class="post-comments">
+                @foreach (var comment in Model.Posts)
+        {
+            if (comment.ParentPost != null && comment.ParentPost.Id == post.Id)
+            {
+                <div class="comment message-div" id="@comment.Id">
+                    <span>
+                        Posted by <a href="/user/@comment.UserAddress"><b>@comment.UserName</b></a> - <b>
+                            @if (@comment.PostDateTime.ToShortDateString() == DateTime.Today.ToShortDateString())
+            {@comment.PostDateTime.ToShortTimeString()}
+else
+{
+                @comment.PostDateTime.ToShortDateString()
+}
+                        </b>
+                    </span>
+                    <div class="vote-div">
+
+                        <div class="votes-action downvote @if (comment.CurrentUserVote < 0) {<text>voted</text> }"><img src="~/Content/images/arrow-down-on-black-circular-background.svg" /></div>
+                        <div class="votes">@comment.Likes</div>
+                        <div class="votes-action upvote @if (comment.CurrentUserVote > 0) {<text>voted</text> }"><img src="~/Content/images/arrow-up-on-a-black-circle-background.svg" /></div>
+                    </div>
+                        <div class="comment-content">@comment.Content</div>
+                    </div>
+                    }
+                    }
+                    @using (Html.BeginForm("Create", "Post", FormMethod.Post, new { role = "form" }))
+    {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                @Html.TextAreaFor(x => x.postModel.Content, new { @class = "comment-box", placeholder = "Leave a comment...." })
+                @Html.TextBoxFor(x => x.postModel.ParentPost, new { style = "display: none;", @Value = post.Id })
+
+                <input type="submit" class="btn btn-info post-comment" value="Post comment" />
+}
+                </div>
+        </div>
+
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Photo.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

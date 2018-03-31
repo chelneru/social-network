@@ -1,0 +1,31 @@
+﻿@model WebApplication4.ViewModels.PostDetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+<br />
+
+<hr />
+<div>
+    <div class="dl-horizontal">
+        <div>
+            @Html.DisplayFor(model => model.Post.UserProfile.User.UserName) - @Model.Post.PostDateTime.ToShortDateString()
+        </div>
+
+        <div>
+            @Html.DisplayFor(model => model.Post.Content)
+        </div>
+        <div>
+            Votes : @Html.DisplayFor(model => model.Votes)
+        </div>
+        <div class="votes-container">
+            <div class="upvote">+1</div>
+            <div class="downvote">-1</div>
+        </div>
+    </div>
+    
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Post.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

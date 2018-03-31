@@ -7,16 +7,30 @@
     color: white;
 }
 
-.avatar-div:hover {
+#upload-avatar-form {
+    display: inline-block;
+}
+
+.hover-action:hover {
     -moz-box-shadow: rgba(0, 0, 0, 0.8) 1px 0 100px 120px inset;
     -webkit-box-shadow: rgba(0, 0, 0, 0.8) 1px 0 100px 120px inset;
     box-shadow: rgba(0, 0, 0, 0.8) 1px 0 100px 120px inset;
     transition: box-shadow 0.1s ease-in;
 }
 
-    .avatar-div:hover .tip {
+    .hover-action:hover .tip {
         visibility: visible;
     }
+
+.friends-button {
+    display: inline-block;
+    background-color: grey;
+    color: white;
+    padding: 10px;
+    vertical-align: bottom;
+    margin-bottom: 24px;
+    cursor: pointer;
+}
 
 .tip {
     visibility: hidden;
@@ -24,42 +38,47 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color:white;
-    font-size: 25px;
-    width: 270px;
+    color: white;
+    font-size: 18px;
+    width: 180px;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .avatar-div {
     position: relative;
+    width: 200px;
+    height: 200px;
 }
 
-.avatar-div img {
+    .avatar-div img {
         max-width: 100%;
         position: relative;
         z-index: -1;
-}
+    }
 
 .dropzone .dz-preview:not(.dz-processing) .dz-progress {
     visibility: hidden;
 }
 
-div.remove-div{
-    cursor:pointer !important;
+div.remove-div {
+    cursor: pointer !important;
 }
-div.remove-div span {
-    font-size:13px;
-}
-div.remove-div .icon {
-    width:15px;
-    height:15px;
-    cursor: pointer;
-    margin-left: 10px;
 
-}
+    div.remove-div span {
+        font-size: 13px;
+    }
+
+    div.remove-div .icon {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
 .dropzone .dz-preview.dz-image-preview {
-    background:transparent;
+    background: transparent;
 }
+
 .dz-error-message {
-    top:171px !important;
+    top: 171px !important;
 }

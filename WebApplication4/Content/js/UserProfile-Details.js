@@ -1,42 +1,86 @@
-﻿$(document).ready(function() {
+﻿$(document).ready(function () {
     console.log("file loaded");
     //File Upload response from the server
-    Dropzone.forElement(".dropzone").options.autoProcessQueue = false;
-    Dropzone.forElement(".dropzone").options.acceptedFiles = "image/*";
-    Dropzone.forElement(".dropzone").options.paramName = "file";
-    Dropzone.forElement(".dropzone").options.resizeWidth ="500";
-    Dropzone.forElement(".dropzone").options.resizeHeight = "500";
-    Dropzone.forElement(".dropzone").options.resizeMimeType = "image/jpeg";
-    //Dropzone.forElement(".dropzone").options.addRemoveLinks = true;
-    Dropzone.forElement(".dropzone").options.maxFilesize = 10;
-   
+    if ($('.dropzone').length > 0) {
+        Dropzone.forElement(".dropzone").options.autoProcessQueue = false;
+        Dropzone.forElement(".dropzone").options.acceptedFiles = "image/*,.mp4";
+        Dropzone.forElement(".dropzone").options.paramName = "file";
+        Dropzone.forElement(".dropzone").options.resizeWidth = "500";
+        Dropzone.forElement(".dropzone").options.resizeHeight = "500";
+        Dropzone.forElement(".dropzone").options.resizeMimeType = "image/jpeg";
+        //Dropzone.forElement(".dropzone").options.addRemoveLinks = true;
+        Dropzone.forElement(".dropzone").options.maxFilesize = 10;
+    }
+
+    $('.friends-button').on("click", function () {
+        var $friendButton = $(this);
+        var user_id = document.querySelector('meta[name="id"]').content;
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        $.ajax({
+            url: '/add-remove-friend',
+            method: 'POST',
+            data: {
+                __RequestVerificationToken: token,
+                user_id: user_id
+            },
+            dataType: 'json'
+        }).done(function (data, textStatus, jqXHR) {
+            // because dataType is json 'data' is guaranteed to be an object
+            console.log('done', data);
+            if (data.Message.toString().toLowerCase().trim() == "friend added") {
+                $($friendButton).text("Friend");
+            }
+            else if (data.Message.toString().toLowerCase().trim() == "friend removed") {
+                $($friendButton).text("Add friend");
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // the response is not guaranteed to be json
+            if (jqXHR.responseJSON) {
+                // jqXHR.reseponseJSON is an object
+                console.log('failed with json data', data);
+            }
+            else {
+                // jqXHR.responseText is not JSON data
+                console.log('failed with unknown data', data);
+            }
+        }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) {
+            console.log('always');
+        });
+
+    });
     $("#submit-all").on("click", function () {
         Dropzone.forElement(".dropzone").processQueue();
     });
     console.log("file loaded");
-    Dropzone.forElement(".dropzone").on("addedfile", function (file) {
-        var removeDiv = Dropzone.createElement("<div class='remove-div'><span>Remove image</span><img class='icon' src='../../Content/removebutton.svg' alt='Click me to remove the file.' data-dz-remove/></div>");
-        var _this = this;
+    if ($('.dropzone').length > 0) {
 
-        // Listen to the click event
-        removeDiv.addEventListener("click", function (e) {
-            // Make sure the button click doesn't submit the form:
-            e.preventDefault();
-            e.stopPropagation();
+        Dropzone.forElement(".dropzone").on("addedfile", function (file) {
+            var removeDiv = Dropzone.createElement("<div class='remove-div'><span>Remove image</span><img class='icon' src='../../Content/removebutton.svg' alt='Click me to remove the file.' data-dz-remove/></div>");
+            var descInputDiv = Dropzone.createElement("<div class='description-div'><textarea type='text' name='image-description' rows='3' placeholder='Put a description'></textarea></textarea></div>");
+            
+            var _this = this;
 
-            // Remove the file preview.
-            _this.removeFile(file);
-            // If you want to the delete the file on the server as well,
-            // you can do the AJAX request here.
+            // Listen to the click event
+            removeDiv.addEventListener("click", function (e) {
+                // Make sure the button click doesn't submit the form:
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Remove the file preview.
+                _this.removeFile(file);
+                // If you want to the delete the file on the server as well,
+                // you can do the AJAX request here.
+            });
+
+            // Add the button to the file preview element.
+            file.previewElement.appendChild(descInputDiv);
+            file.previewElement.appendChild(removeDiv);
+
         });
-
-        // Add the button to the file preview element.
-        file.previewElement.appendChild(removeDiv);
-
+    }
+        console.log("file loaded");
     });
-  
-    console.log("file loaded");
-});
 
 $("#upload-avatar-form .file-input").on("change", function () {
     var mimeType = $(this)[0].files[0]["type"];

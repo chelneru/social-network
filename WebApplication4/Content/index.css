@@ -2,6 +2,149 @@
     border: 1px solid black;
     border-radius: 5px;
     padding: 10px;
-    width: 50%;
-    margin: 10px;
+    width: 80%;
 }
+
+.posts-container {
+    padding:20px;
+}
+
+.posts-container .post-media {
+    margin: 20px 0;
+    width: 400px;
+    height: 400px;
+}
+.posts-container .post-media img {
+    width: 400px;
+    height: 400px;
+}
+body {
+    background-color: #eeeeee;
+}
+
+.feed-container {
+    width: 700px;
+    margin: 0 auto;
+    margin-top: 20px;
+    background-color: white;
+}
+
+.create-post-form textarea {
+    width: 90%;
+    max-width: none;
+}
+
+.create-post-form {
+    padding: 20px;
+}
+
+form input[type=submit] {
+    margin-right: 63px;
+}
+
+.comment-box {
+    width: 98.6%;
+    max-height: 200px;
+}
+
+.post-comments {
+    width: 80%;
+    padding: 5px;
+}
+
+    .post-comments .comment {
+        background-color: lightgrey;
+        margin: 5px 5px 5px 0;
+        padding: 5px;
+    }
+
+.votes {
+    text-align: center;
+}
+
+.votes,
+.votes-action {
+    float: right;
+    padding-right: 5px;
+}
+
+    .votes-action img {
+        width: 20px;
+        height: 20px;
+        opacity: 0.5;
+    }
+
+        .votes-action img:hover {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+.voted img {
+    opacity: 1 !important;
+}
+
+.vote-div {
+    display: inline;
+    width: 100px;
+}
+
+/*Chat CSS*/
+#chat_widnow {
+    width: 200px;
+    border: solid 1px #6c0e4a;
+    bottom: 0;
+    right: 0;
+    position: fixed;
+    overflow-x: hidden;
+    box-shadow: 0 5px 10px -2px rgba(0, 0, 0, 0.7) !important;
+}
+
+#chat_title_bar {
+    background: #FEFEFE;
+    height: 25px;
+    width: 100%;
+}
+
+#chat_min_button {
+    width: 25px;
+    height: 23px;
+    float: right;
+    cursor: pointer;
+}
+
+#chat_box {
+    height: 250px;
+    background: #DFDFDF;
+}
+    /*Chat End*/
+
+
+
+
+    #chat_box .bg-success {
+        display: block;
+        padding: 8px 15px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    #chat_box .bg-info {
+        display: block;
+        padding: 8px 15px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+.ui-chatbox .ui-widget-header {
+    color: #222222;
+    font-weight: 400;
+}
+
+.ui-chatbox-input {
+    border: 0 !important;
+}
+
+.ui-chatbox-input-box {
+    width: 189px !important;
+}
+

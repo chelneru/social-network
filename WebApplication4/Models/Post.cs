@@ -14,13 +14,18 @@ namespace WebApplication4.Models
         public Guid Id { get; set; }
         [Required]
         public string Content { get; set; }
+        public bool Edited { get; set; }
         [Required]
         public DateTime PostDateTime { get; set; }
         [Required]
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        [ForeignKey("UserProfile")]
+        public Guid UserProfileId { get; set; }
+        public UserProfile UserProfile { get; set; }
         public virtual ICollection<Like> Likes { get; set; }
         public virtual Post ParentPost { get; set; }
+        public string PhotoLink { get; set; }
+        public string VideoLink { get; set; }
+        public string ShareLink { get; set; }
+
     }
 }

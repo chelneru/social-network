@@ -1,14 +1,15 @@
-﻿@model IEnumerable<string>
+﻿@model List<WebApplication4.Models.Post>
 
 @{
-    ViewBag.Title = "Gallery";
+    ViewBag.Title = @Model[0].UserProfile.Name+"s Gallery";
 }
+<link rel="stylesheet" href="/Content/user-gallery.css" type="text/css"/>
 
-<h2>Gallery</h2>
+<h2>@Model[0].UserProfile.Name's Gallery</h2>
 
 <div class="gallery-container">
-    @foreach (var fullPath in Model)
+    @foreach (var post in Model)
     {
-        <img src="@fullPath"/>
+    <a href="/posts/@post.Id"><img src="@post.PhotoLink" alt="post-image" /></a>
     }
 </div>

@@ -14,8 +14,7 @@ namespace WebApplication4.Models
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
-        public virtual ICollection<Post> UserPosts { get; set; }
-        public virtual ICollection<Like> Likes { get; set; }
+   
         public virtual UserProfile UserProfile { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -44,12 +43,16 @@ namespace WebApplication4.Models
 
         public System.Data.Entity.DbSet<Post> Post { get; set; }
         public System.Data.Entity.DbSet<Like> Like { get; set; }
+        public System.Data.Entity.DbSet<Notification> Notification { get; set; }
+
         public System.Data.Entity.DbSet<UserProfile> UserProfile { get; set; }
+        public System.Data.Entity.DbSet<Friends> Friends { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Like>()
-           .HasRequired(d => d.User)
-           .WithMany(l => l.Likes);
+           .HasRequired(d => d.UserProfile)
+           .WithMany(l => l.Likes)
+            .WillCascadeOnDelete(false); ;
 
             modelBuilder.Entity<UserProfile>()
                 .HasRequired(b => b.User)

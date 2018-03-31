@@ -1,84 +1,114 @@
-﻿@model WebApplication4.Models.UserProfile
+﻿@model WebApplication4.Models.UserProfileDetailsViewModel
 
 @{
     ViewBag.Title = "Details";
 }
 <link rel="stylesheet" type="text/css" href="~/Content/user-profile-details.css">
-
-<h2>Details</h2>
-
+<meta name="id" content="@Model.Profile.Id">
 <div>
-    <h4>UserProfile</h4>
-    <hr />
-    
-    <form action="~/api/upload-avatar/" method="post" id="upload-avatar-form"  enctype="multipart/form-data" onsubmit="setTimeout(function(){window.location.reload();},10)">
+    <form action="~/api/upload-avatar/" method="post" id="upload-avatar-form" enctype="multipart/form-data" onsubmit="setTimeout(function(){window.location.reload();},10)">
         @Html.AntiForgeryToken()
 
         <label>
-            <div class="avatar-div">
-                <img class="avatar-image" src=@if (Model.AvatarUrl != null) { @Model.AvatarUrl} else { @("../../Content/images/default-avatar.jpg"); } alt="Unable to load default avatar" />
-                <span class="tip">Click to change avatar</span>
+            <div class="avatar-div @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name) { <text>hover-action</text>} ">
+                <img class="avatar-image" src=@if (Model.Profile.AvatarUrl != null) { @Model.Profile.AvatarUrl} else { @("../../Content/images/default-avatar.jpg"); } alt="Unable to load default avatar" />
+                @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
+                {
+                    <span class="tip">Click to change avatar</span>
+                }
             </div>
-            <input type="file" name="avatar" style="display:none" form="upload-avatar-form" class="file-input">
+            @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
+            {
+                <input type="file" name="avatar" style="display:none" form="upload-avatar-form" class="file-input">
+            }
         </label>
         <br>
     </form>
-    
-    <div class="jumbotron">
-        <form action="~/api/upload-photos/" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="background: none; border: none;">
-            @Html.AntiForgeryToken()
-            @*<img class="icon" src="~/Content/removebutton.svg" alt="Click me to remove the file." data-dz-remove />*@
+    @if (Model.Profile.User.UserName != HttpContext.Current.User.Identity.Name)
+    {
+        <div class="friends-button">
+            @if (Model.FriendsCollection.Friend_UserProfile.FirstOrDefault(x => x.User.UserName == HttpContext.Current.User.Identity.Name) != null)
+            {
+                <text>Friend</text>
+            }
+            else
+            {
+                <text>
+                    Add friend
+                </text>
+            }
+        </div>
+    }
+    @if (Model.FriendsCollection != null)
+    {<ul>
+            @foreach (var friend in Model.FriendsCollection.Friend_UserProfile)
+            {
+                {
+                    <li>@friend.Name</li>}
+            }
+        </ul>
+    }
+    @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
+    {
+        <div class="jumbotron">
+            <form action="~/api/upload-photos/" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="background: none; border: none;">
+                @Html.AntiForgeryToken()
+                @*<img class="icon" src="~/Content/removebutton.svg" alt="Click me to remove the file." data-dz-remove />*@
 
-            <div class="fallback">
-                <input name="file" type="file" multiple />
-                <input type="submit" value="Upload" />
-            </div>
-        </form>
-        <button id="submit-all">Submit All Files</button>
-    </div>
+                <div class="fallback">
+                    <input name="file" type="file" multiple />
+                    <input type="submit" value="Upload" />
+                </div>
+            </form>
+            <button id="submit-all">Submit All Files</button>
+        </div>
+    }
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Profile.Name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Profile.Name)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.JoinDate)
+            @Html.DisplayNameFor(model => model.Profile.JoinDate)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.JoinDate.Date)
+            @Html.DisplayFor(model => model.Profile.JoinDate.Date)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Location)
+            @Html.DisplayNameFor(model => model.Profile.Location)
         </dt>
 
         <dd>asdasda<br></dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.About)
+            @Html.DisplayNameFor(model => model.Profile.About)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.About)
+            @Html.DisplayFor(model => model.Profile.About)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.BirthDate)
+            @Html.DisplayNameFor(model => model.Profile.BirthDate)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.BirthDate)
+            @Html.DisplayFor(model => model.Profile.BirthDate)
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Profile.Id }) <text> |</text>
+                }
     @Html.ActionLink("Gallery", "Gallery") |
     @Html.ActionLink("Back to List", "Index")
 </p>
-<script type="text/javascript" src="../../Content/js/UserProfile-Details.js" ></script>
+<script type="text/javascript" src="../../Content/js/UserProfile-Details.js"></script>

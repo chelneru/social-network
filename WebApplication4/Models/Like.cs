@@ -9,14 +9,13 @@ namespace WebApplication4.Models
     public class Like
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         [Required]
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
-        [ForeignKey("Post")]
+        [ForeignKey("UserProfile")]
+        public Guid UserProfileId { get; set; }
+        public UserProfile UserProfile { get; set; }
         [Required]
+        [ForeignKey("Post")]
         public Guid PostId { get; set; }
         public Post Post { get; set; }
         [Required]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -24,5 +25,7 @@ namespace WebApplication4.Models
         public DateTime BirthDate { get; set; }
 
         public ApplicationUser User { get; set; }
+        public virtual ICollection<Post> UserPosts { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
     }
 }
