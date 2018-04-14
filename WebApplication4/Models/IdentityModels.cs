@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebApplication4.DAL.Interfaces;
 
 
 namespace WebApplication4.Models
@@ -41,12 +42,13 @@ namespace WebApplication4.Models
             return new ApplicationDbContext();
         }
 
-        public System.Data.Entity.DbSet<Post> Post { get; set; }
-        public System.Data.Entity.DbSet<Like> Like { get; set; }
-        public System.Data.Entity.DbSet<Notification> Notification { get; set; }
+        public IDbSet<Post> Post { get; set; }
+        public IDbSet<Like> Like { get; set; }
+        public IDbSet<Notification> Notification { get; set; }
+        public IDbSet<LinkPreview> LinkPreview { get; set; }
 
-        public System.Data.Entity.DbSet<UserProfile> UserProfile { get; set; }
-        public System.Data.Entity.DbSet<Friends> Friends { get; set; }
+        public virtual IDbSet<UserProfile> UserProfile { get; set; }
+        public IDbSet<Friends> Friends { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Like>()

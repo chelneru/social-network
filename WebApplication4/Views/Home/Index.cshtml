@@ -13,19 +13,25 @@
 
             @Html.ValidationSummary("", new {@class = "text-danger"})
             <div class="create-post-form">
-                @Html.TextAreaFor(x => x.postModel.Content)
+                @Html.TextAreaFor(x => x.postModel.Content, new{@class="post-content", required=""})
+                <div class="post-additional-options">
+                    <div class="post-video"></div>
+                    <div class="post-image"></div>
+                    <div class="post-link"></div>
+                </div>
                 <div class="form-group">
-                    <input type="submit" class="btn btn-default" value="Create a post !"/>
+                    <input type="submit" class="btn btn-default submit-post" value="Create a post !"/>
                 </div>
             </div>
         }
     }
+    @Html.AntiForgeryToken()
     <div class="posts-container">
         @foreach (var post in Model.Posts)
         {
             if (post.ParentPost == null)
             {
-                <div class="post message-div" id="@post.Id">
+                <div class="post message-div"  id="@post.Id">
                     <span>
                         Posted by <a href="/user/@post.UserAddress">
                             <b>@post.UserName</b>
@@ -111,7 +117,7 @@
                             @Html.AntiForgeryToken()
 
                             @Html.ValidationSummary("", new {@class = "text-danger"})
-                            @Html.TextAreaFor(x => x.postModel.Content, new {@class = "comment-box", placeholder = "Leave a comment...."})
+                            @Html.TextAreaFor(x => x.postModel.Content, new {@class = "comment-box", placeholder = "Leave a comment....",required=""})
                             @Html.TextBoxFor(x => x.postModel.ParentPost, new {style = "display: none;", @Value = post.Id})
 
                             <input type="submit" class="btn btn-info post-comment" value="Post comment"/>

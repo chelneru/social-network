@@ -1,172 +1,124 @@
 ﻿using System;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using WebApplication4.Models;
-using WebApplication4.DAL;
 using WebApplication4.ViewModels;
 using System.Linq;
-using System.Data.Entity.Validation;
+using System.Threading.Tasks;
+using WebApplication4.DAL;
+using WebApplication4.Services;
 
 namespace WebApplication4.Controllers
 {
     public class PostController : Controller
     {
-        private UnitOfWork unitOfWork = new UnitOfWork();
+        private readonly PostService _postService = new PostService();
+        private readonly UserProfileService _userProfileService = new UserProfileService(ApplicationDbContext.Create());
+        private readonly LikeService _likeService = new LikeService();
+        private readonly LinkPreviewService _linkPreviewService = new LinkPreviewService();
 
-        //private ApplicationDbContext ApplicationDbContext { get; set; }
-        //private UserManager<ApplicationUser> UserManager { get; set; }
-
-        //public PostController()
-        //{
-        //    ApplicationDbContext = new ApplicationDbContext();
-        //    UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(ApplicationDbContext));
-        //}
         public ActionResult Index()
         {
-            var list = unitOfWork.PostRepository.Get(includeProperties: "User,Likes").Select(p => new Post()
-            {
-                Content = p.Content,
-                ParentPost = p.ParentPost,
-                UserProfile =p.UserProfile,
-                Likes = p.Likes.Select(l => new Like() { Value = l.Value }).ToList()
-            }).ToList();
+            var list = _postService.GetPosts();
             return View(list);
         }
 
         [Route("posts/{postId}/", Name = "posts")]
         public ActionResult Details(string postId)
         {
-            var post = unitOfWork.PostRepository.Get(includeProperties: "UserProfile,Likes").First(x => x.Id == new Guid(postId));
-            var viewModel = new PostDetailsViewModel
-            {
-                Post = post,
-                Votes = post.Likes.Sum(x => x.Value)
-            };
+            var post = _postService.GetPost(new Guid(postId));
+            var viewModel = new PostDetailsViewModel {Post = post, Votes = post.Likes.Sum(x => x.Value)};
             return View(viewModel);
         }
         // POST: Post/Create
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="post"></param>
-        /// <returns></returns>
+
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Model.Content")]HomeIndexViewModel viewModel)
+        public ActionResult Create([Bind(Include = "Model.Content")] HomeIndexViewModel viewModel)
         {
             Post parentPost = null;
             if (Request.Form.Get("postModel.parentPost") != null)
             {
-                parentPost = unitOfWork.PostRepository.Get().First(x => x.Id == new Guid(Request.Form.Get("postModel.ParentPost")));
+                var parentPostId = Request.Form.Get("postModel.ParentPost");
+                parentPost = _postService.GetPost(new Guid(parentPostId));
             }
 
             var userId = User.Identity.GetUserId();
-            var current_user_profile = unitOfWork.UserProfileRepository.Get(includeProperties: "User").FirstOrDefault(up => up.User.Id == userId);
-            var post = new Post
-            {
-                UserProfileId = current_user_profile.Id,
-                UserProfile = current_user_profile,
-                Content = Request.Form.Get("Model.Content") == null ? Request.Form.Get("postModel.Content") : Request.Form.Get("Model.Content"),
-                PostDateTime = DateTime.Now,
-                ParentPost = parentPost,
-                Id = Guid.NewGuid()
-            };
-
-
-            try
-            {
-                if (ModelState.IsValid)
-                {
-
-                    unitOfWork.PostRepository.Insert(post);
-                    unitOfWork.Save();
-
-                }
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    System.Diagnostics.Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        System.Diagnostics.Debug.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                throw;
-            }
-
-
+            var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
+            var content = Request.Form.Get("postModel.Content");
+            _postService.AddPost(currentUserProfile, content, parentPost);
             return RedirectToAction("Index", "Home");
         }
 
         [HttpPost, ActionName("vote-post")]
         [Route("vote-post/", Name = "vote-post")]
-
         [Authorize]
         [ValidateAntiForgeryToken]
         public JsonResult VotePost()
         {
             if (Request.Form["post_id"] != null)
-
             {
-                var value = 0;
-
-                if (Int32.TryParse(Request.Form["value"], out value))
+                if (Int32.TryParse(Request.Form["value"], out var value))
                 {
                     value = value > 0 ? 1 : -1;
-                    var post_id = new Guid(Request.Form["post_id"]);
-
-                    var current_user_profile = unitOfWork.UserProfileRepository.Get(includeProperties: "User").FirstOrDefault(x => x.User.Id == User.Identity.GetUserId());
-                    var post = unitOfWork.PostRepository.Get().FirstOrDefault(x => x.Id == post_id);
-                    var existing_like = unitOfWork.LikeRepository.Get().FirstOrDefault(x => x.Post.Id == post_id && x.UserProfileId == current_user_profile.Id);
-                    if (existing_like == null)
+                    var postId = new Guid(Request.Form["post_id"]);
+                    var currentUserProfile =
+                        _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+                    var post = _postService.GetPost(postId);
+                    var existingLike = _likeService.GetLike(postId, currentUserProfile.Id);
+                    if (existingLike == null)
                     {
-                        var vote = new Like()
-                        {
-                            Id = Guid.NewGuid(),
-                            UserProfile = current_user_profile,
-                            UserProfileId = current_user_profile.Id,
-                            Value = value,
-                            Post = post,
-                            PostId = post.Id
-                        };
-                        unitOfWork.LikeRepository.Insert(vote);
-
-                        unitOfWork.Save();
-                        return Json(new { Message = "vote_registered" });
-                    }
-                    else
-                    {
-                        if (existing_like.Value != value)
-                        {
-                            existing_like.Value = value;
-                            unitOfWork.Save();
-                            return Json(new { Message = "vote_registered" });
-                        }
-                        else
-                        {
-                            return Json(new { Message = "already_voted" });
-
-                        }
+                        _likeService.AddLike(currentUserProfile, value, post);
+                        return Json(new {Message = "vote_registered"});
                     }
 
+                    if (existingLike.Value != value)
+                    {
+                        existingLike.Value = value;
+                        _likeService.ChangeLikeValue(existingLike.Id, value);
+                        return Json(new {Message = "vote_registered"});
+                    }
+
+                    return Json(new {Message = "already_voted"});
                 }
                 else
                 {
-                    return Json(new { Message = "invalid_parameter" });
+                    return Json(new {Message = "invalid_parameter"});
                 }
             }
             else
             {
-                return Json(new { Message = "invalid_parameter" });
-
+                return Json(new {Message = "invalid_parameter"});
             }
+        }
 
+        [HttpPost, ActionName("get-preview")]
+        [Route("get-preview/", Name = "get-preview")]
+        public async Task<JsonResult> GetLinkPreview()
+        {
+            var url = Request.Form["url"];
+            if (url != null)
+            {
+                var result = _linkPreviewService.FindLinkPreview(url);
+                if (result == null)
+                {
+                    result = await Task.Run(() => _linkPreviewService.GetUrlPreview(url));
+                    try
+                    {
+                        _linkPreviewService.AddLinkPreviewInDb(result);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+
+                return Json(result);
+            }
+            else
+            {
+                return Json("invalid url");
+            }
         }
     }
 }

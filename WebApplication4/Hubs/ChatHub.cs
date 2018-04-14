@@ -17,19 +17,19 @@ namespace WebApplication4.Hubs
         #endregion
 
         #region---Methods---
-        public void Connect(string UserName, Guid UserID)
+        public void Connect(string userName, Guid UserId)
         {
             var id = Context.ConnectionId;
 
             if (ConnectedUsers.Count(x => x.ConnectionId == id) == 0)
             {
-                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = UserName + "-" + UserID, UserID = UserID });
+                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = userName + "-" + UserId, UserId = UserId });
             }
             UserDetail CurrentUser = ConnectedUsers.Where(u => u.ConnectionId == id).FirstOrDefault();
             // send to caller           
-            Clients.Caller.onConnected(CurrentUser.UserID.ToString(), CurrentUser.UserName, ConnectedUsers, CurrentMessage, CurrentUser.UserID);
+            Clients.Caller.onConnected(CurrentUser.UserId.ToString(), CurrentUser.UserName, ConnectedUsers, CurrentMessage, CurrentUser.UserId);
             // send to all except caller client           
-            Clients.AllExcept(CurrentUser.ConnectionId).onNewUserConnected(CurrentUser.UserID.ToString(), CurrentUser.UserName, CurrentUser.UserID);
+            Clients.AllExcept(CurrentUser.ConnectionId).onNewUserConnected(CurrentUser.UserId.ToString(), CurrentUser.UserName, CurrentUser.UserId);
         }
 
         public void SendMessageToAll(string userName, string message)
@@ -46,13 +46,13 @@ namespace WebApplication4.Hubs
             try
             {
                 string fromconnectionid = Context.ConnectionId;
-                string strfromUserId = (ConnectedUsers.Where(u => u.ConnectionId == Context.ConnectionId).Select(u => u.UserID).FirstOrDefault()).ToString();
+                string strfromUserId = (ConnectedUsers.Where(u => u.ConnectionId == Context.ConnectionId).Select(u => u.UserId).FirstOrDefault()).ToString();
                 Guid _fromUserId = new Guid();
                 Guid.TryParse(strfromUserId, out _fromUserId);
                 Guid _toUserId = new Guid();
                 Guid.TryParse(toUserId, out _toUserId);
-                List<UserDetail> FromUsers = ConnectedUsers.Where(u => u.UserID == _fromUserId).ToList();
-                List<UserDetail> ToUsers = ConnectedUsers.Where(x => x.UserID == _toUserId).ToList();
+                List<UserDetail> FromUsers = ConnectedUsers.Where(u => u.UserId == _fromUserId).ToList();
+                List<UserDetail> ToUsers = ConnectedUsers.Where(x => x.UserId == _toUserId).ToList();
 
                 if (FromUsers.Count != 0 && ToUsers.Count() != 0)
                 {
@@ -69,29 +69,29 @@ namespace WebApplication4.Hubs
                         Clients.Client(FromUser.ConnectionId).sendPrivateMessage(_toUserId.ToString(), FromUsers[0].UserName, ToUsers[0].UserName, message);
                     }
                     // send to caller user
-                    //Clients.Caller.sendPrivateMessage(_toUserId.ToString(), FromUsers[0].UserName, message);
+                    //Clients.Caller.sendPrivateMessage(_toUserId.ToString(), FromUsers[0].userName, message);
                     //ChatDB.Instance.SaveChatHistory(_fromUserId, _toUserId, message);
-                    MessageDetail _MessageDeail = new MessageDetail { FromUserID = _fromUserId, FromUserName = FromUsers[0].UserName, ToUserID = _toUserId, ToUserName = ToUsers[0].UserName, Message = message };
+                    MessageDetail _MessageDeail = new MessageDetail { FromUserId = _fromUserId, FromUserName = FromUsers[0].UserName, ToUserId = _toUserId, ToUserName = ToUsers[0].UserName, Message = message };
                     AddMessageinCache(_MessageDeail);
                 }
             }
             catch { }
         }
 
-        public void RequestLastMessage(Guid FromUserID, Guid ToUserID)
+        public void RequestLastMessage(Guid FromUserId, Guid ToUserId)
         {
-            List<MessageDetail> CurrentChatMessages = (from u in CurrentMessage where ((u.FromUserID == FromUserID && u.ToUserID == ToUserID) || (u.FromUserID == ToUserID && u.ToUserID == FromUserID)) select u).ToList();
+            List<MessageDetail> CurrentChatMessages = (from u in CurrentMessage where ((u.FromUserId == FromUserId && u.ToUserId == ToUserId) || (u.FromUserId == ToUserId && u.ToUserId == FromUserId)) select u).ToList();
             //send to caller user
-            Clients.Caller.GetLastMessages(ToUserID, CurrentChatMessages);
+            Clients.Caller.GetLastMessages(ToUserId, CurrentChatMessages);
         }
 
         public void SendUserTypingRequest(string toUserId)
         {
-            string strfromUserId = (ConnectedUsers.Where(u => u.ConnectionId == Context.ConnectionId).Select(u => u.UserID).FirstOrDefault()).ToString();
+            string strfromUserId = (ConnectedUsers.Where(u => u.ConnectionId == Context.ConnectionId).Select(u => u.UserId).FirstOrDefault()).ToString();
 
             Guid _toUserId = new Guid();
             Guid.TryParse(toUserId, out _toUserId);
-            List<UserDetail> ToUsers = ConnectedUsers.Where(x => x.UserID == _toUserId).ToList();
+            List<UserDetail> ToUsers = ConnectedUsers.Where(x => x.UserId == _toUserId).ToList();
 
             foreach (var ToUser in ToUsers)
             {
@@ -106,9 +106,9 @@ namespace WebApplication4.Hubs
             if (item != null)
             {
                 ConnectedUsers.Remove(item);
-                if (ConnectedUsers.Where(u => u.UserID == item.UserID).Count() == 0)
+                if (ConnectedUsers.Where(u => u.UserId == item.UserId).Count() == 0)
                 {
-                    var id = item.UserID.ToString();
+                    var id = item.UserId.ToString();
                     Clients.All.onUserDisconnected(id, item.UserName);
                 }
             }

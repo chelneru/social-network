@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using WebApplication4.DAL;
 using WebApplication4.Models;
+using WebApplication4.Services;
 
 namespace WebApplication4.Controllers
 {
@@ -19,7 +20,6 @@ namespace WebApplication4.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private UnitOfWork unitOfWork = new UnitOfWork();
         public AccountController()
         {
         }
@@ -86,7 +86,8 @@ namespace WebApplication4.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                  
+
+                 
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

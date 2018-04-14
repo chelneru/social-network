@@ -14,5 +14,6 @@ namespace WebApplication4.Models
         public string NotificationMessage { get; set; }
         public string Link { get; set; }
         public DateTime NotificationTime { get; set; }
+        public bool Seen { get; set; }
     }
 }

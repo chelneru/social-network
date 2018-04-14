@@ -1,4 +1,13 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=0601F7A0_002D5469_002D4141_002DBC0D_002D6B4E10E4A66B_002Ff_003ATests_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=E26A465C_002D8A82_002D4BA2_002D899C_002D8F256BA027F7_002Fd_003AControllers_002Ff_003AAccountController_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=E26A465C_002D8A82_002D4BA2_002D899C_002D8F256BA027F7_002Fd_003AControllers_002Ff_003AUserProfilesController_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=E26A465C_002D8A82_002D4BA2_002D899C_002D8F256BA027F7_002Fd_003ADAL_002Fd_003AInterfaces_002Ff_003AIGenericRepository_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=E26A465C_002D8A82_002D4BA2_002D899C_002D8F256BA027F7_002Fd_003ADAL_002Fd_003AInterfaces_002Ff_003AIService_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=E26A465C_002D8A82_002D4BA2_002D899C_002D8F256BA027F7_002Fd_003AModels_002Ff_003AIdentityModels_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=E26A465C_002D8A82_002D4BA2_002D899C_002D8F256BA027F7_002Fd_003AServices_002Ff_003APostService_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=E26A465C_002D8A82_002D4BA2_002D899C_002D8F256BA027F7_002Fd_003AServices_002Ff_003AUserProfileService_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=E26A465C_002D8A82_002D4BA2_002D899C_002D8F256BA027F7_002Fd_003ASqlTableDependencyClasses_002Ff_003ASqlTableDependencService_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="E:\Visual Studio Projects\WebApplication4\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

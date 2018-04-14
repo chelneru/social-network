@@ -16,7 +16,7 @@ namespace WebApplication4.ViewModels
         public string UserName { get; set; }
         public string UserAddress { get; set; }
         public int Likes { get; set; }
-        public short CurrentUserVote { get; set; }
+        public int CurrentUserVote { get; set; }
         public string PhotoLink { get; set; }
         public string VideoLink { get; set; }
         public string ShareLink { get; set; }

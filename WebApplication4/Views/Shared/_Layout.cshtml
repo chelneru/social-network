@@ -11,6 +11,7 @@
     @Styles.Render("~/Scripts/dropzone/dropzonescss")
     @Scripts.Render("~/bundles/jquery")
     <link rel="stylesheet" href="~/Content/app-global.css">
+    <script src="~/Content/js/global.js"></script>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
 </head>
@@ -22,7 +23,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav lef-nav-part">
                 <li class="nav-item active">
                     @Html.ActionLink("Home", "Index", "Home", new object { }, new { @class = "nav-link" })
                 </li>
@@ -77,22 +78,42 @@
     <script src="~/Scripts/jquery.ui.chatbox.js"></script>
     <script src="~/Content/js/chatboxManager.js"></script>
     <script type="text/javascript">
+        
+
         $(function () {
-            // Declare a proxy to reference the hub.
-            var notifications = $.connection.notificationHub;
-            $.connection.notificationHub.qs = { id: $('#hdnCurrentUserID').val() };
-            // Create a function that the hub can call to broadcast messages.
-            notifications.client.receiveNotification = function (totalNewMessages, totalNewCircles, totalNewJobs, totalNewNotifications) {
-                // Add the message to the page.
-            
-            };
-            // Start the connection.
-            $.connection.hub.start().done(function () {
-                notifications.server.sendNotifications();
-            }).fail(function (e) {
-                alert(e);
+            var watcher = $.connection.LikeWatcher; // the generated client-side hub proxy
+            var $stockTable = $('#stockTable');
+            var $stockTableBody = $stockTable.find('tbody');
+            var rowTemplate = '<tr data-symbol="{Symbol}"><td>{Symbol}</td><td>{Name}</td><td>{Price}</td></tr>';
+
+            function formatStock(stock) {
+                return $.extend(stock, {
+                    Price: stock.Price.toFixed(2)
+                });
+            }
+
+            function init() {
+                return watcher.server.getAllLikes().done(function (stocks) {
+                    $stockTableBody.empty();
+
+                    $.each(stocks, function () {
+                        var stock = formatStock(this);
+                        $stockTableBody.append(rowTemplate.supplant(stock));
+                    });
+                });
+            }
+
+            // Add client-side hub methods that the server will call
+            $.extend(watcher.client, {
+                updateStockPrice: function (stock) {
+                    var displayStock = formatStock(stock);
+                    $row = $(rowTemplate.supplant(displayStock)),
+                        $stockTableBody.find('tr[data-symbol=' + stock.Symbol + ']').replaceWith($row);
+                }
             });
-            //$.connection.hub.start();
+
+            // Start the connection
+            $.connection.hub.start().then(init);
         });
     </script>
 

@@ -11,6 +11,7 @@ namespace WebApplication4.DAL
         private GenericRepository<ApplicationUser> userRepository;
         private GenericRepository<Post> postRepository;
         private GenericRepository<Like> likeRepository;
+        private GenericRepository<Notification> notificationRepository;
         private GenericRepository<Friends> friendsRepository;
 
         public IGenericRepository<ApplicationUser> UserRepository
@@ -27,7 +28,13 @@ namespace WebApplication4.DAL
                 return this.userProfileRepository ?? new GenericRepository<UserProfile>(context);
             }
         }
-
+        public IGenericRepository<Notification> NotificationRepository
+        {
+            get
+            {
+                return this.notificationRepository ?? new GenericRepository<Notification>(context);
+            }
+        }
         public IGenericRepository<Post> PostRepository
         {
             get

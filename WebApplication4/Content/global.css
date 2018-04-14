@@ -7,3 +7,24 @@ body {
     font-family: 'Roboto';
     font-size: 13px;
 }
+.notifications-nav {
+    position:relative;
+}
+div.notifications-list {
+    position: absolute;
+    background-color: white;
+    width: 170px;
+    top: 37px;
+    box-shadow: 1px 1px 5px 0px #888888;
+    display:none; 
+}
+.lef-nav-part {
+    margin-right:400px;
+}
+div.notifications-list .notification-item {
+    border-bottom: 1px solid #eeeeee;
+    padding: 5px;
+}
+div.notifications-list a:hover {
+    text-decoration:none;
+}

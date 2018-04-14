@@ -41,7 +41,6 @@ namespace WebApplication4
                 Debug.WriteLine(eventArgs.Exception.ToString());
             };
         }
-       
 
         void Application_End(object sender, EventArgs e)
         {

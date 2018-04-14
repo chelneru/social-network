@@ -12,12 +12,15 @@ using WebApplication4.DAL;
 using System.Data.Entity.Core.Objects;
 using WebApplication4.DAL.Interfaces;
 using System.Collections.ObjectModel;
+using WebApplication4.Services;
 
 namespace WebApplication4.Controllers
 {
     public class HomeController : Controller
     {
-        private UnitOfWork unitOfWork = new UnitOfWork();
+        private readonly NotificationService _notificationService = new NotificationService();
+        private readonly UserProfileService _userProfileService = new UserProfileService(ApplicationDbContext.Create());
+        private readonly PostService _postService = new PostService();
 
 
         //protected ApplicationDbContext ApplicationDbContext { get; set; }
@@ -36,9 +39,10 @@ namespace WebApplication4.Controllers
             if (user != null)
             {
                 //an user is logged in
-               
-                var userProfile = unitOfWork.UserProfileRepository.Get(includeProperties: "User").First(x => x.User.Id == user);
- 
+
+                var userProfile = _userProfileService.GetUserProfileByUserId(new Guid(user));
+                var notifications = _notificationService.GetNewNotifications(userProfile.Id);
+                System.Web.HttpContext.Current.Session["notifications"] = notifications;
                 System.Web.HttpContext.Current.Session["userAddress"] = userProfile.UserAddress;
                 System.Web.HttpContext.Current.Session["userName"] = userProfile.Name;
                 System.Web.HttpContext.Current.Session["userId"] = userProfile.User.Id;
@@ -50,21 +54,7 @@ namespace WebApplication4.Controllers
                 ViewBag.userAddress = '0';
             }
 
-            var posts = unitOfWork.PostRepository.Get(includeProperties: "UserProfile,Likes").Select(p => new HomeIndexPostViewModel()
-            {
-                Id = p.Id,
-                Edited = p.Edited,
-                PostDateTime = p.PostDateTime,
-                Content = p.Content,
-                ParentPost = p.ParentPost,
-                UserAddress = p.UserProfile.UserAddress,
-                UserName = p.UserProfile.Name,
-                PhotoLink = p.PhotoLink,
-                VideoLink = p.VideoLink,
-                ShareLink = p.ShareLink,
-                Likes = p.Likes.Sum(l => l.Value),
-                CurrentUserVote = (Int16)p.Likes.Where(l => l.UserProfile.Id == p.UserProfile.Id).Select(l => l.Value).FirstOrDefault()
-            }).ToList();
+            var posts = _postService.GetPosts();
 
             var viewModel = new HomeIndexViewModel
             {
@@ -80,8 +70,8 @@ namespace WebApplication4.Controllers
         public JsonResult Search()
         {
             var textToSearch = Request.Form["search_query"];
-            var userProfiles = unitOfWork.UserProfileRepository.Get(includeProperties: "User").Where(x => x.User.UserName.Contains(textToSearch)).Select(x => new { x.UserAddress, x.User.UserName }).ToList();
-            var posts = unitOfWork.PostRepository.Get().Where(x => x.Content.Contains(textToSearch)).Select(x => new { x.Id, x.Content}).ToList();
+            var userProfiles = _userProfileService.SearchUserProfilesByUserName(textToSearch);
+            var posts = _postService.SearchPostsByContent(textToSearch);
             var result = new
             {
                 UsersProfiles = userProfiles,
@@ -102,10 +92,6 @@ namespace WebApplication4.Controllers
 
             return View();
         }
-        protected override void Dispose(bool disposing)
-        {
-            unitOfWork.Dispose();
-            base.Dispose(disposing);
-        }
+        
     }
 }

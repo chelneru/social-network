@@ -6,21 +6,36 @@ using System.Net;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using WebApplication4.Models;
-using WebApplication4.DAL;
+using WebApplication4.Services;
 using System.Collections.ObjectModel;
 using WebApplication4.ViewModels;
 using System.Data.Entity.Validation;
+using System.Web;
+using Microsoft.AspNet.Identity.Owin;
+using WebApplication4.DAL;
 
 namespace WebApplication4.Controllers
 {
     public class UserProfilesController : Controller
     {
-        private readonly UnitOfWork _unitOfWork = new UnitOfWork();
 
+        private readonly PostService _postService;
+        private readonly UserProfileService _userProfileService;
+        private readonly LikeService _likeService;
+        private readonly FriendsService _friendsService;
+        
+        protected UserManager<ApplicationUser> UserManager { get; set; }
+
+        public UserProfilesController(PostService postService, UserProfileService userProfileService, LikeService likeService)
+        {
+            _postService = postService;
+            _userProfileService = userProfileService;
+            _likeService = likeService;
+        }
         // GET: UserProfiles
         public ActionResult Index()
         {
-            var userProfiles = _unitOfWork.UserProfileRepository.Get(includeProperties: "User");
+            var userProfiles = _userProfileService.GetAllUserProfiles();
             foreach (var up in userProfiles)
             {
                 var relativePath = "~/Content/avatars/" + up.User.Id + "_avatar.jpg";
@@ -47,8 +62,7 @@ namespace WebApplication4.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var userProfile = _unitOfWork.UserProfileRepository.Get(includeProperties: "User")
-                .First(x => x.UserAddress == userAddress);
+            var userProfile = _userProfileService.GetUserProfileByUserAddress(userAddress);
             if (userProfile == null)
             {
                 return HttpNotFound();
@@ -71,8 +85,7 @@ namespace WebApplication4.Controllers
             var viewModel = new UserProfileDetailsViewModel
             {
                 Profile = userProfile,
-                FriendsCollection = _unitOfWork.FriendsRepository.Get()
-                    .FirstOrDefault(x => x.UserProfile.Id == userProfile.Id)
+                FriendsCollection = _userProfileService.GetUserProfileFriends(userProfile.Id)
             };
             if (viewModel.FriendsCollection == null)
             {
@@ -106,8 +119,8 @@ namespace WebApplication4.Controllers
             }
 
             userProfile.Id = Guid.NewGuid();
-            _unitOfWork.UserProfileRepository.Insert(userProfile);
-            _unitOfWork.Save();
+            _userProfileService.InsertUserProfile(userProfile);
+            
             return RedirectToAction("Index");
         }
 
@@ -119,7 +132,7 @@ namespace WebApplication4.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            UserProfile userProfile = _unitOfWork.UserProfileRepository.GetByID(id);
+            var userProfile = _userProfileService.GetUserProfile(id.Value);
             if (userProfile == null)
             {
                 return HttpNotFound();
@@ -138,10 +151,9 @@ namespace WebApplication4.Controllers
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.UserProfileRepository.Update(userProfile);
-                _unitOfWork.Save();
-                var currentUserId = User.Identity.GetUserId();
-                userProfile.User = _unitOfWork.UserRepository.Get().First(x => x.Id == currentUserId.ToString());
+                _userProfileService.UpdateUserProfile(userProfile);
+                var currentUser = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+                userProfile.User = currentUser;
                 System.Web.HttpContext.Current.Session["userAddress"] = userProfile.UserAddress;
                 return RedirectToAction("Index");
             }
@@ -157,7 +169,7 @@ namespace WebApplication4.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            UserProfile userProfile = _unitOfWork.UserProfileRepository.GetByID(id);
+            UserProfile userProfile = _userProfileService.GetUserProfile(id.Value);
             if (userProfile == null)
             {
                 return HttpNotFound();
@@ -170,15 +182,13 @@ namespace WebApplication4.Controllers
         [HttpGet, ActionName("Gallery")]
         public ActionResult Gallery(string userAddress)
         {
-            var userProfile = _unitOfWork.UserProfileRepository.Get(includeProperties: "User")
-                .First(x => x.UserAddress == userAddress);
+            var userProfile = _userProfileService.GetUserProfileByUserAddress(userAddress);
             if (userProfile == null)
             {
                 return HttpNotFound();
             }
 
-            var photos = _unitOfWork.PostRepository.Get(x => x.UserProfileId == userProfile.Id && x.PhotoLink != null);
-            var list = photos.ToList();
+            var list = _postService.GetUserPhotos(userProfile.Id);
             return View(list);
         }
 
@@ -187,9 +197,7 @@ namespace WebApplication4.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
-            var userProfile = _unitOfWork.UserProfileRepository.GetByID(id);
-            _unitOfWork.UserProfileRepository.Delete(userProfile);
-            _unitOfWork.Save();
+            _userProfileService.DeleteUserProfile(id);
             return RedirectToAction("Index");
         }
 
@@ -209,16 +217,15 @@ namespace WebApplication4.Controllers
                     {
                         fName = file.FileName;
                         var originalDirectory =
-                            new DirectoryInfo(string.Format("{0}Content\\galleries", Server.MapPath(@"\")));
+                            new DirectoryInfo(string.Format($"{0}Content\\galleries", Server.MapPath(@"\")));
                         var userId = User.Identity.GetUserId();
-                        var currentUserProfile = _unitOfWork.UserProfileRepository.Get(includeProperties: "User")
-                            .FirstOrDefault(up => up.User.Id == userId);
+                        var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
                         if (currentUserProfile != null)
                         {
-                            string pathString = Path.Combine(originalDirectory.ToString(), userId);
-                            bool isExists = Directory.Exists(pathString);
+                            var pathString = Path.Combine(originalDirectory.ToString(), userId);
+                            var isExists = Directory.Exists(pathString);
                             if (!isExists) Directory.CreateDirectory(pathString);
-                            var path = string.Format("{0}\\{1}", pathString, file.FileName);
+                            var path = string.Format($"{0}\\{1}", pathString, file.FileName);
                             file.SaveAs(path);
                             var post = new Post
                             {
@@ -232,8 +239,9 @@ namespace WebApplication4.Controllers
                             };
                             try
                             {
-                                _unitOfWork.PostRepository.Insert(post);
-                                _unitOfWork.Save();
+                                _postService.AddPost(currentUserProfile, "descriere", null, null, path.Replace(
+                                    "E:\\Visual Studio Projects\\social-network\\WebApplication4",
+                                    "../../"));
                             }
                             catch (DbEntityValidationException e)
                             {
@@ -261,12 +269,11 @@ namespace WebApplication4.Controllers
         {
             if (Request.Form["user_id"] != null)
             {
-                var userProfile = _unitOfWork.UserProfileRepository.Get()
-                    .First(x => x.Id.ToString() == Request.Form["user_id"]);
-                var friendsCollection = _unitOfWork.FriendsRepository.Get()
-                    .FirstOrDefault(x => x.UserProfile.Id == userProfile.Id);
-                var currentUserProfile = _unitOfWork.UserProfileRepository.Get(includeProperties: "User")
-                    .FirstOrDefault(x => x.User.Id == User.Identity.GetUserId());
+                var userProfile = _userProfileService.GetUserProfile(new Guid(Request.Form["user_id"]));
+                    
+                   
+                var friendsCollection = _userProfileService.GetUserProfileFriends(userProfile.Id);
+                var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
                 if (currentUserProfile != null)
                 {
                     if (friendsCollection == null)
@@ -278,8 +285,7 @@ namespace WebApplication4.Controllers
                             Friend_UserProfile = new Collection<UserProfile>()
                         };
                         friendsCollection.Friend_UserProfile = new Collection<UserProfile> {currentUserProfile};
-                        _unitOfWork.FriendsRepository.Insert(friendsCollection);
-                        _unitOfWork.Save();
+                        _friendsService.AddFriends(friendsCollection);
                         return Json(new {Message = "friend added"});
                     }
 
@@ -289,12 +295,12 @@ namespace WebApplication4.Controllers
                     {
                         //user is already friend so we unfriend him
                         friendsCollection.Friend_UserProfile.Remove(currentUserProfile);
-                        _unitOfWork.Save();
+                        _friendsService.RemoveFriend(friendsCollection.UserProfile.Id,currentUserProfile.Id);
                         return Json(new {Message = "friend removed"});
                     }
 
                     friendsCollection.Friend_UserProfile.Add(currentUserProfile);
-                    _unitOfWork.Save();
+                    _friendsService.AddFriend(friendsCollection.UserProfile.Id,currentUserProfile.Id);
                     return Json(new {Message = "friend added"});
                 }
             }
@@ -349,10 +355,8 @@ namespace WebApplication4.Controllers
         public ActionResult PhotoDetails(string postId)
         {
             var userId = User.Identity.GetUserId();
-            var currentUserProfile = _unitOfWork.UserProfileRepository.Get(includeProperties: "User")
-                .FirstOrDefault(up => up.User.Id == userId);
-            var post = _unitOfWork.PostRepository.Get(includeProperties: "UserProfile")
-                .First(x => x.Id == new Guid(postId));
+            var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
+            var post = _postService.GetPost(new Guid(postId));
             var viewModel = new PhotoDetailsViewModel
             {
                 Post = post,
@@ -363,21 +367,11 @@ namespace WebApplication4.Controllers
                             .Select(l => l.Value)
                             .FirstOrDefault()
                         : 0,
-                Comments = _unitOfWork.PostRepository.Get(includeProperties: "UserProfile")
-                    .Where(x => x.ParentPost.Id == post.Id)
-                    .ToList()
+                Comments = _postService.GetComments(new Guid(postId))
             };
             return View(viewModel);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _unitOfWork.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
+        
     }
 }

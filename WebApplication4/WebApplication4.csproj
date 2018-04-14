@@ -60,6 +60,10 @@
       <HintPath>..\packages\AutoMapper.6.2.2\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc">
+      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -103,6 +107,10 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NSubstitute, Version=3.1.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca">
+      <HintPath>..\packages\NSubstitute.3.1.0\lib\net46\NSubstitute.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="StackifyHttpTracer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=93c44ce23f2048dd, processorArchitecture=MSIL">
       <HintPath>..\packages\StackifyHttpModule.1.0.32\lib\net40\StackifyHttpTracer.dll</HintPath>
       <Private>True</Private>
@@ -113,6 +121,10 @@
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -194,11 +206,12 @@
     <Compile Include="Controllers\UserProfilesController.cs" />
     <Compile Include="DAL\GenericRepository.cs" />
     <Compile Include="DAL\Interfaces\IGenericRepository.cs" />
+    <Compile Include="DAL\Interfaces\IService.cs" />
     <Compile Include="DAL\Interfaces\IUnitOfWork.cs" />
     <Compile Include="DAL\UnitOfWork.cs" />
     <Compile Include="DataModule.cs" />
     <Compile Include="Hubs\ChatHub.cs" />
-    <Compile Include="Hubs\NotificationsHub.cs" />
+    <Compile Include="Hubs\LikeWatcherHub.cs" />
     <Compile Include="Migrations\201711201915279_initial.cs" />
     <Compile Include="Migrations\201711201915279_initial.Designer.cs">
       <DependentUpon>201711201915279_initial.cs</DependentUpon>
@@ -280,8 +293,21 @@
     <Compile Include="Migrations\201803301909578_removed photo and photolikes models.Designer.cs">
       <DependentUpon>201803301909578_removed photo and photolikes models.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804071222112_added seen property for notification.cs" />
+    <Compile Include="Migrations\201804071222112_added seen property for notification.Designer.cs">
+      <DependentUpon>201804071222112_added seen property for notification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804131139038_addedLinkPreviews.cs" />
+    <Compile Include="Migrations\201804131139038_addedLinkPreviews.Designer.cs">
+      <DependentUpon>201804131139038_addedLinkPreviews.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804131313174_auto generate link preview id.cs" />
+    <Compile Include="Migrations\201804131313174_auto generate link preview id.Designer.cs">
+      <DependentUpon>201804131313174_auto generate link preview id.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Friends.cs" />
     <Compile Include="Models\Like.cs" />
+    <Compile Include="Models\LinkPreview.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Photo.cs" />
     <Compile Include="Models\PhotoLike.cs" />
@@ -302,11 +328,17 @@
     <Compile Include="Modules\EFModule.cs" />
     <Compile Include="Modules\RepositoryModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\FriendsService.cs" />
+    <Compile Include="Services\LikeService.cs" />
+    <Compile Include="Services\LinkPreviewService.cs" />
+    <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Services\PostService.cs" />
+    <Compile Include="Services\UserProfileService.cs" />
     <Compile Include="SignalIR\MessageDetail.cs" />
     <Compile Include="SignalIR\NotificationUser.cs" />
     <Compile Include="SignalIR\Startup.cs" />
     <Compile Include="SignalIR\UserDetail.cs" />
-    <Compile Include="SqlDependency\SqlDependencyService.cs" />
+    <Compile Include="SqlTableDependencyClasses\SqlTableDependencService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\HomeIndexPostViewModel.cs" />
     <Compile Include="ViewModels\HomeIndexViewModel.cs" />
@@ -332,6 +364,7 @@
     <Content Include="Content\index.css" />
     <Content Include="Content\js\auth-page.js" />
     <Content Include="Content\js\chatboxManager.js" />
+    <Content Include="Content\js\global.js" />
     <Content Include="Content\js\layout.js" />
     <Content Include="Content\js\posts-index-page.js" />
     <Content Include="Content\theme-styles.css" />
@@ -583,6 +616,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803301909578_removed photo and photolikes models.resx">
       <DependentUpon>201803301909578_removed photo and photolikes models.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804071222112_added seen property for notification.resx">
+      <DependentUpon>201804071222112_added seen property for notification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804131139038_addedLinkPreviews.resx">
+      <DependentUpon>201804131139038_addedLinkPreviews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804131313174_auto generate link preview id.resx">
+      <DependentUpon>201804131313174_auto generate link preview id.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
