@@ -10,20 +10,28 @@
     });
     $('body,html').click(function (e) {
 
-        var container = $(".notifications-list");
+        var container = $(".notifications-list, .popup ");
 
         if (!container.is(e.target) && container.has(e.target).length === 0) {
+            if (container.hasClass('popup')) {
+                $('.popup-overlayer').css('display', 'none');
+                clearLinkPopup();
+            }
             container.css('display', 'none');
 
         }
     });
-    $('textarea').on('input',function () {
+    $('.link-upload-panel textarea').on('input', function () {
+        
         var self = $(this);
         console.log('activated');
         setTimeout(function () {
             var text = $(self).val();
 
             if (isUrlValid(text)) {
+                $('.popup .submit-post').css('display', 'inline-block');
+
+                $('.placeholder-text').text('Fetching preview...');
                 var token = $('input[name="__RequestVerificationToken"]').val();
 
                 var $self = $(this);
@@ -36,6 +44,17 @@
                     },
                     dataType: 'json'
                 }).done(function (data, textStatus, jqXHR) {
+                    $('.placeholder-text').text('');
+                    $('.preview-placeholder').css('display', 'none');
+                    $('.preview').css('display', 'block');
+                    $('.link-upload-panel .preview').attr('lpid', data.Id);
+                    $('.link-upload-panel .preview img').attr('src', data.Image);
+                    $('.link-upload-panel .preview .title').text(data.Title);
+                    var parser = document.createElement('a');
+                    parser.href = data.Url;
+                    $('.link-upload-panel .preview .source').text(parser.hostname.toUpperCase());
+                 
+
                     console.log('done', data);
                     
 
@@ -54,12 +73,30 @@
         }, 100);
     });
 
-   
+
+    $(".post-content").focus(function () {
+        $(".feed-container form .submit-post").css('display', 'block');
+        $(".post-additional-options").css("display", "inline-block");
+        $(this).animate({
+            height: 123
+        }, "normal");
+    }).blur(function () {
+            //$(".submit-post").css('display', 'none');
+            //$(".post-additional-options").css("display", "none");
+            //$(this).animate({
+            //    height: 60
+            //}, "normal");
+    });
+
     
     
     
 });
-
+function getLocation (href) {
+    var l = document.createElement("a");
+    l.href = href;
+    return l;
+};
 function isUrlValid(userInput) {
     var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
     if(res == null)

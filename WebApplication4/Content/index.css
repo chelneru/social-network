@@ -1,12 +1,13 @@
 ﻿.post {
-    border: 1px solid black;
+    border: 1px solid #0000002e;
     border-radius: 5px;
+    margin-bottom:10px;
     padding: 10px;
     width: 80%;
 }
 
 .posts-container {
-    padding:20px;
+    padding: 20px;
 }
 
 .posts-container .post-media {
@@ -25,21 +26,17 @@ body {
 .feed-container {
     width: 700px;
     margin: 0 auto;
-    margin-top: 20px;
     background-color: white;
 }
 
 .create-post-form textarea {
-    width: 90%;
+    width: 81%;
     max-width: none;
+    font-size: 20px;
 }
 
 .create-post-form {
     padding: 20px;
-}
-
-form input[type=submit] {
-    margin-right: 63px;
 }
 
 .comment-box {
@@ -48,12 +45,11 @@ form input[type=submit] {
 }
 
 .post-comments {
-    width: 80%;
     padding: 5px;
 }
 
     .post-comments .comment {
-        background-color: lightgrey;
+        background-color: #d3d3d338;
         margin: 5px 5px 5px 0;
         padding: 5px;
     }
@@ -67,12 +63,27 @@ form input[type=submit] {
     float: right;
     padding-right: 5px;
 }
-
-    .votes-action img {
-        width: 20px;
-        height: 20px;
-        opacity: 0.5;
+.votes-action {
+    padding-right:0px;
+    padding-top:3px;
+    width: 25px;
+    height: 25px;
+    border-radius:50%;
+    text-align:center;
+}
+    .votes-action:hover {
+        background-color:#eeeeee;
     }
+
+    .post-info {
+        font-size: 12px;
+        opacity: 0.8;
+    }
+.votes-action img {
+    width: 15px;
+    height: 15px;
+    opacity: 0.25;
+}
 
         .votes-action img:hover {
             opacity: 1;
@@ -148,3 +159,86 @@ form input[type=submit] {
     width: 189px !important;
 }
 
+.post-additional-options {
+    width: 18%;
+    display: none;
+    vertical-align: top;
+}
+    .post-additional-options .post-video,
+    .post-additional-options .post-image,
+    .post-additional-options .post-link {
+      
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #eeeeee;
+        cursor: pointer;
+    }
+    .post-additional-options .post-video:hover,
+    .post-additional-options .post-image:hover,
+    .post-additional-options .post-link:hover {
+        background-color: #c2bebe;
+        transition: background-color 0.5s ease;
+    }
+.submit-post {
+    display:none;
+    float: right;
+    margin-right: 123px;
+}
+
+.popup-overlayer {
+    position: fixed;
+    display: none; 
+    width: 100%;
+    height: 100%; 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); 
+    z-index: 2;
+}
+
+.popup {
+    position: fixed;
+    display: none;
+    width: 500px;
+    min-height: 200px;
+    background-color: white;
+    left: 50%;
+    top: 50%;
+    padding: 10px;
+    -webkit-transform: translateX(-50%) translatey(-50%);
+    -moz-transform: translateX(-50%) translatey(-50%);
+    transform: translateX(-50%) translatey(-50%);
+    z-index: 3;
+}
+    .popup textarea {
+        width: 95%;
+        margin: 20px 10px;
+    }
+.link-upload-panel {
+    display:none;
+}
+.link-upload-panel .preview {
+    display: none;
+}
+    .link-upload-panel .preview img {
+        width: 100%;
+    }
+
+    .popup  .popup-footer .submit-post {
+        margin-right:0px;
+        background-color:lightgrey;
+        display:none ;
+    }
+.preview-placeholder {
+    display: block;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.placeholder-text {
+
+   
+}

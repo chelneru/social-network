@@ -10,17 +10,9 @@ using WebApplication4.ViewModels;
 
 namespace WebApplication4.Services
 {
-    public class PostService 
+    public class PostService : BaseService
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
-
-        public PostService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        public PostService()
-        {
-        }
+        
 
         public List<HomeIndexPostViewModel> GetPosts()
         {
@@ -28,20 +20,21 @@ namespace WebApplication4.Services
                 .Include(p => p.UserProfile)
                 .Include(p => p.Likes)
                 .Select(p => new HomeIndexPostViewModel()
-            {
-                Id = p.Id,
-                Edited = p.Edited,
-                PostDateTime = p.PostDateTime,
-                Content = p.Content,
-                ParentPost = p.ParentPost,
-                UserAddress = p.UserProfile.UserAddress,
-                UserName = p.UserProfile.Name,
-                PhotoLink = p.PhotoLink,
-                VideoLink = p.VideoLink,
-                ShareLink = p.ShareLink,
+                {
+                    Id = p.Id,
+                    Edited = p.Edited,
+                    PostDateTime = p.PostDateTime,
+                    Content = p.Content,
+                    ParentPost = p.ParentPost,
+                    UserAddress = p.UserProfile.UserAddress,
+                    UserName = p.UserProfile.Name,
+                    PhotoLink = p.PhotoLink,
+                    VideoLink = p.VideoLink,
+                    ShareLink = p.ShareLink,
+                    LinkPreview = _context.LinkPreview.Where(x => x.Url == p.ShareLink).FirstOrDefault(),
                 Likes = p.Likes.Sum(l => l.Value) == null ? 0: p.Likes.Sum(l => l.Value),
                     CurrentUserVote = p.Likes.Where(l => l.UserProfile.Id == p.UserProfile.Id).Select(l => l.Value).FirstOrDefault()
-                }).ToList();
+                }).OrderByDescending(x => x.PostDateTime).ToList();
 
 
             return posts;

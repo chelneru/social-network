@@ -13,7 +13,7 @@ namespace WebApplication4.Controllers
     public class PostController : Controller
     {
         private readonly PostService _postService = new PostService();
-        private readonly UserProfileService _userProfileService = new UserProfileService(ApplicationDbContext.Create());
+        private readonly UserProfileService _userProfileService = new UserProfileService();
         private readonly LikeService _likeService = new LikeService();
         private readonly LinkPreviewService _linkPreviewService = new LinkPreviewService();
 
@@ -43,11 +43,19 @@ namespace WebApplication4.Controllers
                 var parentPostId = Request.Form.Get("postModel.ParentPost");
                 parentPost = _postService.GetPost(new Guid(parentPostId));
             }
+            LinkPreview link = null;
+            var content = Request.Form.Get("postModel.Content");
+
+            if (Request.Form.Get("lpid") != null)
+            {
+                var lpid = new Guid(Request.Form.Get("lpid"));
+                link = _linkPreviewService.FindLinkPreviewById(lpid);
+                content = link.Url;
+            }
 
             var userId = User.Identity.GetUserId();
             var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
-            var content = Request.Form.Get("postModel.Content");
-            _postService.AddPost(currentUserProfile, content, parentPost);
+            _postService.AddPost(currentUserProfile, content, parentPost,link.Url);
             return RedirectToAction("Index", "Home");
         }
 

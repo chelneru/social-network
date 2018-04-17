@@ -13,19 +13,11 @@ using WebApplication4.Models;
 namespace WebApplication4.Services
 
 {
-    public class LinkPreviewService
+    public class LinkPreviewService : BaseService
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
         private const string ApiKey = "5ad095aa9ed741cf1d1f0eb3017f316666faebd7ee902";
         private static readonly HttpClient Client = new HttpClient();
-        public LinkPreviewService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        public LinkPreviewService()
-        {
-
-        }
+        
 
         public void AddLinkPreviewInDb(LinkPreview linkPreview)
         {
@@ -51,7 +43,11 @@ namespace WebApplication4.Services
         {
             return _context.LinkPreview.FirstOrDefault(x => x.Url == url);
         }
-        
+        public LinkPreview FindLinkPreviewById(Guid id)
+        {
+            return _context.LinkPreview.FirstOrDefault(x => x.Id == id);
+        }
+
         public async Task<LinkPreview>  GetUrlPreview(string url)
         {
             var values = new Dictionary<string, string>

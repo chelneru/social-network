@@ -8,18 +8,17 @@ using System.Data.Entity;
 
 namespace WebApplication4.Services
 {
-    public class UserProfileService
+    public class UserProfileService : BaseService
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
 
-        public UserProfileService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        public UserProfileService()
-        {
+        //public UserProfileService(ApplicationDbContext context)
+        //{
+        //    _context = context;
+        //}
+        //public UserProfileService()
+        //{
 
-        }
+        //}
         public List<UserProfile> GetAllUserProfiles()
         {
             var result = _context.UserProfile.Include(a => a.User).ToList();

@@ -7,18 +7,9 @@ using WebApplication4.Models;
 
 namespace WebApplication4.Services
 {
-    public class NotificationService
+    public class NotificationService : BaseService
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
-
-        public NotificationService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        public NotificationService()
-        {
-
-        }
+        
         public bool AddNotification(Guid userTargetId, string title, string icon, string message, string link)
         {
             var notification = new Notification

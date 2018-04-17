@@ -19,7 +19,7 @@ namespace WebApplication4.Controllers
     public class HomeController : Controller
     {
         private readonly NotificationService _notificationService = new NotificationService();
-        private readonly UserProfileService _userProfileService = new UserProfileService(ApplicationDbContext.Create());
+        private readonly UserProfileService _userProfileService = new UserProfileService();
         private readonly PostService _postService = new PostService();
 
 

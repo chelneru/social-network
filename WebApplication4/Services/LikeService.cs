@@ -9,17 +9,9 @@ using Microsoft.Ajax.Utilities;
 
 namespace WebApplication4.Services
 {
-    public class LikeService
+    public class LikeService : BaseService
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
-
-        public LikeService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        public LikeService()
-        {
-        }
+        
         public Like GetLike(Guid postId, Guid posterId)
         {
             var like = _context.Like.Include(l => l.Post )

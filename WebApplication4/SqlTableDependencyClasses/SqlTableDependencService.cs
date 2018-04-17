@@ -24,7 +24,7 @@ namespace WebApplication4.SqlTableDependencyClasses
         private static readonly  Lazy<LikeWatcher> instance = new Lazy<LikeWatcher>(
             () => new LikeWatcher(GlobalHost.ConnectionManager.GetHubContext<LikeWatcherHub>().Clients));
         private readonly NotificationService _notificationService = new NotificationService();
-        private readonly UserProfileService _userProfileService = new UserProfileService(ApplicationDbContext.Create());
+        private readonly UserProfileService _userProfileService = new UserProfileService();
         private readonly PostService _postService = new PostService();
 
         private static SqlTableDependency<Like> _likesTableDependency;

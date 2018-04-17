@@ -5,14 +5,9 @@ using WebApplication4.Models;
 
 namespace WebApplication4.Services
 {
-    public class FriendsService
+    public class FriendsService : BaseService
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
-
-        public FriendsService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        
         public void AddFriends(Friends friends)
         {
             _context.Friends.Add(friends);
