@@ -40,8 +40,8 @@ namespace WebApplication4.Controllers
             {
                 //an user is logged in
 
-                var userProfile = _userProfileService.GetUserProfileByUserId(new Guid(user));
-                var notifications = _notificationService.GetNewNotifications(userProfile.Id);
+                var userProfile = UserProfileService.GetUserProfileByUserId(new Guid(user));
+                var notifications = NotificationService.GetNewNotifications(userProfile.Id);
                 System.Web.HttpContext.Current.Session["notifications"] = notifications;
                 System.Web.HttpContext.Current.Session["userAddress"] = userProfile.UserAddress;
                 System.Web.HttpContext.Current.Session["userName"] = userProfile.Name;
@@ -54,7 +54,7 @@ namespace WebApplication4.Controllers
                 ViewBag.userAddress = '0';
             }
 
-            var posts = _postService.GetPosts();
+            var posts = PostService.GetPosts();
 
             var viewModel = new HomeIndexViewModel
             {
@@ -70,8 +70,8 @@ namespace WebApplication4.Controllers
         public JsonResult Search()
         {
             var textToSearch = Request.Form["search_query"];
-            var userProfiles = _userProfileService.SearchUserProfilesByUserName(textToSearch);
-            var posts = _postService.SearchPostsByContent(textToSearch);
+            var userProfiles = UserProfileService.SearchUserProfilesByUserName(textToSearch);
+            var posts = PostService.SearchPostsByContent(textToSearch);
             var result = new
             {
                 UsersProfiles = userProfiles,

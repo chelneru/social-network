@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNet.Identity
 @using WebApplication4.Models
 @if (Request.IsAuthenticated)
-{
-    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm", @class = "form-inline mt-2 mt-md-0"}))
+{    <div>
+    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm", @class = "form-inline mt-2 mt-md-0"}))
     {
         @Html.AntiForgeryToken()
 
@@ -40,7 +40,8 @@
                 <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
             </li>
         </ul>
-    }
+     }
+     </div>
 }
 else
 {

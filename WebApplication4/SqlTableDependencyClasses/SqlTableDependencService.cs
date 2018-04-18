@@ -23,9 +23,7 @@ namespace WebApplication4.SqlTableDependencyClasses
         // Singleton instance
         private static readonly  Lazy<LikeWatcher> instance = new Lazy<LikeWatcher>(
             () => new LikeWatcher(GlobalHost.ConnectionManager.GetHubContext<LikeWatcherHub>().Clients));
-        private readonly NotificationService _notificationService = new NotificationService();
-        private readonly UserProfileService _userProfileService = new UserProfileService();
-        private readonly PostService _postService = new PostService();
+
 
         private static SqlTableDependency<Like> _likesTableDependency;
         private static SqlTableDependency<Post> _postsTableDependency;
@@ -111,16 +109,16 @@ namespace WebApplication4.SqlTableDependencyClasses
         {
             if (e.ChangeType == ChangeType.Insert || e.ChangeType == ChangeType.Update)
             {
-                var userProfileActor = _userProfileService.GetUserProfile(e.Entity.UserProfileId);
-                var post = _postService.GetPost(e.Entity.PostId);
-                var userProfileTarget = _userProfileService.GetUserProfile(post.UserProfile.Id);
+                var userProfileActor = UserProfileService.GetUserProfile(e.Entity.UserProfileId);
+                var post = PostService.GetPost(e.Entity.PostId);
+                var userProfileTarget = UserProfileService.GetUserProfile(post.UserProfile.Id);
                 if(e.Entity.Value == 1 ) { 
-                _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " liked your post",
+                NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " liked your post",
                     "", userProfileActor.Name + " liked your post. Click to see your post", "posts/" + post.Id);
                 }
                 else
                 {
-                    _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " disliked your post",
+                    NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " disliked your post",
                         "", userProfileActor.Name + " disliked your post. Click to see your post", "posts/" + post.Id);
                 }
             }
@@ -129,15 +127,15 @@ namespace WebApplication4.SqlTableDependencyClasses
         {
             if (e.ChangeType == ChangeType.Insert || e.ChangeType == ChangeType.Update)
             {
-                 var userProfileActor = _userProfileService.GetUserProfile(e.Entity.UserProfileId);
-                var post = _postService.GetPost(e.Entity.Id);
+                 var userProfileActor = UserProfileService.GetUserProfile(e.Entity.UserProfileId);
+                var post = PostService.GetPost(e.Entity.Id);
                 if (post.ParentPost == null)
                 {
                     return;
                 }
-                var parentPost = _postService.GetPost(post.ParentPost.Id);
-                var userProfileTarget = _userProfileService.GetUserProfile(parentPost.UserProfile.Id);
-                _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " commented your post",
+                var parentPost = PostService.GetPost(post.ParentPost.Id);
+                var userProfileTarget = UserProfileService.GetUserProfile(parentPost.UserProfile.Id);
+                NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " commented your post",
                     "", userProfileActor.Name + " commented your post. Click to see the post", "posts/" + parentPost.Id);
                 
             }

@@ -11,16 +11,20 @@ namespace WebApplication4.Services
 {
     public class LikeService : BaseService
     {
-        
-        public Like GetLike(Guid postId, Guid posterId)
+     
+        public LikeService()
         {
-            var like = _context.Like.Include(l => l.Post )
+
+        }
+        public static Like GetLike(Guid postId, Guid posterId)
+        {
+            var like = Context.Like.Include(l => l.Post )
                 .FirstOrDefault(x => x.Post.Id == postId && x.UserProfileId == posterId);
 
             return like;
         }
 
-        public bool AddLike(UserProfile poster, Int32 value, Post post)
+        public static bool AddLike(UserProfile poster, Int32 value, Post post)
         {
             var like = new Like
             {
@@ -36,8 +40,8 @@ namespace WebApplication4.Services
             var results = new List<ValidationResult>();
             if (Validator.TryValidateObject(like, context, results, true))
             {
-                _context.Like.Add(like);
-                _context.SaveChanges();
+                Context.Like.Add(like);
+                Context.SaveChanges();
                 return true;
             }
 
@@ -45,12 +49,12 @@ namespace WebApplication4.Services
             return false;
         }
 
-        public bool ChangeLikeValue(Guid likeId, Int32 value)
+        public static bool ChangeLikeValue(Guid likeId, Int32 value)
         {
-             var like = _context.Like.FirstOrDefault(x => x.Id == likeId);
+             var like = Context.Like.FirstOrDefault(x => x.Id == likeId);
             if(like != null) {
             like.Value = value;
-                _context.SaveChanges();
+                Context.SaveChanges();
                 return true;
             }
             System.Diagnostics.Debug.WriteLine("Like with GUID:" + likeId +" doesn't exist !");
