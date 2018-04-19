@@ -1,13 +1,14 @@
 ﻿
 $(document).ready(function () {
     console.log('loaded');
+    $("div#upload-video").dropzone({ url: "/file/post", clickable: ['.post-video'] });
     $('.upvote').on('click', function () {
         var token = $('input[name="__RequestVerificationToken"]').val();
 
         var $self = $(this);
         $.ajax({
             url: '/vote-post',
-            method: 'POST',
+            method: 'POST', 
             data: {
                 __RequestVerificationToken: token,
                 post_id: $($self).parent().parent().attr('id'),
@@ -125,7 +126,11 @@ $(document).ready(function () {
 
         if ($(this).hasClass('post-link')) {
         $('.link-upload-panel').css('display', 'block');
-    }
+        } if ($(this).hasClass('post-video')) {
+            $('.video-upload-panel').css('display', 'block');
+            
+        }
+
     });
 
 });
