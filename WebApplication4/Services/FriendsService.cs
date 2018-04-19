@@ -7,29 +7,32 @@ namespace WebApplication4.Services
 {
     public class FriendsService : BaseService
     {
-        
-        public void AddFriends(Friends friends)
+        public FriendsService()
         {
-            _context.Friends.Add(friends);
-            _context.SaveChanges();
+
+        }
+        public static void AddFriends(Friends friends)
+        {
+            Context.Friends.Add(friends);
+            Context.SaveChanges();
         }
 
-        public void RemoveFriend(Guid userProfileId,Guid friendUserProfileId)
+        public static void RemoveFriend(Guid userProfileId,Guid friendUserProfileId)
         {
-            var userProfile = _context.UserProfile.FirstOrDefault(up => up.Id == userProfileId);
-            var friendToBeRemoved = _context.UserProfile.FirstOrDefault(up => up.Id == friendUserProfileId);
-            var friends = _context.Friends.FirstOrDefault(fr => fr.UserProfile.Id == userProfile.Id);
+            var userProfile = Context.UserProfile.FirstOrDefault(up => up.Id == userProfileId);
+            var friendToBeRemoved = Context.UserProfile.FirstOrDefault(up => up.Id == friendUserProfileId);
+            var friends = Context.Friends.FirstOrDefault(fr => fr.UserProfile.Id == userProfile.Id);
             friends?.Friend_UserProfile.Remove(friendToBeRemoved);
-            _context.SaveChanges();
+            Context.SaveChanges();
 
         }
-        public void AddFriend(Guid userProfileId,Guid friendUserProfileId)
+        public static void AddFriend(Guid userProfileId,Guid friendUserProfileId)
         {
-            var userProfile = _context.UserProfile.FirstOrDefault(up => up.Id == userProfileId);
-            var friendToBeAdded = _context.UserProfile.FirstOrDefault(up => up.Id == friendUserProfileId);
-            var friends = _context.Friends.FirstOrDefault(fr => fr.UserProfile.Id == userProfile.Id);
+            var userProfile = Context.UserProfile.FirstOrDefault(up => up.Id == userProfileId);
+            var friendToBeAdded = Context.UserProfile.FirstOrDefault(up => up.Id == friendUserProfileId);
+            var friends = Context.Friends.FirstOrDefault(fr => fr.UserProfile.Id == userProfile.Id);
             friends?.Friend_UserProfile.Add(friendToBeAdded);
-            _context.SaveChanges();
+            Context.SaveChanges();
 
         }
     }

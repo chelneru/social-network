@@ -12,11 +12,14 @@ namespace WebApplication4.Services
 {
     public class PostService : BaseService
     {
-        
 
-        public List<HomeIndexPostViewModel> GetPosts()
+        public PostService()
         {
-            var posts = _context.Post
+            
+        }
+        public static List<HomeIndexPostViewModel> GetPosts()
+        {
+            var posts = Context.Post
                 .Include(p => p.UserProfile)
                 .Include(p => p.Likes)
                 .Select(p => new HomeIndexPostViewModel()
@@ -31,7 +34,7 @@ namespace WebApplication4.Services
                     PhotoLink = p.PhotoLink,
                     VideoLink = p.VideoLink,
                     ShareLink = p.ShareLink,
-                    LinkPreview = _context.LinkPreview.Where(x => x.Url == p.ShareLink).FirstOrDefault(),
+                    LinkPreview = Context.LinkPreview.Where(x => x.Url == p.ShareLink).FirstOrDefault(),
                 Likes = p.Likes.Sum(l => l.Value) == null ? 0: p.Likes.Sum(l => l.Value),
                     CurrentUserVote = p.Likes.Where(l => l.UserProfile.Id == p.UserProfile.Id).Select(l => l.Value).FirstOrDefault()
                 }).OrderByDescending(x => x.PostDateTime).ToList();
@@ -40,40 +43,40 @@ namespace WebApplication4.Services
             return posts;
         }
 
-        public Post GetPost(Guid id)
+        public static Post GetPost(Guid id)
         {
-            var post = _context.Post
+            var post = Context.Post
                 .Include(p => p.UserProfile)
                 .Include(p => p.Likes)
                 .First(x => x.Id == id);
             return post;
         }
 
-        public List<Post> GetComments(Guid postId)
+        public static List<Post> GetComments(Guid postId)
         {
-            var comments = _context.Post
+            var comments = Context.Post
                 .Include(p => p.UserProfile)
                 .Where(x => x.ParentPost.Id == postId)
                 .ToList();
             return comments;
         }
 
-        public List<Post> GetUserPhotos(Guid id) 
+        public static List<Post> GetUserPhotos(Guid id) 
         {
-            return _context.Post
+            return Context.Post
                 .Where(x => x.UserProfileId == id && x.PhotoLink != null)
                 .ToList();
 
         }
 
-        public List<Post> SearchPostsByContent(string searchString)
+        public static List<Post> SearchPostsByContent(string searchString)
         {
-            return _context.Post
+            return Context.Post
                 .Where(x => x.Content.Contains(searchString))
                 .Select(x => new Post(){ Id = x.Id, Content = x.Content})
                 .ToList();
         }
-        public bool AddPost(UserProfile poster, string content, Post parentPost = null, string link = null,
+        public static bool AddPost(UserProfile poster, string content, Post parentPost = null, string link = null,
             string imageLink = null, string videoLink = null)
         {
             var post = new Post
@@ -92,8 +95,8 @@ namespace WebApplication4.Services
             var results = new List<ValidationResult>();
             if (Validator.TryValidateObject(post, context, results, true))
             {
-                _context.Post.Add(post);
-                _context.SaveChanges();
+                Context.Post.Add(post);
+                Context.SaveChanges();
                 return true;
             }
 

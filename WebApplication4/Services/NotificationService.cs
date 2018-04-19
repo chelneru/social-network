@@ -9,8 +9,12 @@ namespace WebApplication4.Services
 {
     public class NotificationService : BaseService
     {
-        
-        public bool AddNotification(Guid userTargetId, string title, string icon, string message, string link)
+
+        public NotificationService()
+        {
+            
+        }
+        public static bool AddNotification(Guid userTargetId, string title, string icon, string message, string link)
         {
             var notification = new Notification
             {
@@ -22,14 +26,14 @@ namespace WebApplication4.Services
                 UserId = userTargetId,
                 Seen = false
             };
-       _context.Notification.Add(notification);
-            _context.SaveChanges();
+       Context.Notification.Add(notification);
+            Context.SaveChanges();
             return true;
         }
 
-        public List<Notification> GetNewNotifications(Guid userProfileId)
+        public static List<Notification> GetNewNotifications(Guid userProfileId)
         {
-            var notifications = _context.Notification
+            var notifications = Context.Notification
                 .Where(n => n.UserId == userProfileId && n.Seen == false)
                 .ToList();
             return notifications;

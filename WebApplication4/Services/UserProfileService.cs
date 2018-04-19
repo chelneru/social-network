@@ -15,79 +15,79 @@ namespace WebApplication4.Services
         //{
         //    _context = context;
         //}
-        //public UserProfileService()
-        //{
-
-        //}
-        public List<UserProfile> GetAllUserProfiles()
+        public UserProfileService()
         {
-            var result = _context.UserProfile.Include(a => a.User).ToList();
+
+        }
+        public static List<UserProfile> GetAllUserProfiles()
+        {
+            var result = Context.UserProfile.Include(a => a.User).ToList();
             return result;
         }
-        public UserProfile GetUserProfile(Guid id)
+        public static UserProfile GetUserProfile(Guid id)
         {
-            var result1 = _context.UserProfile.Include(up => up.User).ToList();
+            var result1 = Context.UserProfile.Include(up => up.User).ToList();
             
-            var result = _context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.Id == id);
+            var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.Id == id);
             return result;
         }
         
-        public UserProfile GetUserProfileTest(Guid id)
+        public static UserProfile GetUserProfileTest(Guid id)
         {
             
-            var result = _context.UserProfile.FirstOrDefault(up => up.Id == id);
+            var result = Context.UserProfile.FirstOrDefault(up => up.Id == id);
             return result;
         }
-        public UserProfile GetUserProfileByUserId(Guid id)
+        public static UserProfile GetUserProfileByUserId(Guid id)
         {
-            var result = _context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.User.Id == id.ToString());
+            var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.User.Id == id.ToString());
 
             return result;
         }
         
-        public UserProfile GetUserProfileByUserAddress(string userAddress)
+        public static UserProfile GetUserProfileByUserAddress(string userAddress)
         {
-            var result = _context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.UserAddress == userAddress);
+            var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.UserAddress == userAddress);
 
             return result;
         }
 
-        public Friends GetUserProfileFriends(Guid id)
+        public static Friends GetUserProfileFriends(Guid id)
 
         {
-            var result = _context.Friends.FirstOrDefault(up => up.UserProfile.Id == id);
+            var result = Context.Friends.FirstOrDefault(up => up.UserProfile.Id == id);
 
             return result;
         }
 
-        public List<UserProfile> SearchUserProfilesByUserName(string searchString)
+        public static List<UserProfile> SearchUserProfilesByUserName(string searchString)
         {
-            var userProfiles = _context.UserProfile
+            var userProfiles = Context.UserProfile
                 .Include(up => up.User)
                 .Where(x => x.Name.Contains(searchString))
                 .Select(x => new UserProfile(){ UserAddress = x.UserAddress, Name = x.Name }).ToList();
             return userProfiles;
         }
 
-        public void UpdateUserProfile(UserProfile userProfile)
+        public static void UpdateUserProfile(UserProfile userProfile)
         {
             
-            _context.Entry(userProfile).State = userProfile.Id == Guid.Empty? EntityState.Added : EntityState.Modified;
+            Context.Entry(userProfile).State = userProfile.Id == Guid.Empty? EntityState.Added : EntityState.Modified;
 
-            _context.SaveChanges();
+            Context.SaveChanges();
         }
 
-        public void InsertUserProfile(UserProfile userProfile)
+        public static void InsertUserProfile(UserProfile userProfile)
         {
-            _context.UserProfile.Add(userProfile);
-            _context.SaveChanges();
+            Context.UserProfile.Add(userProfile);
+            Context.SaveChanges();
         }
-        public void DeleteUserProfile(Guid id)
+        public static void DeleteUserProfile(Guid id)
 
         {
             var userProfile = GetUserProfileByUserId(id);
-            _context.UserProfile.Remove(userProfile);
-            _context.SaveChanges();
+            Context.UserProfile.Remove(userProfile);
+            Context.SaveChanges();
         }
     }
 }

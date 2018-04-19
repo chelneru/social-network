@@ -8,7 +8,7 @@ namespace WebApplication4.Services
 {
     public class BaseService
     {
-        protected static ApplicationDbContext _context = new ApplicationDbContext();
+        protected static readonly  ApplicationDbContext Context = new ApplicationDbContext();
 
     }
 }
