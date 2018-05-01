@@ -9,8 +9,18 @@ body {
 }
 .notifications-nav {
     position:relative;
+    cursor:pointer;
 }
-div.notifications-list {
+.navbar-nav .nav-item {
+    position:relative;
+    margin-right:10px;
+}
+    .navbar-nav .nav-item .badge {
+        position: absolute;
+        left: 19px;
+        top: 0px;
+    }
+div.notifications-container {
     position: absolute;
     background-color: white;
     width: 170px;

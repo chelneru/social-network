@@ -1,7 +1,62 @@
-﻿
+﻿Dropzone.autoDiscover = false;
+
 $(document).ready(function () {
+    var promise = new RSVP.Promise(function (resolve, reject) { });
     console.log('loaded');
-    $("div#upload-video").dropzone({ url: "/file/post", clickable: ['.post-video'] });
+    var dropzoneOptions = {
+        dictDefaultMessage: 'Drop Here!',
+        paramName: "file",
+        maxFilesize: 20, // MB
+        addRemoveLinks: true,
+        autoProcessQueue: false,
+        createImageThumbnails:true,
+        init: function () {
+            this.on("success", function (file) {
+                console.log("success > " + file.name);
+            });
+            this.on("addedfile", function (file) {
+                if (this.files[1]!==undefined) {
+                    this.removeFile(this.files[0]);
+                }
+                // check file extension, see:
+                // http://stackoverflow.com/questions/190852/how-can-i-get-file-extensions-with-javascript
+                var comps = file.name.split(".");
+                if (comps.length === 1 || comps[0] === "" && comps.length === 2) {
+                    return;
+                }
+                var ext = comps.pop().toLowerCase();
+                if (ext === 'mov' || ext === 'mpeg' || ext === 'mp4' || ext === 'wmv') {
+                    // create a hidden <video> element with video file.
+                    FrameGrab.blob_to_video(file).then(
+                        function videoRendered(videoEl) {
+
+                            // extract video frame at 1 sec into a 160px image and
+                            // set to the <img> element.
+                            var frameGrab = new FrameGrab({ video: videoEl });
+                            var itemEntry = document.querySelector('div.dz-image > img');
+                            frameGrab.grab(itemEntry, 1, 160).then(
+                                function frameGrabbed(itemEntry) {
+                                    self.emit('thumbnail', file, itemEntry.container.src);
+                                },
+                                function frameFailedToGrab(reason) {
+                                    console.log("Can't grab the video frame from file: " +
+                                        file.name + ". Reason: " + reason);
+                                }
+                            );
+                        },
+                        function videoFailedToRender(reason) {
+                            console.log("Can't convert the file to a video element: " +
+                                file.name + ". Reason: " + reason);
+                        }
+                    );
+                }
+            });
+           
+        }
+    };
+    var uploader = document.querySelector('#uploader');
+    var newDropzone = new Dropzone(uploader, dropzoneOptions);
+
     $('.upvote').on('click', function () {
         var token = $('input[name="__RequestVerificationToken"]').val();
 
@@ -114,11 +169,11 @@ $(document).ready(function () {
                     var $preview =  $('.preview');
                     $($preview).css('display', 'block');
                     $($preview).attr('lpid', data.Id);
-                    $($preview.find('img').attr('src', data.Image);
-                    $($preview.find('.title').text(data.Title);
+                    $($preview).find('img').attr('src', data.Image);
+                    $($preview).find('.title').text(data.Title);
                     var parser = document.createElement('a');
                     parser.href = data.Url;
-                    $($preview.find('.source').text(parser.hostname.toUpperCase());
+                    $($preview).find('.source').text(parser.hostname.toUpperCase());
 
 
                     console.log('done', data);
@@ -154,10 +209,10 @@ $(document).ready(function () {
     });
 
     $('.popup .submit-post').on('click', function () {
-        if ($('textarea.link-input').val() != '') {
+        if ($('textarea.link-input').val() !== '') {
 
             var link_preview_id = $('.link-upload-panel .preview').attr('lpid');
-            if (link_preview_id != '' && link_preview_id != undefined) {
+            if (link_preview_id !== '' && link_preview_id !== undefined) {
                 var token = $('input[name="__RequestVerificationToken"]').val();
 
                 $.ajax({
@@ -193,18 +248,13 @@ $(document).ready(function () {
 
         if ($(this).hasClass('post-link')) {
         $('.link-upload-panel').css('display', 'block');
-        } if ($(this).hasClass('post-video')) {
+        }
+        if ($(this).hasClass('post-video')) {
             $('.video-upload-panel').css('display', 'block');
+            $('#uploader').click();
             
         }
 
     });
 
 });
-function clearLinkPopup() {
-    $('.link-upload-panel .preview').attr('lpid','');
-    $('.link-upload-panel .preview img').attr('src', '');
-    $('.link-upload-panel .preview .title').text('');
-    $('.link-upload-panel .preview .source').text('');
-    $('textarea.link-input').val('');
-}

@@ -9,6 +9,4 @@
 /// <reference path="dropzone/dropzone-amd-module.js" />
 /// <reference path="jquery.validate.js" />
 /// <reference path="jquery.validate.unobtrusive.js" />
-/// <reference path="jquery-3.2.1.min.js" />
-/// <reference path="jquery-3.2.1.slim.min.js" />
 /// <reference path="respond.js" />

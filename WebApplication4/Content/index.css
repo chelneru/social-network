@@ -1,5 +1,5 @@
 ﻿.post {
-    border: 1px solid #0000002e;
+    border: 1px solid #00002e;
     border-radius: 5px;
     margin-bottom:10px;
     padding: 10px;
@@ -95,7 +95,7 @@ body {
 }
 
 .vote-div {
-    display: inline;
+    display: inline-block;
     width: 100px;
 }
 
@@ -227,18 +227,17 @@ body {
     }
 
     .popup  .popup-footer .submit-post {
-        margin-right:0px;
+        margin-right:0;
         background-color:lightgrey;
         display:none ;
     }
 .preview-placeholder {
-    display: block;
     height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.placeholder-text {
-
-   
+.dz-file-preview > div.dz_image > img {
+    width: 100%;
+    height: 100%;
 }

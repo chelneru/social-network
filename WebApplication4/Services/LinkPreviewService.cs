@@ -42,7 +42,7 @@ namespace WebApplication4.Services
                 }
             }
         }
-
+           
         public static LinkPreview FindLinkPreview(string url)
         {
             return Context.LinkPreview.FirstOrDefault(x => x.Url == url);

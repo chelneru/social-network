@@ -7,9 +7,9 @@ namespace WebApplication4.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class removedphotoandphotolikesmodels : IMigrationMetadata
+    public sealed partial class Removedphotoandphotolikesmodels : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(removedphotoandphotolikesmodels));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Removedphotoandphotolikesmodels));
         
         string IMigrationMetadata.Id
         {

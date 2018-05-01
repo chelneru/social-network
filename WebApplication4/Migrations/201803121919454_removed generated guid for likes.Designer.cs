@@ -7,9 +7,9 @@ namespace WebApplication4.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class removedgeneratedguidforlikes : IMigrationMetadata
+    public sealed partial class Removedgeneratedguidforlikes : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(removedgeneratedguidforlikes));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Removedgeneratedguidforlikes));
         
         string IMigrationMetadata.Id
         {

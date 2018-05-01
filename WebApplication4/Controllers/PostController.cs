@@ -5,18 +5,17 @@ using WebApplication4.Models;
 using WebApplication4.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplication4.DAL;
 using WebApplication4.Services;
 
 namespace WebApplication4.Controllers
 {
     public class PostController : Controller
     {
-        public ActionResult Index()
-        {
-            var list = PostService.GetPosts();
-            return View(list);
-        }
+//        public ActionResult Index()
+//        {
+//            var list = PostService.GetPosts();
+//            return View(list);
+//        }
 
         [Route("posts/{postId}/", Name = "posts")]
         public ActionResult Details(string postId)
@@ -38,13 +37,13 @@ namespace WebApplication4.Controllers
                 var parentPostId = Request.Form.Get("postModel.ParentPost");
                 parentPost = PostService.GetPost(new Guid(parentPostId));
             }
-            LinkPreview link = null;
             var content = Request.Form.Get("postModel.Content");
             string url = null;
             if (Request.Form.Get("lpid") != null)
             {
                 var lpid = new Guid(Request.Form.Get("lpid"));
-                link = LinkPreviewService.FindLinkPreviewById(lpid);
+
+                var link = LinkPreviewService.FindLinkPreviewById(lpid);
                 content = link.Url;
                 url = link.Url;
             }
@@ -114,6 +113,7 @@ namespace WebApplication4.Controllers
                     }
                     catch (Exception e)
                     {
+                        System.Diagnostics.Debug.WriteLine(e.Message);
                     }
                 }
 

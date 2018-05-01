@@ -7,9 +7,9 @@ namespace WebApplication4.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class addnotification : IMigrationMetadata
+    public sealed partial class Addnotification : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addnotification));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Addnotification));
         
         string IMigrationMetadata.Id
         {

@@ -46,6 +46,7 @@ namespace WebApplication4.Controllers
                 System.Web.HttpContext.Current.Session["userAddress"] = userProfile.UserAddress;
                 System.Web.HttpContext.Current.Session["userName"] = userProfile.Name;
                 System.Web.HttpContext.Current.Session["userId"] = userProfile.User.Id;
+                System.Web.HttpContext.Current.Session["userProfileId"] = userProfile.Id;
 
             }
             else

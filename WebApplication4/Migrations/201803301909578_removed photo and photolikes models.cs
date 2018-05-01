@@ -3,7 +3,7 @@ namespace WebApplication4.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class removedphotoandphotolikesmodels : DbMigration
+    public partial class Removedphotoandphotolikesmodels : DbMigration
     {
         public override void Up()
         {

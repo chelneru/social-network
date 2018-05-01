@@ -300,8 +300,10 @@ namespace WebApplication4.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult UploadAvatar()
         {
-            var response = new JsonResult();
-            response.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            var response = new JsonResult
+            {
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
             try
             {
                 var fileContent = Request.Files["avatar"];

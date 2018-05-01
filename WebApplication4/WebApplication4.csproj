@@ -334,7 +334,6 @@
     <Compile Include="Services\LinkPreviewService.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\PostService.cs" />
-    <Compile Include="Services\ServiceInterface.cs" />
     <Compile Include="Services\UserProfileService.cs" />
     <Compile Include="SignalIR\MessageDetail.cs" />
     <Compile Include="SignalIR\NotificationUser.cs" />
@@ -344,6 +343,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\HomeIndexPostViewModel.cs" />
     <Compile Include="ViewModels\HomeIndexViewModel.cs" />
+    <Compile Include="ViewModels\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\PhotoDetailsViewModel.cs" />
     <Compile Include="ViewModels\PostDetailsViewModel.cs" />
   </ItemGroup>
@@ -368,6 +368,7 @@
     <Content Include="Content\js\chatboxManager.js" />
     <Content Include="Content\js\global.js" />
     <Content Include="Content\js\layout.js" />
+    <Content Include="Content\js\notificationManager.js" />
     <Content Include="Content\js\posts-index-page.js" />
     <Content Include="Content\theme-styles.css" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -457,6 +458,7 @@
     <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\frame-grab.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -482,6 +484,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\rsvp.js" />
     <Content Include="Scripts\umd\popper-utils.js" />
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />

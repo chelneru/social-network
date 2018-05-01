@@ -21,7 +21,7 @@ namespace WebApplication4.SqlTableDependencyClasses
     public class LikeWatcher
     {
         // Singleton instance
-        private static readonly  Lazy<LikeWatcher> instance = new Lazy<LikeWatcher>(
+        private static readonly  Lazy<LikeWatcher> _instance = new Lazy<LikeWatcher>(
             () => new LikeWatcher(GlobalHost.ConnectionManager.GetHubContext<LikeWatcherHub>().Clients));
 
 
@@ -57,7 +57,7 @@ namespace WebApplication4.SqlTableDependencyClasses
         {
             get
             {
-                return instance.Value;
+                return _instance.Value;
             }
         }
 
@@ -112,14 +112,19 @@ namespace WebApplication4.SqlTableDependencyClasses
                 var userProfileActor = UserProfileService.GetUserProfile(e.Entity.UserProfileId);
                 var post = PostService.GetPost(e.Entity.PostId);
                 var userProfileTarget = UserProfileService.GetUserProfile(post.UserProfile.Id);
-                if(e.Entity.Value == 1 ) { 
-                NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " liked your post",
-                    "", userProfileActor.Name + " liked your post. Click to see your post", "posts/" + post.Id);
+                Notification notification = null;
+                if(e.Entity.Value == 1 ) {
+                    notification = NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " liked your post",
+                    "", userProfileActor.Name + " liked your post. Click to see your post", "/posts/" + post.Id);
                 }
                 else
                 {
-                    NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " disliked your post",
-                        "", userProfileActor.Name + " disliked your post. Click to see your post", "posts/" + post.Id);
+                    notification = NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " disliked your post",
+                        "", userProfileActor.Name + " disliked your post. Click to see your post", "/posts/" + post.Id);
+                }
+                if(notification != null)
+                {
+                    Clients.All.PushNotification(notification, userProfileTarget.Id);
                 }
             }
         }
@@ -136,14 +141,19 @@ namespace WebApplication4.SqlTableDependencyClasses
                 var parentPost = PostService.GetPost(post.ParentPost.Id);
                 var userProfileTarget = UserProfileService.GetUserProfile(parentPost.UserProfile.Id);
                 NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " commented your post",
-                    "", userProfileActor.Name + " commented your post. Click to see the post", "posts/" + parentPost.Id);
+                    "", userProfileActor.Name + " commented your post. Click to see the post", "/posts/" + parentPost.Id);
                 
             }
         }
 
-        private void BroadcastLikePrice(Like Like)
+        ~LikeWatcher()
         {
-            Clients.All.updateLikePrice(Like);
+            Dispose(false);
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #region IDisposable Support
@@ -162,18 +172,8 @@ namespace WebApplication4.SqlTableDependencyClasses
             }
         }
 
-        ~LikeWatcher()
-        {
-            Dispose(false);
-        }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
+       
+       
         #endregion
     }
 }
