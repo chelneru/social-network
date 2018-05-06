@@ -4,7 +4,7 @@ using WebApplication4.Models;
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
-
+using WebApplication4.ViewModels;
 
 namespace WebApplication4.Services
 {
@@ -31,7 +31,12 @@ namespace WebApplication4.Services
             var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.Id == id);
             return result;
         }
-        
+        public static void ChangeUserProfileAvatar(Guid userProfileId, String path)
+        {
+            var userProfile = Context.UserProfile.FirstOrDefault(up => up.Id == userProfileId);
+            userProfile.AvatarUrl = path;
+            Context.SaveChanges();
+        }
         public static UserProfile GetUserProfileTest(Guid id)
         {
             
@@ -60,12 +65,12 @@ namespace WebApplication4.Services
             return result;
         }
 
-        public static List<UserProfile> SearchUserProfilesByUserName(string searchString)
+        public static List<SearchResultModel> SearchUserProfilesByUserName(string searchString)
         {
             var userProfiles = Context.UserProfile
                 .Include(up => up.User)
                 .Where(x => x.Name.Contains(searchString))
-                .Select(x => new UserProfile(){ UserAddress = x.UserAddress, Name = x.Name }).ToList();
+                .Select(x => new SearchResultModel{ Link = "/users/" + x.UserAddress, Content = x.Name }).ToList();
             return userProfiles;
         }
 

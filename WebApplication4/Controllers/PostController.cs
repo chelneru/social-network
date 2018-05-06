@@ -20,8 +20,12 @@ namespace WebApplication4.Controllers
         [Route("posts/{postId}/", Name = "posts")]
         public ActionResult Details(string postId)
         {
-            var post = PostService.GetPost(new Guid(postId));
-            var viewModel = new PostDetailsViewModel {Post = post, Votes = post.Likes.Sum(x => x.Value)};
+            var viewModel = new PostDetailsViewModel
+            {
+                CurrentPost = PostService.GetDetailedPostInfo(new Guid(postId)),
+                Posts = PostService.GetPostComments(new Guid(postId)),
+                PostModel = new Post()
+            };
             return View(viewModel);
         }
         // POST: Post/Create

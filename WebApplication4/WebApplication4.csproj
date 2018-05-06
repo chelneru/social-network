@@ -346,6 +346,7 @@
     <Compile Include="ViewModels\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\PhotoDetailsViewModel.cs" />
     <Compile Include="ViewModels\PostDetailsViewModel.cs" />
+    <Compile Include="ViewModels\SearchResultModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\app-global.css" />
@@ -369,6 +370,7 @@
     <Content Include="Content\js\global.js" />
     <Content Include="Content\js\layout.js" />
     <Content Include="Content\js\notificationManager.js" />
+    <Content Include="Content\js\notifications-index-page.js" />
     <Content Include="Content\js\posts-index-page.js" />
     <Content Include="Content\theme-styles.css" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -547,12 +549,12 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\UserProfiles\PhotoDetails.cshtml" />
+    <Content Include="Views\Notification\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\avatars\" />
     <Folder Include="Views\GlobalApplicationData\" />
-    <Folder Include="Views\Notification\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

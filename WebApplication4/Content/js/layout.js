@@ -16,7 +16,7 @@
                 $('.results-container').css('display', 'block');
                 $('.results-container table tr').remove();
                 for (var upIter = 0; upIter < data.UsersProfiles.length; upIter++) {
-                    $('.results-table tbody').append('<tr><td><a class="profile-result" href="/users/' + data.UsersProfiles[upIter].UserAddress + '">' + data.UsersProfiles[upIter].UserName + '</a></td></tr>');
+                    $('.results-table tbody').append('<tr><td><a class="profile-result" href="' + data.UsersProfiles[upIter].Link + '">' + data.UsersProfiles[upIter].Content + '</a></td></tr>');
                 }
 
                 for (var postIter = 0; postIter < data.Posts.length; postIter++) {
@@ -39,7 +39,7 @@
                     if (end_content_string < data.Posts[postIter].Content.length - 4) {
                         content = content + '...';
                     }
-                    $('.results-table tbody').append('<tr><td><a class="profile-result" href="/posts/' + data.Posts[postIter].Id + '">' +
+                    $('.results-table tbody').append('<tr><td><a class="profile-result" href="' + data.Posts[postIter].Link + '">' +
                         content.substr(0, content.indexOf(search_query)) + '<span>' + search_query + '</span>' + content.substr(content.indexOf(search_query)
                             + search_query.length, content.length - (content.indexOf(search_query)
                             + search_query.length)) + '</a></td></tr>');

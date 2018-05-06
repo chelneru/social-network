@@ -8,7 +8,8 @@ namespace WebApplication4.ViewModels
 {
     public class PostDetailsViewModel
     {
-        public Post Post { get; set; }
-        public int Votes { get; set; }
+        public List<HomeIndexPostViewModel> Posts { get; set; }
+        public HomeIndexPostViewModel CurrentPost { get; set; }
+        public Post PostModel { get; set; }
     }
 }

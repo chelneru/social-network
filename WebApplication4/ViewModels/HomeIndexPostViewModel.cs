@@ -11,6 +11,7 @@ namespace WebApplication4.ViewModels
         public Guid Id { get; set; }
         public bool Edited { get; set; }
         public DateTime PostDateTime { get; set; }
+        public Guid UserProfileId { get; set; }
         public string Content { get; set; }
         public Post ParentPost { get; set; }
         public string UserName { get; set; }

@@ -10,13 +10,13 @@ namespace WebApplication4.ViewModels
     public class HomeIndexViewModel
     {
         public List<HomeIndexPostViewModel> Posts { get; set; }
-        public Post postModel { get; set; }
+        public Post PostModel { get; set; }
 
 
         public HomeIndexViewModel()
         {
             Posts = new List<HomeIndexPostViewModel>();
-            postModel = new Post();
+            PostModel = new Post();
 
         }
     }

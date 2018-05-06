@@ -26,11 +26,11 @@ namespace WebApplication4.Controllers
             var userProfiles = UserProfileService.GetAllUserProfiles();
             foreach (var up in userProfiles)
             {
-                var relativePath = "~/Content/avatars/" + up.User.Id + "_avatar.jpg";
+                var relativePath = "~/Content/avatars/" + up.Id + "_avatar.jpg";
                 var absolutePath = HttpContext.Server.MapPath(relativePath);
                 if (System.IO.File.Exists(absolutePath))
                 {
-                    up.AvatarUrl = "../../Content/avatars/" + up.User.Id + "_avatar.jpg";
+                    up.AvatarUrl = "../../Content/avatars/" + up.Id + "_avatar.jpg";
                 }
                 else
                 {
@@ -56,11 +56,11 @@ namespace WebApplication4.Controllers
                 return HttpNotFound();
             }
 
-            var relativePath = "~/Content/avatars/" + userProfile.User.Id + "_avatar.jpg";
+            var relativePath = "~/Content/avatars/" + userProfile.Id + "_avatar.jpg";
             var absolutePath = HttpContext.Server.MapPath(relativePath);
             if (System.IO.File.Exists(absolutePath))
             {
-                userProfile.AvatarUrl = "../../Content/avatars/" + userProfile.User.Id + "_avatar.jpg";
+                userProfile.AvatarUrl = "../../Content/avatars/" + userProfile.Id + "_avatar.jpg";
             }
             else
             {
@@ -321,8 +321,12 @@ namespace WebApplication4.Controllers
                     try
                     {
                         var userId = User.Identity.GetUserId();
-                        var path = Path.Combine(Server.MapPath("~/Content/Avatars"), userId + "_avatar.jpeg");
-                        img.Save(path);
+                        var userProfile = UserProfileService.GetUserProfileByUserId(new Guid(userId));
+
+                        var path = Path.Combine(Server.MapPath("~/Content/Avatars"), userProfile.Id + "_avatar.jpg");
+                        img.Save(path); 
+                        var db_path = "../../Content/Avatars/" + userId + "_avatar.jpg";
+                        UserProfileService.ChangeUserProfileAvatar(userProfile.Id, db_path);
                     }
                     catch (Exception e)
                     {

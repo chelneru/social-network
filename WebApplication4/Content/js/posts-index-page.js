@@ -55,7 +55,11 @@ $(document).ready(function () {
         }
     };
     var uploader = document.querySelector('#uploader');
-    var newDropzone = new Dropzone(uploader, dropzoneOptions);
+    var newDropzone = null;
+
+    if (uploader !== null) {
+        newDropzone = new Dropzone(uploader, dropzoneOptions);
+    } 
 
     $('.upvote').on('click', function () {
         var token = $('input[name="__RequestVerificationToken"]').val();

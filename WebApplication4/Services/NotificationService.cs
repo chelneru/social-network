@@ -48,6 +48,30 @@ namespace WebApplication4.Services
             var result = (Int16)Context.Notification.Count(nt => nt.Seen == false && nt.UserId == userProfileId);
             return result;
         }
+        public static List<Notification> GetAllNotifications(Guid userProfileId)
+        {
+            //Context.Notification.Re()
+            var result = Context.Notification
+                .Where(n => n.UserId == userProfileId )
+                .OrderBy(n => n.NotificationTime)
+                .AsNoTracking()
+                .ToList();
+            return result;
+        }
+        public static void DeleteAllNotifications(Guid userProfileId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                context.Database.ExecuteSqlCommand("DELETE FROM Notifications WHERE UserId = {0}", userProfileId);
+            }
+        }
+        public static void DeleteNotification(Int16 notifId)
+        {
+            var notification = Context.Notification.FirstOrDefault(nt => nt.Id == notifId);
+            Context.Notification.Remove(notification);
+            Context.SaveChanges();
+        }
+
         public static List<Notification> GetNewNotifications(Guid userProfileId)
         {
             var notifications = Context.Notification

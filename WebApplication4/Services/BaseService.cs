@@ -6,9 +6,13 @@ using WebApplication4.Models;
 
 namespace WebApplication4.Services
 {
-    public class BaseService
+    public class BaseService : IDisposable
     {
-        protected static readonly  ApplicationDbContext Context = new ApplicationDbContext();
+        protected static  ApplicationDbContext Context = new ApplicationDbContext();
 
+        public void Dispose()
+        {
+            Context.Dispose();
+        }
     }
 }

@@ -47,22 +47,24 @@ namespace WebApplication4.Controllers
                 System.Web.HttpContext.Current.Session["userName"] = userProfile.Name;
                 System.Web.HttpContext.Current.Session["userId"] = userProfile.User.Id;
                 System.Web.HttpContext.Current.Session["userProfileId"] = userProfile.Id;
+                var posts = PostService.GetPosts(userProfile.Id);
 
+                var viewModel = new HomeIndexViewModel
+                {
+                    Posts = posts,
+                    PostModel = new Post()
+                };
+                return View(viewModel);
             }
             else
             {
                 // no user is logged in
                 ViewBag.userAddress = '0';
+                return View(new HomeIndexViewModel());
             }
 
-            var posts = PostService.GetPosts();
-
-            var viewModel = new HomeIndexViewModel
-            {
-                Posts = posts,
-                postModel = new Post()
-            };
-            return View(viewModel);
+           
+            
         }
         [HttpPost, ActionName("search")]
         [Route("search/", Name = "search")]

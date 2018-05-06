@@ -1,4 +1,5 @@
 ﻿@model WebApplication4.ViewModels.PostDetailsViewModel
+<link rel="stylesheet" href="/Content/index.css" type="text/css" />
 
 @{
     ViewBag.Title = "Details";
@@ -7,25 +8,113 @@
 
 <hr />
 <div>
-    <div class="dl-horizontal">
-        <div>
-            @Html.DisplayFor(model => model.Post.UserProfile.User.UserName) - @Model.Post.PostDateTime.ToShortDateString()
-        </div>
+   
+    <div class="post message-div" id="@Model.CurrentPost.Id">
+        <span class="post-info">
+            Posted by <a href="/user/@Model.CurrentPost.UserProfileId">
+                <b>@Model.CurrentPost.UserName</b>
+            </a> -
+            @if (@Model.CurrentPost.PostDateTime.ToShortDateString() == DateTime.Today.ToShortDateString())
+            {@Model.CurrentPost.PostDateTime.ToShortTimeString()
+        }
+        else
+        {
+            @Model.CurrentPost.PostDateTime.ToShortDateString()
+        }
+        </span>
 
-        <div>
-            @Html.DisplayFor(model => model.Post.Content)
+        <div class="vote-div">
+            <div class="votes-action downvote @if (Model.CurrentPost.CurrentUserVote < 0)
+                                                          {<text>voted</text>
+                                                          }">
+                <img src="~/Content/images/down-arrow.svg" />
+            </div>
+            <div class="votes">@Model.CurrentPost.Likes</div>
+            <div class="votes-action upvote @if (Model.CurrentPost.CurrentUserVote > 0)
+                                                        {<text>voted</text>
+                                                        }">
+                <img src="~/Content/images/up-arrow.svg" />
+            </div>
         </div>
-        <div>
-            Votes : @Html.DisplayFor(model => model.Votes)
-        </div>
-        <div class="votes-container">
-            <div class="upvote">+1</div>
-            <div class="downvote">-1</div>
+        @if (@Model.CurrentPost.PhotoLink != null)
+        {
+            <div class="post-media">
+                <img src="@Model.CurrentPost.PhotoLink" alt="post image" />
+            </div>
+        }
+        else if (@Model.CurrentPost.VideoLink != null)
+        {
+            <video width="400" height="400" controls>
+                <source src="@Model.CurrentPost.VideoLink" type="video/mp4">
+                Your browser does not support th e video tag.
+            </video>
+        }
+
+        @if (@Model.CurrentPost.ShareLink != null)
+        {
+            <p><a href="@Model.CurrentPost.Content">@Model.CurrentPost.Content</a></p>
+            <a href="@Model.CurrentPost.LinkPreview.Url"><img src="@Model.CurrentPost.LinkPreview.Image" /></a>
+            <p class="source"></p>
+
+            <p class="title">@Model.CurrentPost.LinkPreview.Title</p>
+        }
+        else
+        {
+            <p>@Model.CurrentPost .Content</p>
+        }
+        <div class="post-comments">
+            @foreach (var comment in Model.Posts)
+            {
+                if (comment.ParentPost != null && comment.ParentPost.Id == Model.CurrentPost.Id)
+                {
+                    <div class="comment message-div" id="@comment.Id">
+                        <span class="post-info">
+                            Posted by <a href="/user/@comment.UserAddress">
+                                <b>@comment.UserName</b>
+                            </a> -
+                            @if (@comment.PostDateTime.ToShortDateString() == DateTime.Today.ToShortDateString())
+                            {@comment.PostDateTime.ToShortTimeString()
+                        }
+                        else
+                        {
+                            @comment.PostDateTime.ToShortDateString()
+                        }
+                        </span>
+                        <div class="vote-div">
+
+                            <div class="votes-action downvote @if (comment.CurrentUserVote < 0)
+                                                                          {<text>voted</text>
+                                            }">
+                                <img src="~/Content/images/down-arrow.svg" />
+                            </div>
+                            <div class="votes">@comment.Likes</div>
+                            <div class="votes-action upvote @if (comment.CurrentUserVote > 0)
+                                                                        {<text>voted</text>
+                                                                        }">
+                                <img src="~/Content/images/up-arrow.svg" />
+                            </div>
+                        </div>
+                        <div class="comment-content">@comment.Content</div>
+                    </div>
+                }
+            }
+            @using (Html.BeginForm("Create", "Post", FormMethod.Post, new { role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                @Html.TextAreaFor(x => @Model.PostModel.Content, new { @class = "comment-box", placeholder = "Leave a comment....", required = "" })
+                @Html.TextBoxFor(x => @Model.PostModel.ParentPost, new { style = "display: none;" ,@Model.PostModel.Id})
+
+                <input type="submit" class="btn btn-info post-comment" value="Post comment" />
+            }
         </div>
     </div>
     
+
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Post.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List" ,"Index","Home")
 </p>
+<script type="text/javascript" src="../../Content/js/posts-index-page.js"></script>
+<script src="~/Scripts/rsvp.js"></script>

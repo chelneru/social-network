@@ -17,7 +17,7 @@ namespace WebApplication4.Services
         {
             
         }
-        public static List<HomeIndexPostViewModel> GetPosts()
+        public static List<HomeIndexPostViewModel> GetPosts(Guid userProfileId)
         {
             var posts = Context.Post
                 .Include(p => p.UserProfile)
@@ -36,7 +36,7 @@ namespace WebApplication4.Services
                     ShareLink = p.ShareLink,
                     LinkPreview = Context.LinkPreview.Where(x => x.Url == p.ShareLink).FirstOrDefault(),
                 Likes = p.Likes.Sum(l => l.Value) == null ? 0: p.Likes.Sum(l => l.Value),
-                    CurrentUserVote = p.Likes.Where(l => l.UserProfile.Id == p.UserProfile.Id).Select(l => l.Value).FirstOrDefault()
+                    CurrentUserVote = p.Likes.Where(l => l.UserProfile.Id == userProfileId).Select(l => l.Value).FirstOrDefault()
                 }).OrderByDescending(x => x.PostDateTime).ToList();
 
 
@@ -51,7 +51,54 @@ namespace WebApplication4.Services
                 .First(x => x.Id == id);
             return post;
         }
-
+        public static HomeIndexPostViewModel GetDetailedPostInfo(Guid id)
+        {
+            var post = Context.Post
+                .Include(p => p.UserProfile)
+                .Include(p => p.Likes)
+                .Select(p => new HomeIndexPostViewModel()
+                {
+                    Id = p.Id,
+                    Edited = p.Edited,
+                    PostDateTime = p.PostDateTime,
+                    Content = p.Content,
+                    UserProfileId = p.UserProfile.Id,
+                    ParentPost = p.ParentPost,
+                    UserAddress = p.UserProfile.UserAddress,
+                    UserName = p.UserProfile.Name,
+                    PhotoLink = p.PhotoLink,
+                    VideoLink = p.VideoLink,
+                    ShareLink = p.ShareLink,
+                    LinkPreview = Context.LinkPreview.Where(x => x.Url == p.ShareLink).FirstOrDefault(),
+                    Likes = p.Likes.Sum(l => l.Value) == null ? 0 : p.Likes.Sum(l => l.Value),
+                    CurrentUserVote = p.Likes.Where(l => l.UserProfile.Id == p.UserProfile.Id).Select(l => l.Value).FirstOrDefault()
+                })
+                .First(x => x.Id == id);
+            return post;
+        }
+        public static List<HomeIndexPostViewModel> GetPostComments(Guid id) {
+            var results = Context.Post
+                .Include(p => p.UserProfile)
+                .Include(p => p.Likes)
+                .Where(p => p.ParentPost.Id == id)
+                .Select(p => new HomeIndexPostViewModel()
+                {
+                    Id = p.Id,
+                    Edited = p.Edited,
+                    PostDateTime = p.PostDateTime,
+                    Content = p.Content,
+                    ParentPost = p.ParentPost,
+                    UserAddress = p.UserProfile.UserAddress,
+                    UserName = p.UserProfile.Name,
+                    PhotoLink = p.PhotoLink,
+                    VideoLink = p.VideoLink,
+                    ShareLink = p.ShareLink,
+                    LinkPreview = Context.LinkPreview.Where(x => x.Url == p.ShareLink).FirstOrDefault(),
+                    Likes = p.Likes.Sum(l => l.Value) == null ? 0 : p.Likes.Sum(l => l.Value),
+                    CurrentUserVote = p.Likes.Where(l => l.UserProfile.Id == p.UserProfile.Id).Select(l => l.Value).FirstOrDefault()
+                }).OrderByDescending(x => x.PostDateTime).ToList();
+            return results;
+        }
         public static List<Post> GetComments(Guid postId)
         {
             var comments = Context.Post
@@ -69,11 +116,11 @@ namespace WebApplication4.Services
 
         }
 
-        public static List<Post> SearchPostsByContent(string searchString)
+        public static List<SearchResultModel> SearchPostsByContent(string searchString)
         {
             return Context.Post
                 .Where(x => x.Content.Contains(searchString))
-                .Select(x => new Post(){ Id = x.Id, Content = x.Content})
+                .Select(x => new SearchResultModel(){ Link ="/posts/"+ x.Id.ToString(), Content = x.Content})
                 .ToList();
         }
         public static bool AddPost(UserProfile poster, string content, Post parentPost = null, string link = null,
