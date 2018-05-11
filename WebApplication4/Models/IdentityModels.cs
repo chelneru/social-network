@@ -45,6 +45,8 @@ namespace WebApplication4.Models
         public IDbSet<Post> Post { get; set; }
         public IDbSet<Like> Like { get; set; }
         public IDbSet<Notification> Notification { get; set; }
+        public IDbSet<FriendRequest> FriendRequest { get; set; }
+        public IDbSet<PrivateMessage> PrivateMessage { get; set; }
         public IDbSet<LinkPreview> LinkPreview { get; set; }
 
         public virtual IDbSet<UserProfile> UserProfile { get; set; }
