@@ -43,6 +43,7 @@ namespace WebApplication4.Services
             var result = Context.UserProfile.FirstOrDefault(up => up.Id == id);
             return result;
         }
+       
         public static UserProfile GetUserProfileByUserId(Guid id)
         {
             var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.User.Id == id.ToString());

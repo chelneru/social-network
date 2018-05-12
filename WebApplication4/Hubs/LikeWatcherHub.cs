@@ -12,19 +12,19 @@ using WebApplication4.ViewModels;
 
 namespace WebApplication4.Hubs
 {
-    [HubName("LikeWatcher")]
+    [HubName("NotificationWatcher")]
     public class LikeWatcherHub : Hub
     {
-        private readonly LikeWatcher _likeWatcher;
+        private readonly NotificationWatcher _likeWatcher;
         private static readonly List<UserDetail> ConnectedUsers = new List<UserDetail>();
         private static SqlTableDependency<Notification> _tableDependency;
 
         public LikeWatcherHub() :
-        this(LikeWatcher.Instance)
+        this(NotificationWatcher.Instance)
         {
 
         }
-        public LikeWatcherHub(LikeWatcher likeWatcher)
+        public LikeWatcherHub(NotificationWatcher likeWatcher)
         {
             _likeWatcher = likeWatcher;
         }

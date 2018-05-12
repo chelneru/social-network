@@ -54,7 +54,9 @@ div.notifications-list a:hover {
     height: 25px;
     width: 100%;
 }
-
+.avoid-clicks {
+    pointer-events: none;
+}
 #chat_min_button {
     width: 25px;
     height: 23px;

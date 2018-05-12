@@ -1,4 +1,4 @@
-var watcher = $.connection.LikeWatcher; // the generated client-side hub proxy
+var watcher = $.connection.NotificationWatcher; // the generated client-side hub proxy
 
 
 $(document).ready(function () {

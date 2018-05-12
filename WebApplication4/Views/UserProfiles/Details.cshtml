@@ -26,10 +26,21 @@
     </form>
     @if (Model.Profile.User.UserName != HttpContext.Current.User.Identity.Name)
     {
-        <div class="friends-button">
+        <div class="friends-button @if(Model.ActiveFriendRequest != null && Model.Profile.Id == Model.ActiveFriendRequest.InitiatorUserProfileId){<text>avoid-clicks</text>}">
             @if (Model.FriendsCollection.Friend_UserProfile.FirstOrDefault(x => x.User.UserName == HttpContext.Current.User.Identity.Name) != null)
             {
                 <text>Friend</text>
+            }
+            else if (Model.ActiveFriendRequest != null)
+            {
+                if (Model.Profile.Id == Model.ActiveFriendRequest.InitiatorUserProfileId)
+                {
+                    <text>@Model.Profile.Name wants to be friends</text>  
+                }
+                else if (Model.Profile.Id == Model.ActiveFriendRequest.TargetUserProfileId)
+                {
+                    <text>Friend request sent</text>   
+                }
             }
             else
             {
@@ -37,6 +48,10 @@
                     Add friend
                 </text>
             }
+        </div>
+        <div class="friend-request-dialog" @if(Model.ActiveFriendRequest != null && Model.Profile.Id != Model.ActiveFriendRequest.InitiatorUserProfileId){<text>style="display:none"</text>}>
+            <span>Accept friend request ?</span>
+            <span class="accept-friend-request">Yes</span> | <span class="deny-friend-request">No</span>
         </div>
     }
     @if (Model.FriendsCollection != null)

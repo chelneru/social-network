@@ -66,14 +66,16 @@ namespace WebApplication4.Controllers
             {
                 userProfile.AvatarUrl = "../../Content/avatars/default_avatar.jpeg";
             }
-            //var friendsCollection = _unitOfWork.FriendsRepository.Get().First(x => x.UserProfile.Id == userProfile.Id);
-            //friendsCollection.Friend_UserProfile.Add(_unitOfWork.UserProfileRepository.Get().First(x => x.Name =="ascensionter"));
-            //_unitOfWork.Save();
 
+            var currentUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+
+            var friendRequest = FriendRequestService.CheckIfFriendRequestExists(currentUserProfile.Id, userProfile.Id);
+            
             var viewModel = new UserProfileDetailsViewModel
             {
                 Profile = userProfile,
-                FriendsCollection = UserProfileService.GetUserProfileFriends(userProfile.Id)
+                FriendsCollection = UserProfileService.GetUserProfileFriends(userProfile.Id),
+                ActiveFriendRequest = friendRequest
             };
             if (viewModel.FriendsCollection == null)
             {
@@ -250,6 +252,55 @@ namespace WebApplication4.Controllers
             return Json(new {Message = fName});
         }
 
+        [HttpPost, ActionName("accept=deny-friend-request")]
+        [Route("friend-request/{initiatorProfileId}", Name = "accept=deny-friend-request")]
+        [ValidateAntiForgeryToken]
+        public JsonResult RespondToFriendRequest(string initiatorProfileId)
+        {
+            if (Request.Form["response"] != null)
+            {
+                var currentUserId = User.Identity.GetUserId();
+                var currentProfile = UserProfileService.GetUserProfileByUserId(new Guid(currentUserId));
+                var friendRequest =
+                    FriendRequestService.CheckIfFriendRequestExists(new Guid(initiatorProfileId), currentProfile.Id);
+                if (friendRequest != null)
+                {
+                    if (!short.TryParse(Request.Form["response"], out var response))
+                    {
+                        response = 0;
+                    }
+
+                    if (response == 1 || response == 2)
+                    {
+                        //we have a valid response
+                        FriendRequestService.MarkFriendRequestAsUsed(friendRequest.Id, response);
+                        if (response == 1)
+                        {
+                            //friend request accepted , add user profile as friend
+                            FriendsService.AddFriend(currentProfile.Id, new Guid(initiatorProfileId));
+                            return Json(new {Message = "friend added"});
+                        }
+                        else
+                        {
+                            return Json(new {Message = "friend request denied"});   
+                        }
+                    }
+                    else
+                    {
+                        return Json(new {Message = "invalid response"});
+                    }
+                }
+                else
+                {
+                    return Json(new {Message = "no friend request found"});
+                }
+            }
+            else
+            {
+                return Json(new {Message = "missing response"});
+            }
+        }
+
         [HttpPost, ActionName("add-remove-friend")]
         [Route("add-remove-friend/", Name = "add-remove-friend")]
         [ValidateAntiForgeryToken]
@@ -257,42 +308,39 @@ namespace WebApplication4.Controllers
         {
             if (Request.Form["user_id"] != null)
             {
-                var userProfile = UserProfileService.GetUserProfile(new Guid(Request.Form["user_id"]));
-                    
-                   
-                var friendsCollection = UserProfileService.GetUserProfileFriends(userProfile.Id);
-                var currentUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
-                if (currentUserProfile != null)
+                var targetUserProfile = UserProfileService.GetUserProfile(new Guid(Request.Form["user_id"]));
+                var initiatorUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+
+                var friendRequest = FriendRequestService.CheckIfFriendRequestExists(initiatorUserProfile.Id, targetUserProfile.Id);
+                if (friendRequest != null)
                 {
-                    if (friendsCollection == null)
+                    //a friend request is active so we cancel it
+                    FriendRequestService.DeleteFriendRequest(friendRequest.Id);
+                    return Json(new { Message = "friend request canceled" });
+                }
+                
+                var friendship = FriendsService.CheckFriendship(targetUserProfile.Id, initiatorUserProfile.Id);
+                
+                if (friendship == true)
+                {
+                    //user is already friend so we unfriend him
+                    FriendsService.RemoveFriend(targetUserProfile.Id, initiatorUserProfile.Id);
+                    return Json(new { Message = "friend removed" });
+                }
+                else
+                {
+                    // user is not friend so we send friend request
+                    var friendRequestFeedback = FriendRequestService.CreateFriendRequest(initiatorUserProfile.Id, targetUserProfile.Id);
+                    if (friendRequestFeedback == true)
                     {
-                        // user doesn't have any friends so we add the current user as friend
-                        friendsCollection = new Friends
-                        {
-                            UserProfile = userProfile,
-                            Friend_UserProfile = new Collection<UserProfile>()
-                        };
-                        friendsCollection.Friend_UserProfile = new Collection<UserProfile> {currentUserProfile};
-                        FriendsService.AddFriends(friendsCollection);
-                        return Json(new {Message = "friend added"});
+                        return Json(new { Message = "friend request sent" });
                     }
-
-                    var findCurrentUserAsFriend =
-                        friendsCollection.Friend_UserProfile.FirstOrDefault(x => x.Id == currentUserProfile.Id);
-                    if (findCurrentUserAsFriend != null)
+                    else
                     {
-                        //user is already friend so we unfriend him
-                        friendsCollection.Friend_UserProfile.Remove(currentUserProfile);
-                        FriendsService.RemoveFriend(friendsCollection.UserProfile.Id,currentUserProfile.Id);
-                        return Json(new {Message = "friend removed"});
+                        return Json(new { Message = "failed to send friend request" });
                     }
-
-                    friendsCollection.Friend_UserProfile.Add(currentUserProfile);
-                    FriendsService.AddFriend(friendsCollection.UserProfile.Id,currentUserProfile.Id);
-                    return Json(new {Message = "friend added"});
                 }
             }
-
             return Json(new {Message = "invalid user_id parameter"});
         }
 

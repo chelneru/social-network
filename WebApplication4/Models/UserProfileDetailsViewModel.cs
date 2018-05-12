@@ -9,5 +9,7 @@ namespace WebApplication4.Models
     {
         public UserProfile Profile { get; set; }
         public Friends FriendsCollection { get; set; }
+        public FriendRequest ActiveFriendRequest { get; set; }
+        
     }
 }

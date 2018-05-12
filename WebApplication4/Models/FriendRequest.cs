@@ -11,7 +11,7 @@ namespace WebApplication4.Models
         public Guid InitiatorUserProfileId { get; set; }
         public Guid TargetUserProfileId { get; set; }
         public DateTime TimeStamp { get; set; }
-        public bool Used { get; set; }
+        public short Used { get; set; }
 
     }
 }

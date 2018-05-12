@@ -18,20 +18,23 @@ using WebApplication4.Services;
 
 namespace WebApplication4.SqlTableDependencyClasses
 {
-    public class LikeWatcher
+    public class NotificationWatcher
     {
         // Singleton instance
-        private static readonly  Lazy<LikeWatcher> _instance = new Lazy<LikeWatcher>(
-            () => new LikeWatcher(GlobalHost.ConnectionManager.GetHubContext<LikeWatcherHub>().Clients));
+        private static readonly  Lazy<NotificationWatcher> _instance = new Lazy<NotificationWatcher>(
+            () => new NotificationWatcher(GlobalHost.ConnectionManager.GetHubContext<LikeWatcherHub>().Clients));
 
 
         private static SqlTableDependency<Like> _likesTableDependency;
         private static SqlTableDependency<Post> _postsTableDependency;
+        private static SqlTableDependency<FriendRequest> _friendRequestsTableDependency;
 
-        private LikeWatcher(IHubConnectionContext<dynamic> clients)
+        private NotificationWatcher(IHubConnectionContext<dynamic> clients)
         {
             Clients = clients;
 
+            //likes watcher
+        
             _likesTableDependency = new SqlTableDependency<Like>(
                 ConfigurationManager.ConnectionStrings["defaultConnection"].ConnectionString,
                 "Likes",null,null,null,DmlTriggerType.All,true);
@@ -40,7 +43,7 @@ namespace WebApplication4.SqlTableDependencyClasses
             _likesTableDependency.OnError += SqlLikesTableDependencyOnError;
             _likesTableDependency.Start();
             
-            
+            //posts watcher
            
             _postsTableDependency = new SqlTableDependency<Post>(
                 ConfigurationManager.ConnectionStrings["defaultConnection"].ConnectionString,
@@ -49,16 +52,25 @@ namespace WebApplication4.SqlTableDependencyClasses
             _postsTableDependency.OnChanged += SqlPostsTableDependencyChanged;
             _postsTableDependency.OnError += SqlLikesTableDependencyOnError;
             _postsTableDependency.Start();
-            
-            
+
+            // friend requests watcher
+
+            _friendRequestsTableDependency = new SqlTableDependency<FriendRequest>(
+                ConfigurationManager.ConnectionStrings["defaultConnection"].ConnectionString,
+                "FriendRequests", null, null, null, DmlTriggerType.All, true);
+
+            _friendRequestsTableDependency.OnChanged += SqlFriendRequestsTableDependencyChanged;
+            _friendRequestsTableDependency.OnError += SqlLikesTableDependencyOnError;
+            _friendRequestsTableDependency.Start();
+
         }
 
-        public static LikeWatcher Instance
+        public static NotificationWatcher Instance
         {
             get
             {
                 return _instance.Value;
-            }
+            } 
         }
 
         private IHubConnectionContext<dynamic> Clients
@@ -128,6 +140,26 @@ namespace WebApplication4.SqlTableDependencyClasses
                 }
             }
         }
+
+        void SqlFriendRequestsTableDependencyChanged(object sender, RecordChangedEventArgs<FriendRequest> e)
+        {
+            if (e.ChangeType == ChangeType.Insert)
+            {
+                var userProfileActor = UserProfileService.GetUserProfile(e.Entity.InitiatorUserProfileId);
+                var friendRequest = FriendRequestService.GetFriendRequest(e.Entity.Id);
+                var userProfileTarget = UserProfileService.GetUserProfile(friendRequest.TargetUserProfileId);
+                Notification notification = null;
+
+                notification = NotificationService.AddFriendRequestNotification(userProfileTarget.Id, userProfileActor.Name + " wants to be friends.",
+                "", userProfileActor.Name + " send you a friend request. Click to see your post", "/friend-requests/" + friendRequest.Id);
+
+                if (notification != null)
+                {
+                    Clients.All.PushNotification(notification, userProfileTarget.Id);
+                }
+            }
+        }
+
         void SqlPostsTableDependencyChanged(object sender, RecordChangedEventArgs<Post> e)
         {
             if (e.ChangeType == ChangeType.Insert || e.ChangeType == ChangeType.Update)
@@ -146,7 +178,7 @@ namespace WebApplication4.SqlTableDependencyClasses
             }
         }
 
-        ~LikeWatcher()
+        ~NotificationWatcher()
         {
             Dispose(false);
         }
@@ -166,6 +198,8 @@ namespace WebApplication4.SqlTableDependencyClasses
                 if (disposing)
                 {
                     _likesTableDependency.Stop();
+                    _friendRequestsTableDependency.Stop();
+                    _postsTableDependency.Stop();
                 }
 
                 disposedValue = true;

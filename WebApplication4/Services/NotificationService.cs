@@ -24,6 +24,7 @@ namespace WebApplication4.Services
                 NotificationMessage = message,
                 NotificationTime = DateTime.Now,
                 NotificationTitle = title,
+                isRequest = false,
                 UserId = userTargetId,
                 Seen = false
             };
@@ -31,6 +32,25 @@ namespace WebApplication4.Services
             Context.SaveChanges();
             return notification;
         }
+
+        public static Notification AddFriendRequestNotification(Guid userTargetId, string title, string icon, string message, string link)
+        {
+            var notification = new Notification
+            {
+                Link = link,
+                NotificationIcon = icon,
+                NotificationMessage = message,
+                NotificationTime = DateTime.Now,
+                NotificationTitle = title,
+                isRequest = true,
+                UserId = userTargetId,
+                Seen = false
+            };
+            Context.Notification.Add(notification);
+            Context.SaveChanges();
+            return notification;
+        }
+
         public static void MarkNotificationsAsSeen(List<string> notificationsIds)
         {
             var notificationEntities = Context.Notification
@@ -45,7 +65,7 @@ namespace WebApplication4.Services
         }
         public static Int16 GetUnseenNotificationsCount(Guid userProfileId)
         {
-            var result = (Int16)Context.Notification.Count(nt => nt.Seen == false && nt.UserId == userProfileId);
+            var result = (Int16)Context.Notification.Count(nt => nt.Seen == false && nt.UserId == userProfileId && nt.isRequest == false);
             return result;
         }
         public static List<Notification> GetAllNotifications(Guid userProfileId)
@@ -62,7 +82,7 @@ namespace WebApplication4.Services
         {
             using (var context = new ApplicationDbContext())
             {
-                context.Database.ExecuteSqlCommand("DELETE FROM Notifications WHERE UserId = {0}", userProfileId);
+                context.Database.ExecuteSqlCommand("DELETE FROM Notifications WHERE UserId = {0} AND isRequest = false", userProfileId);
             }
         }
         public static void DeleteNotification(Int16 notifId)

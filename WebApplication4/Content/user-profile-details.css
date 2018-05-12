@@ -31,6 +31,19 @@
     margin-bottom: 24px;
     cursor: pointer;
 }
+.friend-request-dialog {
+    display: inline-block;
+    vertical-align: bottom;
+    margin-bottom: 34px;
+    margin-left: 20px;
+}
+.friend-request-dialog span:first-child {
+    margin-right:10px;
+}
+.friend-request-dialog span:not(:first-child) {
+    color:dodgerblue;
+    cursor: pointer;
+}
 
 .tip {
     visibility: hidden;

@@ -12,6 +12,7 @@ using Microsoft.Owin.Security;
 using WebApplication4.DAL;
 using WebApplication4.Models;
 using WebApplication4.Services;
+using Friends = WebApplication4.Migrations.Friends;
 
 namespace WebApplication4.Controllers
 {
@@ -174,6 +175,7 @@ namespace WebApplication4.Controllers
                     };
                     var applicationDbContext = new ApplicationDbContext();
                     applicationDbContext.UserProfile.Add(userProfile);
+                    FriendsService.CreateEmptyFriendsEntity(userProfile);
                 }
                 catch (DbEntityValidationException e)
                 {

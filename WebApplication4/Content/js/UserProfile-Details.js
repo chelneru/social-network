@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+    var friend_request_button_text = $('.friends-button').text();
     console.log("file loaded");
     //File Upload response from the server
     if ($('.dropzone').length > 0) {
@@ -13,6 +14,8 @@
     }
 
     $('.friends-button').on("click", function () {
+        $(".friends-button").css("pointer-events", "none");
+
         var $friendButton = $(this);
         var user_id = document.querySelector('meta[name="id"]').content;
         var token = $('input[name="__RequestVerificationToken"]').val();
@@ -28,12 +31,17 @@
         }).done(function (data, textStatus, jqXHR) {
             // because dataType is json 'data' is guaranteed to be an object
             console.log('done', data);
-            if (data.Message.toString().toLowerCase().trim() == "friend added") {
-                $($friendButton).text("Friend");
+            if (data.Message.toString().toLowerCase().trim() === "friend request sent") {
+                $($friendButton).text("Friend request sent.");
             }
-            else if (data.Message.toString().toLowerCase().trim() == "friend removed") {
+            else if (data.Message.toString().toLowerCase().trim() === "friend removed") {
                 $($friendButton).text("Add friend");
             }
+            else if (data.Message.toString().toLowerCase().trim() === "friend request canceled") {
+                $($friendButton).text("Add friend");
+            }
+            
+            $(".friends-button").css("pointer-events", "auto");
         }).fail(function (jqXHR, textStatus, errorThrown) {
             // the response is not guaranteed to be json
             if (jqXHR.responseJSON) {
@@ -48,6 +56,16 @@
             console.log('always');
         });
 
+    });
+    $('.friends-button').mouseenter(function () {
+        if ($(this).text().toString().toLowerCase().trim() === "friend request sent") {
+            $(this).text('Cancel friend request');
+        } 
+    });
+    
+    $('.friends-button').mouseleave(function () {
+            $(this).text(friend_request_button_text);
+        
     });
     $("#submit-all").on("click", function () {
         Dropzone.forElement(".dropzone").processQueue();

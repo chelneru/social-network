@@ -325,6 +325,14 @@
     <Compile Include="Migrations\201805111924361_added seen property for pm.Designer.cs">
       <DependentUpon>201805111924361_added seen property for pm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805120727152_added used property.cs" />
+    <Compile Include="Migrations\201805120727152_added used property.Designer.cs">
+      <DependentUpon>201805120727152_added used property.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805120742161_added notification type.cs" />
+    <Compile Include="Migrations\201805120742161_added notification type.Designer.cs">
+      <DependentUpon>201805120742161_added notification type.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\FriendRequest.cs" />
     <Compile Include="Models\Friends.cs" />
     <Compile Include="Models\Like.cs" />
@@ -671,6 +679,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201805111924361_added seen property for pm.resx">
       <DependentUpon>201805111924361_added seen property for pm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805120727152_added used property.resx">
+      <DependentUpon>201805120727152_added used property.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805120742161_added notification type.resx">
+      <DependentUpon>201805120742161_added notification type.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
