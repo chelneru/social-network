@@ -16,14 +16,14 @@ namespace WebApplication4.Services
     public class LinkPreviewService : BaseService
     {
         private const string ApiKey = "5ad095aa9ed741cf1d1f0eb3017f316666faebd7ee902";
-        private static readonly HttpClient Client = new HttpClient();
+        private  readonly HttpClient Client = new HttpClient();
 
 
         public LinkPreviewService()
         {
             
         }
-        public static void AddLinkPreviewInDb(LinkPreview linkPreview)
+        public  void AddLinkPreviewInDb(LinkPreview linkPreview)
         {
             var context = new ValidationContext(linkPreview, null, null);
             var results = new List<ValidationResult>();
@@ -43,16 +43,16 @@ namespace WebApplication4.Services
             }
         }
            
-        public static LinkPreview FindLinkPreview(string url)
+        public  LinkPreview FindLinkPreview(string url)
         {
             return Context.LinkPreview.FirstOrDefault(x => x.Url == url);
         }
-        public static LinkPreview FindLinkPreviewById(Guid id)
+        public  LinkPreview FindLinkPreviewById(Guid id)
         {
             return Context.LinkPreview.FirstOrDefault(x => x.Id == id);
         }
 
-        public static async Task<LinkPreview>  GetUrlPreview(string url)
+        public  async Task<LinkPreview>  GetUrlPreview(string url)
         {
             var values = new Dictionary<string, string>
             {

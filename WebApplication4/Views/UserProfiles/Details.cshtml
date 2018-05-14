@@ -49,7 +49,7 @@
                 </text>
             }
         </div>
-        <div class="friend-request-dialog" @if(Model.ActiveFriendRequest != null && Model.Profile.Id != Model.ActiveFriendRequest.InitiatorUserProfileId){<text>style="display:none"</text>}>
+        <div class="friend-request-dialog" @if(Model.ActiveFriendRequest != null && Model.Profile.Id == Model.ActiveFriendRequest.InitiatorUserProfileId){<text>style="display:inline-block" init-profile-id="@Model.ActiveFriendRequest.InitiatorUserProfileId"</text>}>
             <span>Accept friend request ?</span>
             <span class="accept-friend-request">Yes</span> | <span class="deny-friend-request">No</span>
         </div>

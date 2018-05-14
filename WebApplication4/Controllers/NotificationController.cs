@@ -11,12 +11,15 @@ namespace WebApplication4.Controllers
 {
     public class NotificationController : Controller
     {
+        private readonly NotificationService  _notificationService= new NotificationService();
+        private readonly UserProfileService  _userProfileService= new UserProfileService();
+        
         [Route("notifications/", Name = "notifications")]
         public ActionResult Index()
         {
             var userId = User.Identity.GetUserId();
-            var currentUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(userId));
-            var notifications = NotificationService.GetAllNotifications(currentUserProfile.Id);
+            var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
+            var notifications = _notificationService.GetAllNotifications(currentUserProfile.Id);
             return View(notifications);
         }
 
@@ -25,7 +28,7 @@ namespace WebApplication4.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult Delete(Int16 notificationId)
         {
-            NotificationService.DeleteNotification(notificationId);
+            _notificationService.DeleteNotification(notificationId);
             return Json(new { Message = "notification_deleted" });
         }
         [Route("notifications/delete-all", Name = "notification-delete-all")]
@@ -33,7 +36,7 @@ namespace WebApplication4.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult DeleteAll(Guid userProfileId)
         {
-            NotificationService.DeleteAllNotifications(userProfileId);
+            _notificationService.DeleteAllNotifications(userProfileId);
             return Json(new { Message = "all_notification_deleted" });
         }
     }

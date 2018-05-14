@@ -18,7 +18,7 @@ namespace WebApplication4.Hubs
         private readonly NotificationWatcher _likeWatcher;
         private static readonly List<UserDetail> ConnectedUsers = new List<UserDetail>();
         private static SqlTableDependency<Notification> _tableDependency;
-
+        private readonly NotificationService  _notificationService= new NotificationService();
         public LikeWatcherHub() :
         this(NotificationWatcher.Instance)
         {
@@ -62,15 +62,15 @@ namespace WebApplication4.Hubs
         {
             var request = Context.Request;
             //TODO Mark notification as seen in database
-            NotificationService.MarkNotificationsAsSeen(notifIds);
+            _notificationService.MarkNotificationsAsSeen(notifIds);
             return true;
         }
         public NotificationsViewModel GetAllNotifications(Guid userProfileId)
         {
             var result = new NotificationsViewModel()
             {
-                Notifications = NotificationService.GetNewNotifications(userProfileId),
-                NotificationCount = NotificationService.GetUnseenNotificationsCount(userProfileId)
+                Notifications = _notificationService.GetNewNotifications(userProfileId),
+                NotificationCount = _notificationService.GetUnseenNotificationsCount(userProfileId)
                 
         };
 

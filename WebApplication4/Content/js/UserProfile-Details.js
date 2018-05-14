@@ -32,7 +32,7 @@
             // because dataType is json 'data' is guaranteed to be an object
             console.log('done', data);
             if (data.Message.toString().toLowerCase().trim() === "friend request sent") {
-                $($friendButton).text("Friend request sent.");
+                $($friendButton).text("Friend request sent");
             }
             else if (data.Message.toString().toLowerCase().trim() === "friend removed") {
                 $($friendButton).text("Add friend");
@@ -57,14 +57,98 @@
         });
 
     });
+    $('.accept-friend-request').on('click',function () {
+        var initiatorProfileId = $('.friend-request-dialog').attr('init-profile-id');
+        var answer = 1;
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            url: '/friend-request',
+            method: 'POST',
+            data: {
+                __RequestVerificationToken: token,
+                initiatorProfileId: initiatorProfileId,
+                response :answer
+            },
+            dataType: 'json'
+        }).done(function (data, textStatus, jqXHR) {
+            // because dataType is json 'data' is guaranteed to be an object
+            console.log('done', data);
+            if (data.Message.toString().toLowerCase().trim() === "friend added") {
+                $('.friend-request-dialog').css("display",'none');
+            }
+            
+            $(".friends-button").text("Friend");
+            $(".friends-button").removeClass("avoid-clicks");
+            
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // the response is not guaranteed to be json
+            if (jqXHR.responseJSON) {
+                // jqXHR.reseponseJSON is an object
+                console.log('failed with json data', data);
+            }
+            else {
+                // jqXHR.responseText is not JSON data
+                console.log('failed with unknown data', data);
+            }
+        }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) {
+            console.log('always');
+        });
+    });
+
+    $('.deny-friend-request').on('click',function () {
+        var initiatorProfileId = $('.friend-request-dialog').attr('init-profile-id');
+        var answer = 2;
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            url: '/friend-request',
+            method: 'POST',
+            data: {
+                __RequestVerificationToken: token,
+                initiatorProfileId: initiatorProfileId,
+                response :answer
+            },
+            dataType: 'json'
+        }).done(function (data, textStatus, jqXHR) {
+            // because dataType is json 'data' is guaranteed to be an object
+            console.log('done', data);
+            if (data.Message.toString().toLowerCase().trim() === "friend request denied") {
+                $('.friend-request-dialog').css("display",'none');
+            }
+
+            $(".friends-button").text("Add friend");
+            $(".friends-button").removeClass("avoid-clicks");
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // the response is not guaranteed to be json
+            if (jqXHR.responseJSON) {
+                // jqXHR.reseponseJSON is an object
+                console.log('failed with json data', data);
+            }
+            else {
+                // jqXHR.responseText is not JSON data
+                console.log('failed with unknown data', data);
+            }
+        }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) {
+            console.log('always');
+        });
+    });
+    
     $('.friends-button').mouseenter(function () {
         if ($(this).text().toString().toLowerCase().trim() === "friend request sent") {
             $(this).text('Cancel friend request');
         } 
+        else if ($(this).text().toString().toLowerCase().trim() === "friend") {
+            $(this).text('Unfriend');
+        }
     });
     
     $('.friends-button').mouseleave(function () {
+        if ($(this).text().toString().toLowerCase().trim() === "cancel friend request") { 
             $(this).text(friend_request_button_text);
+        }
+        else if ($(this).text().toString().toLowerCase().trim() === "unfriend") {
+            $(this).text(friend_request_button_text);
+        }
         
     });
     $("#submit-all").on("click", function () {

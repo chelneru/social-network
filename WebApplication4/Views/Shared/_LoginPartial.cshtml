@@ -31,10 +31,31 @@
                         <div class="notifications-message"><a href="/notifications">See all notifications</a></div>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item requests-nav">
                     <img class="navbar-symbol" src="~/Content/images/friend-request-symbol.svg" /><span class="badge badge-danger">4</span>
+                    @{ var requests = Session["requests"] != null ? (List<Notification>)Session["requests"] : null;}
+
+                    <span class="badge badge-danger" style="@if (requests == null ||requests.Count() == 0 ) {<text>display:none;</text> }">
+                        @if (requests != null)
+        {
+                <text>@requests.Count</text>
+
+}
+                    </span>
+                    <div class="notifications-container">
+                        <div class="notifications-list">
+                            @if (notifications != null)
+            {
+                foreach (var notification in notifications)
+                {
+                    <a id="@notification.Id" href="@notification.Link"><div class="notification-item">@notification.NotificationMessage</div></a>
+}
+}
+                        </div>
+                        <div class="notifications-message"><a href="/notifications">See all notifications</a></div>
+                    </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item messages-nav">
                     <img class="navbar-symbol" src="~/Content/images/message-symbol.svg" /><span class="badge badge-danger">4</span>
                 </li>
                 <li>

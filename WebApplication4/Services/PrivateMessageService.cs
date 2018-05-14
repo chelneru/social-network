@@ -50,7 +50,7 @@ namespace WebApplication4.Services
             }
         }
 
-        public static bool MarkPrivateMessageAsSeen(Guid pmId)
+        public  bool MarkPrivateMessageAsSeen(Guid pmId)
         {
             var entity = Context.PrivateMessage.FirstOrDefault(pm => pm.Id == pmId);
             if(entity != null)
@@ -61,7 +61,7 @@ namespace WebApplication4.Services
             return true;
         }
 
-        public static List<PrivateMessage> GetAllPrivateMessages(Guid userProfileId1, Guid userProfileId2)
+        public  List<PrivateMessage> GetAllPrivateMessages(Guid userProfileId1, Guid userProfileId2)
         {
             var result = Context.PrivateMessage
                 .Where(pm => (pm.InitiatorUserProfileId == userProfileId1 && pm.TargetUserProfileId == userProfileId2) ||

@@ -13,7 +13,7 @@ namespace WebApplication4.Models
         public string NotificationIcon { get; set; }
         public string NotificationMessage { get; set; }
         public string Link { get; set; }
-        public bool isRequest { get; set; }
+        public bool IsRequest { get; set; }
         public DateTime NotificationTime { get; set; }
         public bool Seen { get; set; }
     }

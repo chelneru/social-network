@@ -5,21 +5,44 @@ $(document).ready(function () {
     $.connection.hub.logging = true;
     watcher.client.pushNotification = function (notification) {
         console.log(notification);
-        $row = $(notifTemplate);
-        $($row).attr('href', notification.Link);
-        $($row).attr('id', notification.Id);
-        $($row).find('div').text(notification.NotificationTitle);
 
-        $notificationList.append($row);
-        var $notificationCount = $('#logoutForm > ul > li.nav-item.notifications-nav > span');
-        $($notificationCount).text(parseInt($($notificationCount).text()) + 1);
-        if ($($notificationCount).css('display') === 'none') {
-            $($notificationCount).css('display', 'inline-block');
+        if (notification.isRequest == false) {
+            //we have a normal notification
+            $row = $(notifTemplate);
+            $($row).attr('href', notification.Link);
+            $($row).attr('id', notification.Id);
+            $($row).find('div').text(notification.NotificationTitle);
+
+            $notificationList.append($row);
+            var $notificationCount = $('#logoutForm > ul > li.nav-item.notifications-nav > span');
+
+            $($notificationCount).text(parseInt($($notificationCount).text()) + 1);
+            if ($($notificationCount).css('display') === 'none') {
+                $($notificationCount).css('display', 'inline-block');
+            }
+        }
+        else {
+            //we have a request (friend request)
+            $row = $(notifTemplate);
+            $($row).attr('href', notification.Link);
+            $($row).attr('id', notification.Id);
+            $($row).find('div').text(notification.NotificationTitle);
+
+            $notificationList.append($row);
+            var $requestCount = $('#logoutForm > ul > li.nav-item.requests-nav > span');
+
+            $($requestCount).text(parseInt($($notificationCount).text()) + 1);
+            if ($($requestCount).css('display') === 'none') {
+                $($requestCount).css('display', 'inline-block');
+            }
+
         }
     };
  
     var $notificationList = $('.notifications-list');
+    var $requestList = $('.requests-list');
     var notifTemplate = '<a href=""><div class="notification-item"></div></a>';
+    var requestTemplate = '<a href=""><div class="request-item"></div></a>';
 
   
 
@@ -65,6 +88,21 @@ $(document).ready(function () {
              checkForRemainingNotifications(userProfileId);
          }
      });
+
+     $('.requests-nav').on('click', function (e) {
+         e.stopPropagation();
+         if ($('.requests-nav .notifications-container').css('display') === 'none') {
+             $('.requests-nav .notifications-container').css('display', 'block');
+
+           
+         }
+         else {
+             $('.requests-nav .requests-container').css('display', 'none');
+             var userProfileId = $('#hdnCurrentUserProfileID').val();
+             checkForRemainingNotifications(userProfileId);
+         }
+     });
+
      function checkForRemainingNotifications(userProfileId) {
          watcher.server.getAllNotifications(userProfileId).done(function (data) {
              console.log('checking for remaining notifications');

@@ -14,7 +14,7 @@ namespace WebApplication4.Services
         {
 
         }
-        public static bool CreateFriendRequest(Guid initiatorUserProfileId, Guid TargetUserProfileId)
+        public  bool CreateFriendRequest(Guid initiatorUserProfileId, Guid TargetUserProfileId)
         {
             var fr = new FriendRequest()
             {
@@ -47,7 +47,7 @@ namespace WebApplication4.Services
             return true;
         }
 
-        public static List<FriendRequest> GetUserProfileFriendRequests(Guid userProfileId)
+        public  List<FriendRequest> GetUserProfileFriendRequests(Guid userProfileId)
         {
             var result = Context.FriendRequest
                 .Where(fr => fr.TargetUserProfileId == userProfileId && fr.Used == 0)
@@ -56,14 +56,14 @@ namespace WebApplication4.Services
             return result;
         }
 
-        public static FriendRequest GetFriendRequest(int frId)
+        public  FriendRequest GetFriendRequest(int frId)
         {
             var result = Context.FriendRequest
                 .AsNoTracking()
                 .FirstOrDefault(fr => fr.Id == frId);
             return result;
         }
-        public static bool MarkFriendRequestAsUsed(int friendRequestId,short answer)
+        public  bool MarkFriendRequestAsUsed(int friendRequestId,short answer)
         {
             var entity = Context.FriendRequest.FirstOrDefault(fr => fr.Id == friendRequestId);
             if(entity != null)
@@ -74,7 +74,7 @@ namespace WebApplication4.Services
             }
             return false;
         }
-        public static FriendRequest CheckIfFriendRequestExists(Guid initiatorUserProfileId,Guid targetUserProfileId)
+        public  FriendRequest CheckIfFriendRequestExists(Guid initiatorUserProfileId,Guid targetUserProfileId)
         {
             var result = Context.FriendRequest
                 .AsNoTracking()
@@ -83,7 +83,7 @@ namespace WebApplication4.Services
             return result;
             
         }
-        public static bool DeleteFriendRequest(int friendRequestId)
+        public  bool DeleteFriendRequest(int friendRequestId)
         {
             var entity = Context.FriendRequest.FirstOrDefault(fr => fr.Id == friendRequestId);
             if (entity != null)

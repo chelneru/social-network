@@ -21,6 +21,7 @@ namespace WebApplication4.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private readonly FriendsService  _friendsService= new FriendsService();
         public AccountController()
         {
         }
@@ -175,7 +176,7 @@ namespace WebApplication4.Controllers
                     };
                     var applicationDbContext = new ApplicationDbContext();
                     applicationDbContext.UserProfile.Add(userProfile);
-                    FriendsService.CreateEmptyFriendsEntity(userProfile);
+                    _friendsService.CreateEmptyFriendsEntity(userProfile);
                 }
                 catch (DbEntityValidationException e)
                 {

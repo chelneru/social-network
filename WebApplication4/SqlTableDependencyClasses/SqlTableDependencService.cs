@@ -24,7 +24,10 @@ namespace WebApplication4.SqlTableDependencyClasses
         private static readonly  Lazy<NotificationWatcher> _instance = new Lazy<NotificationWatcher>(
             () => new NotificationWatcher(GlobalHost.ConnectionManager.GetHubContext<LikeWatcherHub>().Clients));
 
-
+        private readonly UserProfileService  _userProfileService= new UserProfileService();
+        private readonly FriendRequestService  _friendRequestService= new FriendRequestService();
+        private readonly NotificationService  _notificationService= new NotificationService();
+        private readonly PostService  _postService= new PostService();
         private static SqlTableDependency<Like> _likesTableDependency;
         private static SqlTableDependency<Post> _postsTableDependency;
         private static SqlTableDependency<FriendRequest> _friendRequestsTableDependency;
@@ -79,37 +82,7 @@ namespace WebApplication4.SqlTableDependencyClasses
             set;
         }
 
-        public IEnumerable<Like> GetAllLikes()
-        {
-            var LikeModel = new List<Like>();
-
-            var connectionString = ConfigurationManager.ConnectionStrings
-                    ["connectionString"].ConnectionString;
-            using (var sqlConnection = new SqlConnection(connectionString))
-            {
-                sqlConnection.Open();
-                using (var sqlCommand = sqlConnection.CreateCommand())
-                {
-                    sqlCommand.CommandText = "exec SQLDependency_Posts_Likes";
-
-                    using (var sqlDataReader = sqlCommand.ExecuteReader())
-                    {
-                        //while (sqlDataReader.Read())
-                        //{
-                        //    var code = sqlDataReader.GetString(sqlDataReader.GetOrdinal("Code"));
-                        //    var name = sqlDataReader.GetString(sqlDataReader.GetOrdinal("Name"));
-                        //    var price = sqlDataReader.GetDecimal(sqlDataReader.GetOrdinal("Price"));
-
-                        //    LikeModel.Add(new Like { Symbol = code, Name = name, Price = price });
-                        //}
-                    }
-                }
-            }
-
-            return LikeModel;
-        }
-
-        void SqlLikesTableDependencyOnError(object sender, ErrorEventArgs e)
+        private static  void SqlLikesTableDependencyOnError(object sender, ErrorEventArgs e)
         {
             throw e.Error;
         }
@@ -117,21 +90,21 @@ namespace WebApplication4.SqlTableDependencyClasses
         /// <summary>
         /// Broadcast New Like Price
         /// </summary>
-        void SqlLikesTableDependencyChanged(object sender, RecordChangedEventArgs<Like> e)
+        private void SqlLikesTableDependencyChanged(object sender, RecordChangedEventArgs<Like> e)
         {
             if (e.ChangeType == ChangeType.Insert || e.ChangeType == ChangeType.Update)
             {
-                var userProfileActor = UserProfileService.GetUserProfile(e.Entity.UserProfileId);
-                var post = PostService.GetPost(e.Entity.PostId);
-                var userProfileTarget = UserProfileService.GetUserProfile(post.UserProfile.Id);
+                var userProfileActor = _userProfileService.GetUserProfile(e.Entity.UserProfileId);
+                var post = _postService.GetPost(e.Entity.PostId);
+                var userProfileTarget = _userProfileService.GetUserProfile(post.UserProfile.Id);
                 Notification notification = null;
                 if(e.Entity.Value == 1 ) {
-                    notification = NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " liked your post",
+                    notification = _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " liked your post",
                     "", userProfileActor.Name + " liked your post. Click to see your post", "/posts/" + post.Id);
                 }
                 else
                 {
-                    notification = NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " disliked your post",
+                    notification = _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " disliked your post",
                         "", userProfileActor.Name + " disliked your post. Click to see your post", "/posts/" + post.Id);
                 }
                 if(notification != null)
@@ -145,12 +118,12 @@ namespace WebApplication4.SqlTableDependencyClasses
         {
             if (e.ChangeType == ChangeType.Insert)
             {
-                var userProfileActor = UserProfileService.GetUserProfile(e.Entity.InitiatorUserProfileId);
-                var friendRequest = FriendRequestService.GetFriendRequest(e.Entity.Id);
-                var userProfileTarget = UserProfileService.GetUserProfile(friendRequest.TargetUserProfileId);
+                var userProfileActor = _userProfileService.GetUserProfile(e.Entity.InitiatorUserProfileId);
+                var friendRequest = _friendRequestService.GetFriendRequest(e.Entity.Id);
+                var userProfileTarget = _userProfileService.GetUserProfile(friendRequest.TargetUserProfileId);
                 Notification notification = null;
 
-                notification = NotificationService.AddFriendRequestNotification(userProfileTarget.Id, userProfileActor.Name + " wants to be friends.",
+                notification = _notificationService.AddFriendRequestNotification(userProfileTarget.Id, userProfileActor.Name + " wants to be friends.",
                 "", userProfileActor.Name + " send you a friend request. Click to see your post", "/friend-requests/" + friendRequest.Id);
 
                 if (notification != null)
@@ -160,19 +133,19 @@ namespace WebApplication4.SqlTableDependencyClasses
             }
         }
 
-        void SqlPostsTableDependencyChanged(object sender, RecordChangedEventArgs<Post> e)
+        private void SqlPostsTableDependencyChanged(object sender, RecordChangedEventArgs<Post> e)
         {
             if (e.ChangeType == ChangeType.Insert || e.ChangeType == ChangeType.Update)
             {
-                 var userProfileActor = UserProfileService.GetUserProfile(e.Entity.UserProfileId);
-                var post = PostService.GetPost(e.Entity.Id);
+                 var userProfileActor = _userProfileService.GetUserProfile(e.Entity.UserProfileId);
+                var post = _postService.GetPost(e.Entity.Id);
                 if (post.ParentPost == null)
                 {
                     return;
                 }
-                var parentPost = PostService.GetPost(post.ParentPost.Id);
-                var userProfileTarget = UserProfileService.GetUserProfile(parentPost.UserProfile.Id);
-                NotificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " commented your post",
+                var parentPost = _postService.GetPost(post.ParentPost.Id);
+                var userProfileTarget = _userProfileService.GetUserProfile(parentPost.UserProfile.Id);
+                _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " commented your post",
                     "", userProfileActor.Name + " commented your post. Click to see the post", "/posts/" + parentPost.Id);
                 
             }

@@ -9,12 +9,14 @@ namespace WebApplication4.Services
 {
     public class FriendsService : BaseService
     {
+        private readonly UserProfileService  _userProfileService= new UserProfileService();
+
         public FriendsService()
         {
         }
 
 
-        public static Friends CreateEmptyFriendsEntity(UserProfile up)
+        public Friends CreateEmptyFriendsEntity(UserProfile up)
         {
             if (up != null)
             {
@@ -29,13 +31,13 @@ namespace WebApplication4.Services
 
             return null;
         }
-        public static void AddFriends(Friends friends)
+        public void AddFriends(Friends friends)
         {
             Context.Friends.Add(friends);
             Context.SaveChanges();
         }
 
-        public static void RemoveFriend(Guid userProfileId, Guid userProfileId2)
+        public void RemoveFriend(Guid userProfileId, Guid userProfileId2)
         {
             var userProfile = Context.UserProfile.FirstOrDefault(up => up.Id == userProfileId);
             var userProfile2 = Context.UserProfile.FirstOrDefault(up => up.Id == userProfileId2);
@@ -49,7 +51,7 @@ namespace WebApplication4.Services
             Context.SaveChanges();
         }
 
-        public static void AddFriend(Guid userProfileId, Guid userProfileId2)
+        public void AddFriend(Guid userProfileId, Guid userProfileId2)
         {
             var userProfile = Context.UserProfile.FirstOrDefault(up => up.Id == userProfileId);
             var userProfile2 = Context.UserProfile.FirstOrDefault(up => up.Id == userProfileId2);
@@ -64,7 +66,7 @@ namespace WebApplication4.Services
             Context.SaveChanges();
         }
 
-        public static void AddFriendToFriendEntity(Guid friendEntityId, Guid userProfileId)
+        public void AddFriendToFriendEntity(Guid friendEntityId, Guid userProfileId)
         {
             var friendEntity = Context.Friends.Include(a => a.UserProfile)
                 .FirstOrDefault(frnd => frnd.Id == friendEntityId);
@@ -100,9 +102,9 @@ namespace WebApplication4.Services
             }
         }
 
-        public static bool CheckFriendship(Guid userProfileId1, Guid userProfileId2)
+        public bool CheckFriendship(Guid userProfileId1, Guid userProfileId2)
         {
-            var friendsList = UserProfileService.GetUserProfileFriends(userProfileId1);
+            var friendsList = _userProfileService.GetUserProfileFriends(userProfileId1);
             if (friendsList == null)
             {
                 return false;

@@ -8,7 +8,7 @@ using WebApplication4.ViewModels;
 
 namespace WebApplication4.Services
 {
-    public class UserProfileService : BaseService
+    public  class UserProfileService : BaseService
     {
 
         //public UserProfileService(ApplicationDbContext context)
@@ -19,46 +19,50 @@ namespace WebApplication4.Services
         {
 
         }
-        public static List<UserProfile> GetAllUserProfiles()
+        public  List<UserProfile> GetAllUserProfiles()
         {
             var result = Context.UserProfile.Include(a => a.User).ToList();
             return result;
         }
-        public static UserProfile GetUserProfile(Guid id)
+        public  UserProfile GetUserProfile(Guid id)
         {
             var result1 = Context.UserProfile.Include(up => up.User).ToList();
             
             var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.Id == id);
             return result;
         }
-        public static void ChangeUserProfileAvatar(Guid userProfileId, String path)
+        public void ChangeUserProfileAvatar(Guid userProfileId, String path)
         {
             var userProfile = Context.UserProfile.FirstOrDefault(up => up.Id == userProfileId);
-            userProfile.AvatarUrl = path;
-            Context.SaveChanges();
+            if (userProfile != null)
+            {
+                userProfile.AvatarUrl = path;
+                Context.SaveChanges();
+            }
+            
         }
-        public static UserProfile GetUserProfileTest(Guid id)
+        public UserProfile GetUserProfileTest(Guid id)
         {
             
             var result = Context.UserProfile.FirstOrDefault(up => up.Id == id);
             return result;
         }
        
-        public static UserProfile GetUserProfileByUserId(Guid id)
+        public UserProfile GetUserProfileByUserId(Guid id)
         {
             var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.User.Id == id.ToString());
 
             return result;
         }
         
-        public static UserProfile GetUserProfileByUserAddress(string userAddress)
+        public UserProfile GetUserProfileByUserAddress(string userAddress)
         {
             var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.UserAddress == userAddress);
 
             return result;
         }
 
-        public static Friends GetUserProfileFriends(Guid id)
+        public Friends GetUserProfileFriends(Guid id)
 
         {
             var result = Context.Friends.FirstOrDefault(up => up.UserProfile.Id == id);
@@ -66,7 +70,7 @@ namespace WebApplication4.Services
             return result;
         }
 
-        public static List<SearchResultModel> SearchUserProfilesByUserName(string searchString)
+        public List<SearchResultModel> SearchUserProfilesByUserName(string searchString)
         {
             var userProfiles = Context.UserProfile
                 .Include(up => up.User)
@@ -75,7 +79,7 @@ namespace WebApplication4.Services
             return userProfiles;
         }
 
-        public static void UpdateUserProfile(UserProfile userProfile)
+        public void UpdateUserProfile(UserProfile userProfile)
         {
             
             Context.Entry(userProfile).State = userProfile.Id == Guid.Empty? EntityState.Added : EntityState.Modified;
@@ -83,12 +87,12 @@ namespace WebApplication4.Services
             Context.SaveChanges();
         }
 
-        public static void InsertUserProfile(UserProfile userProfile)
+        public  void InsertUserProfile(UserProfile userProfile)
         {
             Context.UserProfile.Add(userProfile);
             Context.SaveChanges();
         }
-        public static void DeleteUserProfile(Guid id)
+        public void DeleteUserProfile(Guid id)
 
         {
             var userProfile = GetUserProfileByUserId(id);

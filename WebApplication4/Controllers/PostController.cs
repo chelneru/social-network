@@ -11,6 +11,10 @@ namespace WebApplication4.Controllers
 {
     public class PostController : Controller
     {
+        private readonly PostService  _postService= new PostService();
+        private readonly UserProfileService  _userProfileService= new UserProfileService();
+        private readonly LikeService  _likeService= new LikeService();
+        private readonly LinkPreviewService  _linkPreviewService= new LinkPreviewService();
 //        public ActionResult Index()
 //        {
 //            var list = PostService.GetPosts();
@@ -22,8 +26,8 @@ namespace WebApplication4.Controllers
         {
             var viewModel = new PostDetailsViewModel
             {
-                CurrentPost = PostService.GetDetailedPostInfo(new Guid(postId)),
-                Posts = PostService.GetPostComments(new Guid(postId)),
+                CurrentPost = _postService.GetDetailedPostInfo(new Guid(postId)),
+                Posts = _postService.GetPostComments(new Guid(postId)),
                 PostModel = new Post()
             };
             return View(viewModel);
@@ -39,7 +43,7 @@ namespace WebApplication4.Controllers
             if (Request.Form.Get("postModel.parentPost") != null)
             {
                 var parentPostId = Request.Form.Get("postModel.ParentPost");
-                parentPost = PostService.GetPost(new Guid(parentPostId));
+                parentPost = _postService.GetPost(new Guid(parentPostId));
             }
             var content = Request.Form.Get("postModel.Content");
             string url = null;
@@ -47,14 +51,14 @@ namespace WebApplication4.Controllers
             {
                 var lpid = new Guid(Request.Form.Get("lpid"));
 
-                var link = LinkPreviewService.FindLinkPreviewById(lpid);
+                var link = _linkPreviewService.FindLinkPreviewById(lpid);
                 content = link.Url;
                 url = link.Url;
             }
 
             var userId = User.Identity.GetUserId();
-            var currentUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(userId));
-            PostService.AddPost(currentUserProfile, content, parentPost,url);
+            var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
+            _postService.AddPost(currentUserProfile, content, parentPost,url);
             return RedirectToAction("Index", "Home");
         }
 
@@ -71,19 +75,19 @@ namespace WebApplication4.Controllers
                     value = value > 0 ? 1 : -1;
                     var postId = new Guid(Request.Form["post_id"]);
                     var currentUserProfile =
-                        UserProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
-                    var post = PostService.GetPost(postId);
-                    var existingLike = LikeService.GetLike(postId, currentUserProfile.Id);
+                        _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+                    var post = _postService.GetPost(postId);
+                    var existingLike = _likeService.GetLike(postId, currentUserProfile.Id);
                     if (existingLike == null)
                     {
-                        LikeService.AddLike(currentUserProfile, value, post);
+                        _likeService.AddLike(currentUserProfile, value, post);
                         return Json(new {Message = "vote_registered"});
                     }
 
                     if (existingLike.Value != value)
                     {
                         existingLike.Value = value;
-                        LikeService.ChangeLikeValue(existingLike.Id, value);
+                        _likeService.ChangeLikeValue(existingLike.Id, value);
                         return Json(new {Message = "vote_registered"});
                     }
 
@@ -107,13 +111,13 @@ namespace WebApplication4.Controllers
             var url = Request.Form["url"];
             if (url != null)
             {
-                var result = LinkPreviewService.FindLinkPreview(url);
+                var result = _linkPreviewService.FindLinkPreview(url);
                 if (result == null)
                 {
-                    result = await Task.Run(() => LinkPreviewService.GetUrlPreview(url));
+                    result = await Task.Run(() => _linkPreviewService.GetUrlPreview(url));
                     try
                     {
-                        LinkPreviewService.AddLinkPreviewInDb(result);
+                        _linkPreviewService.AddLinkPreviewInDb(result);
                     }
                     catch (Exception e)
                     {

@@ -16,7 +16,7 @@ namespace WebApplication4.Services
         {
 
         }
-        public static Like GetLike(Guid postId, Guid posterId)
+        public  Like GetLike(Guid postId, Guid posterId)
         {
             var like = Context.Like.Include(l => l.Post )
                 .FirstOrDefault(x => x.Post.Id == postId && x.UserProfileId == posterId);
@@ -24,7 +24,7 @@ namespace WebApplication4.Services
             return like;
         }
 
-        public static bool AddLike(UserProfile poster, Int32 value, Post post)
+        public  bool AddLike(UserProfile poster, Int32 value, Post post)
         {
             var like = new Like
             {
@@ -49,7 +49,7 @@ namespace WebApplication4.Services
             return false;
         }
 
-        public static bool ChangeLikeValue(Guid likeId, Int32 value)
+        public  bool ChangeLikeValue(Guid likeId, Int32 value)
         {
              var like = Context.Like.FirstOrDefault(x => x.Id == likeId);
             if(like != null) {

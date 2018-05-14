@@ -18,12 +18,15 @@ namespace WebApplication4.Controllers
 {
     public class UserProfilesController : Controller
     {
-
+        private readonly UserProfileService  _userProfileService= new UserProfileService();
+        private readonly FriendRequestService  _friendRequestService= new FriendRequestService();
+        private readonly FriendsService  _friendsService= new FriendsService();
+        private readonly PostService  _postService= new PostService();
         
         // GET: UserProfiles
         public ActionResult Index()
         {
-            var userProfiles = UserProfileService.GetAllUserProfiles();
+            var userProfiles = _userProfileService.GetAllUserProfiles();
             foreach (var up in userProfiles)
             {
                 var relativePath = "~/Content/avatars/" + up.Id + "_avatar.jpg";
@@ -50,7 +53,7 @@ namespace WebApplication4.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var userProfile = UserProfileService.GetUserProfileByUserAddress(userAddress);
+            var userProfile = _userProfileService.GetUserProfileByUserAddress(userAddress);
             if (userProfile == null)
             {
                 return HttpNotFound();
@@ -67,14 +70,14 @@ namespace WebApplication4.Controllers
                 userProfile.AvatarUrl = "../../Content/avatars/default_avatar.jpeg";
             }
 
-            var currentUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+            var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
 
-            var friendRequest = FriendRequestService.CheckIfFriendRequestExists(currentUserProfile.Id, userProfile.Id);
+            var friendRequest = _friendRequestService.CheckIfFriendRequestExists(currentUserProfile.Id, userProfile.Id);
             
             var viewModel = new UserProfileDetailsViewModel
             {
                 Profile = userProfile,
-                FriendsCollection = UserProfileService.GetUserProfileFriends(userProfile.Id),
+                FriendsCollection = _userProfileService.GetUserProfileFriends(userProfile.Id),
                 ActiveFriendRequest = friendRequest
             };
             if (viewModel.FriendsCollection == null)
@@ -109,7 +112,7 @@ namespace WebApplication4.Controllers
             }
 
             userProfile.Id = Guid.NewGuid();
-            UserProfileService.InsertUserProfile(userProfile);
+            _userProfileService.InsertUserProfile(userProfile);
             
             return RedirectToAction("Index");
         }
@@ -122,7 +125,7 @@ namespace WebApplication4.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var userProfile = UserProfileService.GetUserProfile(id.Value);
+            var userProfile = _userProfileService.GetUserProfile(id.Value);
             if (userProfile == null)
             {
                 return HttpNotFound();
@@ -141,7 +144,7 @@ namespace WebApplication4.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserProfileService.UpdateUserProfile(userProfile);
+                _userProfileService.UpdateUserProfile(userProfile);
                 var currentUser = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
                 userProfile.User = currentUser;
                 System.Web.HttpContext.Current.Session["userAddress"] = userProfile.UserAddress;
@@ -159,7 +162,7 @@ namespace WebApplication4.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            UserProfile userProfile = UserProfileService.GetUserProfile(id.Value);
+            UserProfile userProfile = _userProfileService.GetUserProfile(id.Value);
             if (userProfile == null)
             {
                 return HttpNotFound();
@@ -172,13 +175,13 @@ namespace WebApplication4.Controllers
         [HttpGet, ActionName("Gallery")]
         public ActionResult Gallery(string userAddress)
         {
-            var userProfile = UserProfileService.GetUserProfileByUserAddress(userAddress);
+            var userProfile = _userProfileService.GetUserProfileByUserAddress(userAddress);
             if (userProfile == null)
             {
                 return HttpNotFound();
             }
 
-            var list = PostService.GetUserPhotos(userProfile.Id);
+            var list = _postService.GetUserPhotos(userProfile.Id);
             return View(list);
         }
 
@@ -187,7 +190,7 @@ namespace WebApplication4.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
-            UserProfileService.DeleteUserProfile(id);
+            _userProfileService.DeleteUserProfile(id);
             return RedirectToAction("Index");
         }
 
@@ -209,7 +212,7 @@ namespace WebApplication4.Controllers
                         var originalDirectory =
                             new DirectoryInfo(string.Format($"{0}Content\\galleries", Server.MapPath(@"\")));
                         var userId = User.Identity.GetUserId();
-                        var currentUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(userId));
+                        var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
                         if (currentUserProfile != null)
                         {
                             var pathString = Path.Combine(originalDirectory.ToString(), userId);
@@ -229,7 +232,7 @@ namespace WebApplication4.Controllers
                             };
                             try
                             {
-                                PostService.AddPost(currentUserProfile, "descriere", null, null, path.Replace(
+                                _postService.AddPost(currentUserProfile, "descriere", null, null, path.Replace(
                                     "E:\\Visual Studio Projects\\social-network\\WebApplication4",
                                     "../../"));
                             }
@@ -252,17 +255,17 @@ namespace WebApplication4.Controllers
             return Json(new {Message = fName});
         }
 
-        [HttpPost, ActionName("accept=deny-friend-request")]
-        [Route("friend-request/{initiatorProfileId}", Name = "accept=deny-friend-request")]
+        [HttpPost, ActionName("accept-deny-friend-request")]
+        [Route("friend-request", Name = "accept-deny-friend-request")]
         [ValidateAntiForgeryToken]
-        public JsonResult RespondToFriendRequest(string initiatorProfileId)
+        public JsonResult RespondToFriendRequest()
         {
-            if (Request.Form["response"] != null)
+            if (Request.Form["response"] != null && Request.Form["initiatorProfileId"] != null)
             {
                 var currentUserId = User.Identity.GetUserId();
-                var currentProfile = UserProfileService.GetUserProfileByUserId(new Guid(currentUserId));
+                var currentProfile = _userProfileService.GetUserProfileByUserId(new Guid(currentUserId));
                 var friendRequest =
-                    FriendRequestService.CheckIfFriendRequestExists(new Guid(initiatorProfileId), currentProfile.Id);
+                    _friendRequestService.CheckIfFriendRequestExists(new Guid(Request.Form["initiatorProfileId"]), currentProfile.Id);
                 if (friendRequest != null)
                 {
                     if (!short.TryParse(Request.Form["response"], out var response))
@@ -273,11 +276,11 @@ namespace WebApplication4.Controllers
                     if (response == 1 || response == 2)
                     {
                         //we have a valid response
-                        FriendRequestService.MarkFriendRequestAsUsed(friendRequest.Id, response);
+                        _friendRequestService.MarkFriendRequestAsUsed(friendRequest.Id, response);
                         if (response == 1)
                         {
                             //friend request accepted , add user profile as friend
-                            FriendsService.AddFriend(currentProfile.Id, new Guid(initiatorProfileId));
+                            _friendsService.AddFriend(currentProfile.Id, new Guid(Request.Form["initiatorProfileId"]));
                             return Json(new {Message = "friend added"});
                         }
                         else
@@ -308,29 +311,29 @@ namespace WebApplication4.Controllers
         {
             if (Request.Form["user_id"] != null)
             {
-                var targetUserProfile = UserProfileService.GetUserProfile(new Guid(Request.Form["user_id"]));
-                var initiatorUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+                var targetUserProfile = _userProfileService.GetUserProfile(new Guid(Request.Form["user_id"]));
+                var initiatorUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
 
-                var friendRequest = FriendRequestService.CheckIfFriendRequestExists(initiatorUserProfile.Id, targetUserProfile.Id);
+                var friendRequest = _friendRequestService.CheckIfFriendRequestExists(initiatorUserProfile.Id, targetUserProfile.Id);
                 if (friendRequest != null)
                 {
                     //a friend request is active so we cancel it
-                    FriendRequestService.DeleteFriendRequest(friendRequest.Id);
+                    _friendRequestService.DeleteFriendRequest(friendRequest.Id);
                     return Json(new { Message = "friend request canceled" });
                 }
                 
-                var friendship = FriendsService.CheckFriendship(targetUserProfile.Id, initiatorUserProfile.Id);
+                var friendship = _friendsService.CheckFriendship(targetUserProfile.Id, initiatorUserProfile.Id);
                 
                 if (friendship == true)
                 {
                     //user is already friend so we unfriend him
-                    FriendsService.RemoveFriend(targetUserProfile.Id, initiatorUserProfile.Id);
+                    _friendsService.RemoveFriend(targetUserProfile.Id, initiatorUserProfile.Id);
                     return Json(new { Message = "friend removed" });
                 }
                 else
                 {
                     // user is not friend so we send friend request
-                    var friendRequestFeedback = FriendRequestService.CreateFriendRequest(initiatorUserProfile.Id, targetUserProfile.Id);
+                    var friendRequestFeedback = _friendRequestService.CreateFriendRequest(initiatorUserProfile.Id, targetUserProfile.Id);
                     if (friendRequestFeedback == true)
                     {
                         return Json(new { Message = "friend request sent" });
@@ -369,12 +372,12 @@ namespace WebApplication4.Controllers
                     try
                     {
                         var userId = User.Identity.GetUserId();
-                        var userProfile = UserProfileService.GetUserProfileByUserId(new Guid(userId));
+                        var userProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
 
                         var path = Path.Combine(Server.MapPath("~/Content/Avatars"), userProfile.Id + "_avatar.jpg");
                         img.Save(path); 
-                        var db_path = "../../Content/Avatars/" + userId + "_avatar.jpg";
-                        UserProfileService.ChangeUserProfileAvatar(userProfile.Id, db_path);
+                        var dbPath = "../../Content/Avatars/" + userId + "_avatar.jpg";
+                        _userProfileService.ChangeUserProfileAvatar(userProfile.Id, dbPath);
                     }
                     catch (Exception e)
                     {
@@ -397,8 +400,8 @@ namespace WebApplication4.Controllers
         public ActionResult PhotoDetails(string postId)
         {
             var userId = User.Identity.GetUserId();
-            var currentUserProfile = UserProfileService.GetUserProfileByUserId(new Guid(userId));
-            var post = PostService.GetPost(new Guid(postId));
+            var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
+            var post = _postService.GetPost(new Guid(postId));
             var viewModel = new PhotoDetailsViewModel
             {
                 Post = post,
@@ -409,7 +412,7 @@ namespace WebApplication4.Controllers
                             .Select(l => l.Value)
                             .FirstOrDefault()
                         : 0,
-                Comments = PostService.GetComments(new Guid(postId))
+                Comments = _postService.GetComments(new Guid(postId))
             };
             return View(viewModel);
         }

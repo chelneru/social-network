@@ -40,14 +40,16 @@ namespace WebApplication4.Controllers
             {
                 //an user is logged in
 
-                var userProfile = UserProfileService.GetUserProfileByUserId(new Guid(user));
-                var notifications = NotificationService.GetNewNotifications(userProfile.Id);
+                var userProfile = _userProfileService.GetUserProfileByUserId(new Guid(user));
+                var notifications = _notificationService.GetNewNotifications(userProfile.Id);
+                var notifications = _notificationService.GetNewNotifications(userProfile.Id);
                 System.Web.HttpContext.Current.Session["notifications"] = notifications;
+                System.Web.HttpContext.Current.Session["requests"] = requests;
                 System.Web.HttpContext.Current.Session["userAddress"] = userProfile.UserAddress;
                 System.Web.HttpContext.Current.Session["userName"] = userProfile.Name;
                 System.Web.HttpContext.Current.Session["userId"] = userProfile.User.Id;
                 System.Web.HttpContext.Current.Session["userProfileId"] = userProfile.Id;
-                var posts = PostService.GetPosts(userProfile.Id);
+                var posts = _postService.GetPosts(userProfile.Id);
 
                 var viewModel = new HomeIndexViewModel
                 {
@@ -73,8 +75,8 @@ namespace WebApplication4.Controllers
         public JsonResult Search()
         {
             var textToSearch = Request.Form["search_query"];
-            var userProfiles = UserProfileService.SearchUserProfilesByUserName(textToSearch);
-            var posts = PostService.SearchPostsByContent(textToSearch);
+            var userProfiles = _userProfileService.SearchUserProfilesByUserName(textToSearch);
+            var posts = _postService.SearchPostsByContent(textToSearch);
             var result = new
             {
                 UsersProfiles = userProfiles,

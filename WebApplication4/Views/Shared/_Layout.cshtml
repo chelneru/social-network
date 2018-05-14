@@ -9,7 +9,6 @@
     <title>@ViewBag.Title - Social Network</title>
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Scripts/dropzone/dropzonescss")
-    @Scripts.Render("~/bundles/jquery")
     <link rel="stylesheet" href="~/Content/app-global.css">
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
@@ -38,7 +37,7 @@
                 <li class="nav-item">@Html.ActionLink("Users", "Index", "UserProfiles", new object { }, new { @class = "nav-link" })</li>
                 <li class="nav-item"><div style="position:relative;padding-top: 4px;"><input class="search-input" type="text" placeholder="Search here Post, User, Groups..." />@Html.AntiForgeryToken()<div class="results-container"><table class="results-table"><tbody></tbody></table></div></div></li>
             </ul>
-            @Html.Partial("_LoginPartial")
+           @Html.Partial("_LoginPartial")
 
         </div>
     </nav>

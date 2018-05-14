@@ -17,7 +17,7 @@ namespace WebApplication4.Services
         {
             
         }
-        public static List<HomeIndexPostViewModel> GetPosts(Guid userProfileId)
+        public  List<HomeIndexPostViewModel> GetPosts(Guid userProfileId)
         {
             var posts = Context.Post
                 .Include(p => p.UserProfile)
@@ -43,7 +43,7 @@ namespace WebApplication4.Services
             return posts;
         }
 
-        public static Post GetPost(Guid id)
+        public  Post GetPost(Guid id)
         {
             var post = Context.Post
                 .Include(p => p.UserProfile)
@@ -51,7 +51,7 @@ namespace WebApplication4.Services
                 .First(x => x.Id == id);
             return post;
         }
-        public static HomeIndexPostViewModel GetDetailedPostInfo(Guid id)
+        public  HomeIndexPostViewModel GetDetailedPostInfo(Guid id)
         {
             var post = Context.Post
                 .Include(p => p.UserProfile)
@@ -76,7 +76,7 @@ namespace WebApplication4.Services
                 .First(x => x.Id == id);
             return post;
         }
-        public static List<HomeIndexPostViewModel> GetPostComments(Guid id) {
+        public  List<HomeIndexPostViewModel> GetPostComments(Guid id) {
             var results = Context.Post
                 .Include(p => p.UserProfile)
                 .Include(p => p.Likes)
@@ -99,7 +99,7 @@ namespace WebApplication4.Services
                 }).OrderByDescending(x => x.PostDateTime).ToList();
             return results;
         }
-        public static List<Post> GetComments(Guid postId)
+        public  List<Post> GetComments(Guid postId)
         {
             var comments = Context.Post
                 .Include(p => p.UserProfile)
@@ -108,7 +108,7 @@ namespace WebApplication4.Services
             return comments;
         }
 
-        public static List<Post> GetUserPhotos(Guid id) 
+        public  List<Post> GetUserPhotos(Guid id) 
         {
             return Context.Post
                 .Where(x => x.UserProfileId == id && x.PhotoLink != null)
@@ -116,14 +116,14 @@ namespace WebApplication4.Services
 
         }
 
-        public static List<SearchResultModel> SearchPostsByContent(string searchString)
+        public  List<SearchResultModel> SearchPostsByContent(string searchString)
         {
             return Context.Post
                 .Where(x => x.Content.Contains(searchString))
                 .Select(x => new SearchResultModel(){ Link ="/posts/"+ x.Id.ToString(), Content = x.Content})
                 .ToList();
         }
-        public static bool AddPost(UserProfile poster, string content, Post parentPost = null, string link = null,
+        public  bool AddPost(UserProfile poster, string content, Post parentPost = null, string link = null,
             string imageLink = null, string videoLink = null)
         {
             var post = new Post
