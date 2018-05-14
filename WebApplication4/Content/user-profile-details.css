@@ -22,6 +22,12 @@
         visibility: visible;
     }
 
+    .profile-name {
+        display: inline-block;
+        height: 200px;
+        margin-left: 40px;
+        font-size: 40px;
+    }
 .friends-button {
     display: inline-block;
     background-color: grey;
@@ -30,6 +36,13 @@
     vertical-align: bottom;
     margin-bottom: 24px;
     cursor: pointer;
+}
+.friends-list-container {
+    float: right;
+    margin-top: 180px;
+}
+.friends-list-container .friends-list-header {
+    font-size: 27px;
 }
 .friend-request-dialog {
     display: inline-block;
@@ -43,6 +56,17 @@
 .friend-request-dialog span:not(:first-child) {
     color:dodgerblue;
     cursor: pointer;
+}
+.friend-item div{
+    display: inline-block;
+}
+.friend-item a{
+    text-decoration: none;
+}
+.avatar-thumbnail
+{
+    width:40px;
+    border-radius:50%;
 }
 
 .tip {
@@ -59,6 +83,7 @@
 
 .avatar-div {
     position: relative;
+    display: inline-block;
     width: 200px;
     height: 200px;
 }
@@ -72,7 +97,9 @@
 .dropzone .dz-preview:not(.dz-processing) .dz-progress {
     visibility: hidden;
 }
-
+.profile-info label{
+    font-weight: bold;
+}
 div.remove-div {
     cursor: pointer !important;
 }
