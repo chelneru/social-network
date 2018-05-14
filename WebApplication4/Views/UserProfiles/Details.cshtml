@@ -6,27 +6,39 @@
 <link rel="stylesheet" type="text/css" href="~/Content/user-profile-details.css">
 <meta name="id" content="@Model.Profile.Id">
 <div>
-    <form action="~/api/upload-avatar/" method="post" id="upload-avatar-form" enctype="multipart/form-data" onsubmit="setTimeout(function(){window.location.reload();},10)">
+    <form action="~/api/upload-avatar/" method="post" id="upload-avatar-form" enctype="multipart/form-data" onsubmit="setTimeout(function() { window.location.reload(); }, 10)">
         @Html.AntiForgeryToken()
 
         <label>
-            <div class="avatar-div @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name) { <text>hover-action</text>} ">
-                <img class="avatar-image" src=@if (Model.Profile.AvatarUrl != null) { @Model.Profile.AvatarUrl} else { @("../../Content/images/default-avatar.jpg"); } alt="Unable to load default avatar" />
+            <div class="avatar-div @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
+                                   {
+                                       <text>hover-action</text>} ">
+                <img class="avatar-image" src=@if (Model.Profile.AvatarUrl != null)
+                                              {
+                                                  @Model.Profile.AvatarUrl
+                                              }
+                                              else
+                                              {
+                                                  @("../../Content/images/default-avatar.jpg");
+                                              } alt="Unable to load default avatar"/>
                 @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
                 {
                     <span class="tip">Click to change avatar</span>
                 }
             </div>
+            <div class="profile-name">@Model.Profile.Name</div>
+
             @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
             {
-                <input type="file" name="avatar" style="display:none" form="upload-avatar-form" class="file-input">
+                <input type="file" name="avatar" style="display: none" form="upload-avatar-form" class="file-input">
             }
         </label>
         <br>
     </form>
     @if (Model.Profile.User.UserName != HttpContext.Current.User.Identity.Name)
     {
-        <div class="friends-button @if(Model.ActiveFriendRequest != null && Model.Profile.Id == Model.ActiveFriendRequest.InitiatorUserProfileId){<text>avoid-clicks</text>}">
+        <div class="friends-button @if (Model.ActiveFriendRequest != null && Model.Profile.Id == Model.ActiveFriendRequest.InitiatorUserProfileId)
+                                   {<text>avoid-clicks</text>}">
             @if (Model.FriendsCollection.Friend_UserProfile.FirstOrDefault(x => x.User.UserName == HttpContext.Current.User.Identity.Name) != null)
             {
                 <text>Friend</text>
@@ -35,11 +47,11 @@
             {
                 if (Model.Profile.Id == Model.ActiveFriendRequest.InitiatorUserProfileId)
                 {
-                    <text>@Model.Profile.Name wants to be friends</text>  
+                    <text>@Model.Profile.Name wants to be friends</text>
                 }
                 else if (Model.Profile.Id == Model.ActiveFriendRequest.TargetUserProfileId)
                 {
-                    <text>Friend request sent</text>   
+                    <text>Friend request sent</text>
                 }
             }
             else
@@ -49,81 +61,61 @@
                 </text>
             }
         </div>
-        <div class="friend-request-dialog" @if(Model.ActiveFriendRequest != null && Model.Profile.Id == Model.ActiveFriendRequest.InitiatorUserProfileId){<text>style="display:inline-block" init-profile-id="@Model.ActiveFriendRequest.InitiatorUserProfileId"</text>}>
+        <div class="friend-request-dialog"
+             @if (Model.ActiveFriendRequest != null && Model.Profile.Id != Model.ActiveFriendRequest.InitiatorUserProfileId)
+             {<text>style="display: none"</text>}>
             <span>Accept friend request ?</span>
             <span class="accept-friend-request">Yes</span> | <span class="deny-friend-request">No</span>
         </div>
     }
+
     @if (Model.FriendsCollection != null)
-    {<ul>
-            @foreach (var friend in Model.FriendsCollection.Friend_UserProfile)
-            {
-                {
-                    <li>@friend.Name</li>}
-            }
-        </ul>
-    }
-    @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
     {
-        <div class="jumbotron">
-            <form action="~/api/upload-photos/" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="background: none; border: none;">
-                @Html.AntiForgeryToken()
-                @*<img class="icon" src="~/Content/removebutton.svg" alt="Click me to remove the file." data-dz-remove />*@
+    <div class="friends-list-container">
+        <div class="friends-list-header">Friends</div>
+        @foreach (var friend in Model.FriendsCollection.Friend_UserProfile)
+        {
+            <div class="friend-item">
+                <a href="/users/@friend.UserAddress">
+                    <img class="avatar-thumbnail" src=@if (friend.AvatarUrl != null)
+                                                      {
+                                                          @(friend.AvatarUrl)}
+                                                      else
+                                                      {
+                                                          @("../../Content/images/default-avatar.jpg");
+                                                      } alt="Unable to load default avatar"/>
 
-                <div class="fallback">
-                    <input name="file" type="file" multiple />
-                    <input type="submit" value="Upload" />
-                </div>
-            </form>
-            <button id="submit-all">Submit All Files</button>
-        </div>
+                                                          <div>@friend.Name</div>
+                                                          </a>
+
+                                                          </div>
+        }
+                                                          </div>
     }
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Profile.Name)
-        </dt>
+                                                          @Html.ActionLink("Gallery", "Gallery")
+                                                          <div class="profile-info">
+                                                              <div>
+                                                                  <label>Join date:</label> <span>@Model.Profile.JoinDate.Date</span>
+                                                              </div>
+                                                              <div>
+                                                                  <label>Location:</label> <span>@Model.Profile.Location</span>
+                                                              </div>
+                                                              <div>
+                                                                  <label>About:</label> <span>@Model.Profile.About</span>
+                                                              </div>
+                                                              <div>
+                                                                  <label>Birth Date:</label> <span>@Model.Profile.BirthDate</span>
+                                                              </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Profile.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Profile.JoinDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Profile.JoinDate.Date)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Profile.Location)
-        </dt>
-
-        <dd>asdasda<br></dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Profile.About)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Profile.About)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Profile.BirthDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Profile.BirthDate)
-
-    </dl>
-</div>
-<p>
-    @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
-    {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Profile.Id }) <text> |</text>
-                }
-    @Html.ActionLink("Gallery", "Gallery") |
-    @Html.ActionLink("Back to List", "Index")
-</p>
-<script type="text/javascript" src="../../Content/js/UserProfile-Details.js"></script>
+                                                          </div>
+                                                          </div>
+                                                          <p>
+                                                              @if (Model.Profile.User.UserName == HttpContext.Current.User.Identity.Name)
+                                                              {
+                                                                  @Html.ActionLink("Edit", "Edit", new {id = Model.Profile.Id})
+                                                                  <text> |</text>
+                                                              }
+                                                              |
+                                                              @Html.ActionLink("See Users List", "Index")
+                                                          </p>
+                                                          <script type="text/javascript" src="../../Content/js/UserProfile-Details.js"></script>

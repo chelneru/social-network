@@ -181,8 +181,13 @@ namespace WebApplication4.Controllers
                 return HttpNotFound();
             }
 
-            var list = _postService.GetUserPhotos(userProfile.Id);
-            return View(list);
+            var list = PostService.GetUserPhotos(userProfile.Id);
+            var viewModel = new GalleryViewModel
+            {
+                Posts = list,
+                UserProfile = userProfile
+            };
+            return View(viewModel);
         }
 
         // POST: UserProfiles/Delete/5

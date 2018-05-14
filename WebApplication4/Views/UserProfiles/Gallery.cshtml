@@ -1,15 +1,31 @@
-﻿@model List<WebApplication4.Models.Post>
+﻿@using Microsoft.AspNet.Identity
+@model WebApplication4.ViewModels.GalleryViewModel
 
 @{
-    ViewBag.Title = @Model[0].UserProfile.Name+"s Gallery";
+    ViewBag.Title = @Model.UserProfile.Name+"s Gallery";
 }
 <link rel="stylesheet" href="/Content/user-gallery.css" type="text/css"/>
 
-<h2>@Model[0].UserProfile.Name's Gallery</h2>
+<h2>@Model.UserProfile.Name's Gallery</h2>
+@if (Model.UserProfile.User.Id == HttpContext.Current.User.Identity.GetUserId())
+{
+    <div class="jumbotron">
+        <form action="~/api/upload-photos/" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="background: none; border: none;">
+            @Html.AntiForgeryToken()
+            @*<img class="icon" src="~/Content/removebutton.svg" alt="Click me to remove the file." data-dz-remove />*@
 
+            <div class="fallback">
+                <input name="file" type="file" multiple />
+                <input type="submit" value="Upload" />
+            </div>
+        </form>
+        <button id="submit-all">Submit All Files</button>
+    </div>
+}
 <div class="gallery-container">
-    @foreach (var post in Model)
+    @foreach (var post in Model.Posts)
     {
-    <a href="/posts/@post.Id"><img src="@post.PhotoLink" alt="post-image" /></a>
+        <a href="/posts/@post.Id"><img src="@post.PhotoLink" alt="post-image" /></a>
     }
 </div>
+@Html.ActionLink("Back to profile", "Details", new {userAddress = Model.UserProfile.UserAddress})
