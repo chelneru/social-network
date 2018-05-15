@@ -58,10 +58,10 @@ namespace WebApplication4.Hubs
             }
 
         }
+        
         public bool MarkSeenNotifications(List<string> notifIds)
         {
             var request = Context.Request;
-            //TODO Mark notification as seen in database
             _notificationService.MarkNotificationsAsSeen(notifIds);
             return true;
         }

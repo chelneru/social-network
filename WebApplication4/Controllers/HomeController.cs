@@ -42,8 +42,10 @@ namespace WebApplication4.Controllers
 
                 var userProfile = _userProfileService.GetUserProfileByUserId(new Guid(user));
                 var notifications = _notificationService.GetNewNotifications(userProfile.Id);
-                var notifications = _notificationService.GetNewNotifications(userProfile.Id);
+                var notificationsTotal = _notificationService.GetUnseenNotificationsCount(userProfile.Id);
+                var requests = _notificationService.GetAllUnansweredRequests(userProfile.Id);
                 System.Web.HttpContext.Current.Session["notifications"] = notifications;
+                System.Web.HttpContext.Current.Session["notificationsTotal"] = notificationsTotal;
                 System.Web.HttpContext.Current.Session["requests"] = requests;
                 System.Web.HttpContext.Current.Session["userAddress"] = userProfile.UserAddress;
                 System.Web.HttpContext.Current.Session["userName"] = userProfile.Name;

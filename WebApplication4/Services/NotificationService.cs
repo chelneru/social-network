@@ -33,7 +33,7 @@ namespace WebApplication4.Services
             return notification;
         }
 
-        public  Notification AddFriendRequestNotification(Guid userTargetId, string title, string icon, string message, string link)
+        public  Notification AddFriendRequestNotification(Guid userTargetId, string title, string icon, string message, string link,string entityId)
         {
             var notification = new Notification
             {
@@ -44,7 +44,8 @@ namespace WebApplication4.Services
                 NotificationTitle = title,
                 IsRequest = true,
                 UserId = userTargetId,
-                Seen = false
+                Seen = false,
+                EntityId = entityId
             };
             Context.Notification.Add(notification);
             Context.SaveChanges();
@@ -63,6 +64,17 @@ namespace WebApplication4.Services
             }
             Context.SaveChanges();
         }
+        public  void MarkNotificationAsSeen(string notificationsId)
+        {
+            var notificationEntity = Context.Notification
+                .FirstOrDefault(n=> n.Id.ToString() == notificationsId);
+
+            if (notificationEntity != null)
+            {
+                notificationEntity.Seen = true;
+                Context.SaveChanges(); 
+            }
+        }
         public  Int16 GetUnseenNotificationsCount(Guid userProfileId)
         {
             var result = (Int16)Context.Notification.Count(nt => nt.Seen == false && nt.UserId == userProfileId && nt.IsRequest == false);
@@ -71,7 +83,7 @@ namespace WebApplication4.Services
         public  List<Notification> GetAllUnansweredRequests(Guid userProfileId)
         {
             var result = Context.Notification
-                .Where(n => n.UserId == userProfileId && n.IsRequest == true &&)
+                .Where(n => n.UserId == userProfileId && n.IsRequest == true && n.Seen == false)
                 .OrderBy(n => n.NotificationTime)
                 .AsNoTracking()
                 .ToList();

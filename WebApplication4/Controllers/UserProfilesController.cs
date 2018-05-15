@@ -22,6 +22,7 @@ namespace WebApplication4.Controllers
         private readonly FriendRequestService  _friendRequestService= new FriendRequestService();
         private readonly FriendsService  _friendsService= new FriendsService();
         private readonly PostService  _postService= new PostService();
+        private readonly NotificationService  _notificationService = new NotificationService();
         
         // GET: UserProfiles
         public ActionResult Index()
@@ -181,7 +182,7 @@ namespace WebApplication4.Controllers
                 return HttpNotFound();
             }
 
-            var list = PostService.GetUserPhotos(userProfile.Id);
+            var list = _postService.GetUserPhotos(userProfile.Id);
             var viewModel = new GalleryViewModel
             {
                 Posts = list,
@@ -264,7 +265,7 @@ namespace WebApplication4.Controllers
         [Route("friend-request", Name = "accept-deny-friend-request")]
         [ValidateAntiForgeryToken]
         public JsonResult RespondToFriendRequest()
-        {
+        {    
             if (Request.Form["response"] != null && Request.Form["initiatorProfileId"] != null)
             {
                 var currentUserId = User.Identity.GetUserId();
@@ -282,6 +283,13 @@ namespace WebApplication4.Controllers
                     {
                         //we have a valid response
                         _friendRequestService.MarkFriendRequestAsUsed(friendRequest.Id, response);
+                        if (Request.Form["notificationId"] != null)
+                        {
+                           // in case this request comes from a notification
+                            _notificationService.MarkNotificationAsSeen(Request.Form["notificationId"]);
+
+                        }
+                        
                         if (response == 1)
                         {
                             //friend request accepted , add user profile as friend

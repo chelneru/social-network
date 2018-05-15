@@ -1,43 +1,67 @@
-﻿
-@font-face {
+﻿@font-face {
     font-family: 'Roboto';
     src: url('/fonts/Roboto-Regular.ttf');
 }
+
 body {
     font-family: 'Roboto';
     font-size: 13px;
 }
+
 .notifications-nav {
-    position:relative;
-    cursor:pointer;
+    position: relative;
+    cursor: pointer;
 }
+
 .navbar-nav .nav-item {
-    position:relative;
-    margin-right:10px;
+    position: relative;
+    margin-right: 10px;
 }
-    .navbar-nav .nav-item .badge {
-        position: absolute;
-        left: 19px;
-        top: 0px;
-    }
+
+.navbar-nav .nav-item .badge {
+    position: absolute;
+    left: 19px;
+    top: 0px;
+}
+
 div.notifications-container {
     position: absolute;
     background-color: white;
     width: 170px;
     top: 37px;
     box-shadow: 1px 1px 5px 0px #888888;
-    display:none; 
+    display: none;
 }
+
 .lef-nav-part {
-    margin-right:400px;
+    margin-right: 400px;
 }
+
 div.notifications-list .notification-item {
     border-bottom: 1px solid #eeeeee;
     padding: 5px;
 }
+
 div.notifications-list a:hover {
-    text-decoration:none;
+    text-decoration: none;
 }
+
+div.requests-list .request-answers div {
+    text-align: center;
+    width: 49%;
+    cursor: pointer;
+    display: inline-block;
+}
+
+div.requests-list .request-answers div:hover {
+    background-color: #eeeeee;
+}
+
+div.requests-list div.notification-item {
+    border-bottom: 1px solid #eeeeee;
+    padding: 5px;
+}
+
 /*Chat CSS*/
 #chat_widnow {
     width: 200px;
@@ -54,9 +78,11 @@ div.notifications-list a:hover {
     height: 25px;
     width: 100%;
 }
+
 .avoid-clicks {
     pointer-events: none;
 }
+
 #chat_min_button {
     width: 25px;
     height: 23px;
@@ -95,4 +121,5 @@ div.notifications-list a:hover {
 .ui-chatbox-input-box {
     width: 189px !important;
 }
+
 /*Chat End*/

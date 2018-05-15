@@ -124,7 +124,7 @@ namespace WebApplication4.SqlTableDependencyClasses
                 Notification notification = null;
 
                 notification = _notificationService.AddFriendRequestNotification(userProfileTarget.Id, userProfileActor.Name + " wants to be friends.",
-                "", userProfileActor.Name + " send you a friend request. Click to see your post", "/friend-requests/" + friendRequest.Id);
+                "", userProfileActor.Name + " wants to be friends.", "/friend-requests/" + friendRequest.Id,e.Entity.Id.ToString());
 
                 if (notification != null)
                 {

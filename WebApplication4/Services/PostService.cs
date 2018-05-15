@@ -51,6 +51,7 @@ namespace WebApplication4.Services
                 .First(x => x.Id == id);
             return post;
         }
+        
         public  HomeIndexPostViewModel GetDetailedPostInfo(Guid id)
         {
             var post = Context.Post

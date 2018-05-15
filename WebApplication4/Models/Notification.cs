@@ -11,6 +11,7 @@ namespace WebApplication4.Models
         public Guid UserId { get; set; }
         public string NotificationTitle { get; set; }
         public string NotificationIcon { get; set; }
+        public string EntityId { get; set; }
         public string NotificationMessage { get; set; }
         public string Link { get; set; }
         public bool IsRequest { get; set; }

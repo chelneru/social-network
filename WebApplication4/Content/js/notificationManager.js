@@ -23,15 +23,15 @@ $(document).ready(function () {
         }
         else {
             //we have a request (friend request)
-            $row = $(notifTemplate);
+            $row = $(requestTemplate);
             $($row).attr('href', notification.Link);
             $($row).attr('id', notification.Id);
             $($row).find('div').text(notification.NotificationTitle);
 
-            $notificationList.append($row);
+            $requestList.append($row);
             var $requestCount = $('#logoutForm > ul > li.nav-item.requests-nav > span');
 
-            $($requestCount).text(parseInt($($notificationCount).text()) + 1);
+            $($requestCount).text(parseInt($($requestCount).text()) + 1);
             if ($($requestCount).css('display') === 'none') {
                 $($requestCount).css('display', 'inline-block');
             }
@@ -42,7 +42,7 @@ $(document).ready(function () {
     var $notificationList = $('.notifications-list');
     var $requestList = $('.requests-list');
     var notifTemplate = '<a href=""><div class="notification-item"></div></a>';
-    var requestTemplate = '<a href=""><div class="request-item"></div></a>';
+    var requestTemplate = '<a href=""><div class="request-item"></div></a><div class="request-answers"><span class="accept-request">Yes</span>|<span class="deny-request">No</span></div>';
 
   
 
@@ -88,7 +88,12 @@ $(document).ready(function () {
              checkForRemainingNotifications(userProfileId);
          }
      });
-
+     
+     $('.requests-list .accept-request').on('click',function () {
+        var answer = 1;
+        var notificationId = $(this).parent().parent().find('a').attr('id');
+     });
+     
      $('.requests-nav').on('click', function (e) {
          e.stopPropagation();
          if ($('.requests-nav .notifications-container').css('display') === 'none') {
@@ -125,9 +130,57 @@ $(document).ready(function () {
              }
          });
      }
+     
      function markNotificationsAsSeen(notificationsIds) {
          watcher.server.markSeenNotifications(notificationsIds).done(function (data) {
              console.log('marked all notifications as seen',data);
          });
+     }
+         function respondToFriendRequest(initiatorProfileId,answer,notificationId) {
+
+             var token = $('input[name="__RequestVerificationToken"]').val();
+             $.ajax({
+                 url: '/friend-request',
+                 method: 'POST',
+                 data: {
+                     __RequestVerificationToken: token,
+                     initiatorProfileId: initiatorProfileId,
+                     notificationId: notificationId,
+                     response :answer
+                 },
+                 dataType: 'json'
+             }).done(function (data, textStatus, jqXHR) {
+                 // because dataType is json 'data' is guaranteed to be an object
+                 console.log('done', data);
+                 if (answer === 1) {
+                     if (data.Message.toString().toLowerCase().trim() === "friend added") {
+                         $('.friend-request-dialog').css("display",'none');
+                     }
+
+                     $(".friends-button").text("Friend");
+                     $(".friends-button").removeClass("avoid-clicks");
+                 }
+                 else if (asnwer === 2) {
+                     if (data.Message.toString().toLowerCase().trim() === "friend request denied") {
+                         $('.friend-request-dialog').css("display",'none');
+                     }
+
+                     $(".friends-button").text("Add friend");
+                     $(".friends-button").removeClass("avoid-clicks");
+                 }
+
+             }).fail(function (jqXHR, textStatus, errorThrown) {
+                 // the response is not guaranteed to be json
+                 if (jqXHR.responseJSON) {
+                     // jqXHR.reseponseJSON is an object
+                     console.log('failed with json data', data);
+                 }
+                 else {
+                     // jqXHR.responseText is not JSON data
+                     console.log('failed with unknown data', data);
+                 }
+             }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) {
+                 console.log('always');
+             });
      }
 });

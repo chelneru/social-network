@@ -1,4 +1,6 @@
 ﻿$(document).ready(function () {
+    console.log("file loaded");
+
     var friend_request_button_text = $('.friends-button').text();
     console.log("file loaded");
     //File Upload response from the server
@@ -60,77 +62,14 @@
     $('.accept-friend-request').on('click',function () {
         var initiatorProfileId = $('.friend-request-dialog').attr('init-profile-id');
         var answer = 1;
-        var token = $('input[name="__RequestVerificationToken"]').val();
-        $.ajax({
-            url: '/friend-request',
-            method: 'POST',
-            data: {
-                __RequestVerificationToken: token,
-                initiatorProfileId: initiatorProfileId,
-                response :answer
-            },
-            dataType: 'json'
-        }).done(function (data, textStatus, jqXHR) {
-            // because dataType is json 'data' is guaranteed to be an object
-            console.log('done', data);
-            if (data.Message.toString().toLowerCase().trim() === "friend added") {
-                $('.friend-request-dialog').css("display",'none');
-            }
-            
-            $(".friends-button").text("Friend");
-            $(".friends-button").removeClass("avoid-clicks");
-            
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            // the response is not guaranteed to be json
-            if (jqXHR.responseJSON) {
-                // jqXHR.reseponseJSON is an object
-                console.log('failed with json data', data);
-            }
-            else {
-                // jqXHR.responseText is not JSON data
-                console.log('failed with unknown data', data);
-            }
-        }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) {
-            console.log('always');
-        });
+        respondToFriendRequest(initiatorProfileId,answer);
     });
 
+    
     $('.deny-friend-request').on('click',function () {
         var initiatorProfileId = $('.friend-request-dialog').attr('init-profile-id');
         var answer = 2;
-        var token = $('input[name="__RequestVerificationToken"]').val();
-        $.ajax({
-            url: '/friend-request',
-            method: 'POST',
-            data: {
-                __RequestVerificationToken: token,
-                initiatorProfileId: initiatorProfileId,
-                response :answer
-            },
-            dataType: 'json'
-        }).done(function (data, textStatus, jqXHR) {
-            // because dataType is json 'data' is guaranteed to be an object
-            console.log('done', data);
-            if (data.Message.toString().toLowerCase().trim() === "friend request denied") {
-                $('.friend-request-dialog').css("display",'none');
-            }
-
-            $(".friends-button").text("Add friend");
-            $(".friends-button").removeClass("avoid-clicks");
-
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            // the response is not guaranteed to be json
-            if (jqXHR.responseJSON) {
-                // jqXHR.reseponseJSON is an object
-                console.log('failed with json data', data);
-            }
-            else {
-                // jqXHR.responseText is not JSON data
-                console.log('failed with unknown data', data);
-            }
-        }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) {
-            console.log('always');
-        });
+        respondToFriendRequest(initiatorProfileId,answer);
     });
     
     $('.friends-button').mouseenter(function () {
@@ -181,7 +120,54 @@
 
         });
     }
-        console.log("file loaded");
+    
+    function respondToFriendRequest(initiatorProfileId,answer) {
+        
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            url: '/friend-request',
+            method: 'POST',
+            data: {
+                __RequestVerificationToken: token,
+                initiatorProfileId: initiatorProfileId,
+                response :answer
+            },
+            dataType: 'json'
+        }).done(function (data, textStatus, jqXHR) {
+            // because dataType is json 'data' is guaranteed to be an object
+            console.log('done', data);
+            if (answer === 1) { 
+            if (data.Message.toString().toLowerCase().trim() === "friend added") {
+                $('.friend-request-dialog').css("display",'none');
+            }
+
+            $(".friends-button").text("Friend");
+            $(".friends-button").removeClass("avoid-clicks");
+            }
+            else if (asnwer === 2) {
+                if (data.Message.toString().toLowerCase().trim() === "friend request denied") {
+                    $('.friend-request-dialog').css("display",'none');
+                }
+
+                $(".friends-button").text("Add friend");
+                $(".friends-button").removeClass("avoid-clicks");
+            } 
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // the response is not guaranteed to be json
+            if (jqXHR.responseJSON) {
+                // jqXHR.reseponseJSON is an object
+                console.log('failed with json data', data);
+            }
+            else {
+                // jqXHR.responseText is not JSON data
+                console.log('failed with unknown data', data);
+            }
+        }).always(function (dataOrjqXHR, textStatus, jqXHRorErrorThrown) {
+            console.log('always');
+        });
+    }
+    
     });
 
 $("#upload-avatar-form .file-input").on("change", function () {
