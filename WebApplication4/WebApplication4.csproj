@@ -333,6 +333,10 @@
     <Compile Include="Migrations\201805120742161_added notification type.Designer.cs">
       <DependentUpon>201805120742161_added notification type.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805151056261_'added entity id for notification'.cs" />
+    <Compile Include="Migrations\201805151056261_'added entity id for notification'.Designer.cs">
+      <DependentUpon>201805151056261_'added entity id for notification'.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\FriendRequest.cs" />
     <Compile Include="Models\Friends.cs" />
     <Compile Include="Models\Like.cs" />
@@ -373,6 +377,7 @@
     <Compile Include="SignalIR\UserDetail.cs" />
     <Compile Include="SqlTableDependencyClasses\SqlTableDependencService.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\GalleryViewModel.cs" />
     <Compile Include="ViewModels\HomeIndexPostViewModel.cs" />
     <Compile Include="ViewModels\HomeIndexViewModel.cs" />
     <Compile Include="ViewModels\NotificationsViewModel.cs" />
@@ -686,6 +691,9 @@
     <EmbeddedResource Include="Migrations\201805120742161_added notification type.resx">
       <DependentUpon>201805120742161_added notification type.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805151056261_'added entity id for notification'.resx">
+      <DependentUpon>201805151056261_'added entity id for notification'.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
@@ -693,10 +701,6 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
-  <PropertyGroup>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

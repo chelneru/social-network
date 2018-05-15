@@ -39,7 +39,7 @@
     {
         <div class="friends-button @if (Model.ActiveFriendRequest != null && Model.Profile.Id == Model.ActiveFriendRequest.InitiatorUserProfileId)
                                    {<text>avoid-clicks</text>}">
-            @if (Model.FriendsCollection.Friend_UserProfile.FirstOrDefault(x => x.User.UserName == HttpContext.Current.User.Identity.Name) != null)
+            @if (Model.FriendsCollection.Friend_UserProfile.FirstOrDefault(x => x.Name == (string)Session["userName"]) != null)
             {
                 <text>Friend</text>
             }

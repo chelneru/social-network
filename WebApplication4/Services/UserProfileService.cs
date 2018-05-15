@@ -65,7 +65,7 @@ namespace WebApplication4.Services
         public Friends GetUserProfileFriends(Guid id)
 
         {
-            var result = Context.Friends.FirstOrDefault(up => up.UserProfile.Id == id);
+            var result = Context.Friends.AsNoTracking().FirstOrDefault(up => up.UserProfile.Id == id);
 
             return result;
         }

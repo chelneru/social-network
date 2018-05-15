@@ -33,6 +33,11 @@ namespace WebApplication4.Services
             return notification;
         }
 
+        public Notification GetNotification(int notificationId)
+        {
+            var result = Context.Notification.AsNoTracking().FirstOrDefault(n => n.Id == notificationId);
+            return result;
+        }
         public  Notification AddFriendRequestNotification(Guid userTargetId, string title, string icon, string message, string link,string entityId)
         {
             var notification = new Notification

@@ -10,7 +10,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Microsoft.AspNet.Identity;
 using WebApplication4.Modules;
+using WebApplication4.Services;
 using WebApplication4.SignalIR;
 
 namespace WebApplication4
@@ -47,6 +49,40 @@ namespace WebApplication4
             //  Code that runs on application shutdown
             System.Data.SqlClient.SqlDependency.Stop(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 
+        }
+        protected void Application_PreRequestHandlerExecute(object sender, EventArgs e)
+        {
+            if (Request.IsAuthenticated)
+            {
+                HttpApplication application = (HttpApplication)sender;
+                HttpContext context = application.Context;
+                if(context.Session != null) {
+                var user = User.Identity.GetUserId();
+                var userProfileService = new UserProfileService();
+                var notificationService = new NotificationService();
+                
+                var userProfile = userProfileService.GetUserProfileByUserId(new Guid(user));
+                var notifications = notificationService.GetNewNotifications(userProfile.Id);
+                var notificationsTotal = notificationService.GetUnseenNotificationsCount(userProfile.Id);
+                var requests = notificationService.GetAllUnansweredRequests(userProfile.Id);
+                
+                if (notifications != null)
+                {
+                    context.Session["notifications"] = notifications;
+                    context.Session["notificationsTotal"] = notificationsTotal;
+                }
+
+                if (requests != null)
+                {
+                    context.Session["requests"] = requests;
+                }
+                context.Session["userAddress"] = userProfile.UserAddress;
+                context.Session["userName"] = userProfile.Name;
+                context.Session["userId"] = userProfile.User.Id;
+                context.Session["userProfileId"] = userProfile.Id;
+                }
+
+            }
         }
     }
 }

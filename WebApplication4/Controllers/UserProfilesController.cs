@@ -266,14 +266,37 @@ namespace WebApplication4.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult RespondToFriendRequest()
         {    
-            if (Request.Form["response"] != null && Request.Form["initiatorProfileId"] != null)
+            if (Request.Form["response"] != null && (Request.Form["initiatorProfileId"] != null || Request.Form["notificationId"] != null))
             {
                 var currentUserId = User.Identity.GetUserId();
                 var currentProfile = _userProfileService.GetUserProfileByUserId(new Guid(currentUserId));
-                var friendRequest =
-                    _friendRequestService.CheckIfFriendRequestExists(new Guid(Request.Form["initiatorProfileId"]), currentProfile.Id);
+                FriendRequest friendRequest = null;
+                if ((Request.Form["initiatorProfileId"] == null || Request.Form["initiatorProfileId"] =="") && Request.Form["notificationId"] != null)
+                {
+                    //we get the friend request id from the notification
+                    if (Int32.TryParse(Request.Form["notificationId"], out var notifId))
+                    {
+                        var notification = _notificationService.GetNotification(notifId);
+                        if (Int32.TryParse(notification.EntityId, out var frId))
+                        {
+                            friendRequest = _friendRequestService.GetFriendRequest(frId);
+                        }
+                        else
+                        {
+                            return Json(new {Message = "invalid friend request id"}); 
+                        }
+                }
+                    else
+                    {
+                        return Json(new {Message = "invalid notification id"});
+                    }
+                }
+                else {
+                friendRequest = _friendRequestService.CheckIfFriendRequestExists(new Guid(Request.Form["initiatorProfileId"]), currentProfile.Id);
+                }
                 if (friendRequest != null)
                 {
+                    var initiatorProfileId = friendRequest.InitiatorUserProfileId;
                     if (!short.TryParse(Request.Form["response"], out var response))
                     {
                         response = 0;
@@ -293,7 +316,7 @@ namespace WebApplication4.Controllers
                         if (response == 1)
                         {
                             //friend request accepted , add user profile as friend
-                            _friendsService.AddFriend(currentProfile.Id, new Guid(Request.Form["initiatorProfileId"]));
+                            _friendsService.AddFriend(currentProfile.Id, initiatorProfileId);
                             return Json(new {Message = "friend added"});
                         }
                         else
