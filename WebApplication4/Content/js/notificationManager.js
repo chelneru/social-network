@@ -3,10 +3,13 @@ var watcher = $.connection.NotificationWatcher; // the generated client-side hub
 
 $(document).ready(function () {
     $.connection.hub.logging = true;
+
+   
+    
     watcher.client.pushNotification = function (notification) {
         console.log(notification);
 
-        if (notification.isRequest == false) {
+        if (notification.IsRequest == false) {
             //we have a normal notification
             $row = $(notifTemplate);
             $($row).attr('href', notification.Link);
@@ -50,7 +53,8 @@ $(document).ready(function () {
 
 
     function init(userId) {
-
+        var UserProfileId = $("[id$=hdnCurrentUserProfileID]").val();
+        watcher.server.connect( UserProfileId);
     }
 
     //Add client-side hub methods that the server will call

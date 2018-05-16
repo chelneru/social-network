@@ -39,7 +39,7 @@ namespace WebApplication4.Hubs
             }
         }
 
-        public void PushNotification(Notification notification, Guid userProfileId)
+        public static void  PushNotification(Notification notification, Guid userProfileId)
         {
             UserDetail currentUser = null;
             foreach (var connectedUser in ConnectedUsers)
@@ -53,7 +53,9 @@ namespace WebApplication4.Hubs
 
             if (currentUser != null)
             {
-                Clients.Client(currentUser.ConnectionId).PushNotification(notification);
+                IHubContext context = GlobalHost.ConnectionManager.GetHubContext<LikeWatcherHub>();
+
+                context.Clients.Client(currentUser.ConnectionId).PushNotification(notification);
 
             }
 

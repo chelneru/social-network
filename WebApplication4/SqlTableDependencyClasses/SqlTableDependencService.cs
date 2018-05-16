@@ -7,6 +7,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNet.SignalR.Infrastructure;
 using TableDependency;
 using TableDependency.Enums;
 using TableDependency.EventArgs;
@@ -109,7 +110,10 @@ namespace WebApplication4.SqlTableDependencyClasses
                 }
                 if(notification != null)
                 {
-                    Clients.All.PushNotification(notification, userProfileTarget.Id);
+                    var test = GlobalHost.DependencyResolver.Resolve<IConnectionManager>()
+                        .GetHubContext<LikeWatcherHub>();
+
+                    LikeWatcherHub.PushNotification(notification, userProfileTarget.Id);
                 }
             }
         }
@@ -128,7 +132,8 @@ namespace WebApplication4.SqlTableDependencyClasses
 
                 if (notification != null)
                 {
-                    Clients.All.PushNotification(notification, userProfileTarget.Id);
+                    LikeWatcherHub.PushNotification(notification, userProfileTarget.Id);
+
                 }
             }
         }
@@ -145,9 +150,12 @@ namespace WebApplication4.SqlTableDependencyClasses
                 }
                 var parentPost = _postService.GetPost(post.ParentPost.Id);
                 var userProfileTarget = _userProfileService.GetUserProfile(parentPost.UserProfile.Id);
-                _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " commented your post",
+                var notification = _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " commented your post",
                     "", userProfileActor.Name + " commented your post. Click to see the post", "/posts/" + parentPost.Id);
-                
+                if(notification != null) {
+                LikeWatcherHub.PushNotification(notification, userProfileTarget.Id);
+                }
+
             }
         }
 
