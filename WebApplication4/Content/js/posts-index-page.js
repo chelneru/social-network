@@ -3,7 +3,7 @@
 $(document).ready(function () {
     var promise = new RSVP.Promise(function (resolve, reject) { });
     console.log('loaded');
-    var dropzoneOptions = {
+    var videoDropzoneOptions = {
         dictDefaultMessage: 'Drop Here!',
         paramName: "file",
         maxFilesize: 20, // MB
@@ -13,6 +13,13 @@ $(document).ready(function () {
         init: function () {
             this.on("success", function (file) {
                 console.log("success > " + file.name);
+                location.reload();
+            });
+            this.on('sending', function (file, xhr, formData) {
+                // Append all form inputs to the formData Dropzone will POST
+                var content = $('.video-upload-panel .video-description').val();
+                formData.append("post-description", content);
+                
             });
             this.on("addedfile", function (file) {
                 if (this.files[1]!==undefined) {
@@ -43,6 +50,7 @@ $(document).ready(function () {
                                         file.name + ". Reason: " + reason);
                                 }
                             );
+                            $('.video-upload-panel .submit-post').css('display','block');
                         },
                         function videoFailedToRender(reason) {
                             console.log("Can't convert the file to a video element: " +
@@ -54,11 +62,41 @@ $(document).ready(function () {
            
         }
     };
-    var uploader = document.querySelector('#uploader');
-    var newDropzone = null;
 
-    if (uploader !== null) {
-        newDropzone = new Dropzone(uploader, dropzoneOptions);
+    var imageDropzoneOptions = {
+        dictDefaultMessage: 'Drop Here!',
+        paramName: "file",
+        maxFilesize: 20, // MB
+        addRemoveLinks: true,
+        autoProcessQueue: false,
+        createImageThumbnails: true,
+        init: function () {
+            this.on("success", function (file) {
+                console.log("success > " + file.name);
+                location.reload();
+            });
+            this.on('sending', function (file, xhr, formData) {
+                // Append all form inputs to the formData Dropzone will POST
+                var content = $('.photo-upload-panel .image-description').val();
+                formData.append("post-description", content);
+
+            });
+            this.on("addedfile", function (file) {
+                $('.photo-upload-panel .submit-post').css('display', 'block');
+            
+            });
+        }
+    };
+    var video_uploader = document.querySelector('#video-uploader');
+    var videoDropzone = null;
+    if (video_uploader !== null) {
+        videoDropzone = new Dropzone(video_uploader, videoDropzoneOptions);
+    } 
+
+    var image_uploader = document.querySelector('#image-uploader');
+    var imageDropzone = null;
+    if (image_uploader !== null) {
+        imageDropzone = new Dropzone(image_uploader, imageDropzoneOptions);
     } 
 
     $('.upvote').on('click', function () {
@@ -104,6 +142,7 @@ $(document).ready(function () {
             }
         });
     });
+
     $('.downvote').on('click', function () {
         var token = $('input[name="__RequestVerificationToken"]').val();
 
@@ -152,8 +191,8 @@ $(document).ready(function () {
         setTimeout(function () {
             var text = $(self).val();
 
-            if (isUrlValid(text)) {
-                $('.popup .submit-post').css('display', 'inline-block');
+            if (!isUrlValid(text)) {
+                $('.link-upload-panel .submit-post').css('display', 'inline-block');
 
                 $('.placeholder-text').text('Fetching preview...');
                 var token = $('input[name="__RequestVerificationToken"]').val();
@@ -205,14 +244,10 @@ $(document).ready(function () {
             height: 123
         }, "normal");
     }).blur(function () {
-        //$(".submit-post").css('display', 'none');
-        //$(".post-additional-options").css("display", "none");
-        //$(this).animate({
-        //    height: 60
-        //}, "normal");
+     
     });
 
-    $('.popup .submit-post').on('click', function () {
+    $('.link-upload-panel .submit-post').on('click', function () {
         if ($('textarea.link-input').val() !== '') {
 
             var link_preview_id = $('.link-upload-panel .preview').attr('lpid');
@@ -245,18 +280,33 @@ $(document).ready(function () {
             }
         }
     });
+    $('.photo-upload-panel .submit-post').on('click', function (e) {
+        e.preventDefault();
+        imageDropzone.processQueue();
+        
+    });
+
+    $('.video-upload-panel .submit-post').on('click', function (e) {
+        e.preventDefault();
+        videoDropzone.processQueue();
+
+    });
+
     $('.post-video, .post-image, .post-link').on('click', function (e) {
         e.stopPropagation();
         $('.popup-overlayer').css('display', 'block');
         $('.popup').css('display', 'block');
-
+        
         if ($(this).hasClass('post-link')) {
         $('.link-upload-panel').css('display', 'block');
         }
-        if ($(this).hasClass('post-video')) {
+        else if ($(this).hasClass('post-video')) {
             $('.video-upload-panel').css('display', 'block');
-            $('#uploader').click();
-            
+      
+        }
+        else if ($(this).hasClass('post-image')) {
+            $('.photo-upload-panel').css('display', 'block');
+
         }
 
     });

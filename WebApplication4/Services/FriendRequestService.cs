@@ -40,6 +40,8 @@ namespace WebApplication4.Services
                             ve.PropertyName, ve.ErrorMessage);
                     }
                 }
+                Context.Entry(fr).State = EntityState.Detached;
+
                 return false;
 
                 throw;

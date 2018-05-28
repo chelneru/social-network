@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
 using WebApplication4.ViewModels;
+using System.Data.Entity.Validation;
 
 namespace WebApplication4.Services
 {
@@ -48,6 +49,38 @@ namespace WebApplication4.Services
             return result;
         }
        
+        public UserProfile CreateNewUserProfile(ApplicationUser user)
+        {
+            try
+            {
+                var userProfile = new UserProfile
+                {
+                    Name = user.Email,
+                    JoinDate = DateTime.Now,
+                    BirthDate = new DateTime(1995, 08, 30),
+                    User = user,
+                    UserAddress = user.Email.Substring(0, user.Email.IndexOf('@'))
+                };
+                Context.UserProfile.Add(userProfile);
+                Context.SaveChanges();
+                return userProfile;
+            }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    System.Diagnostics.Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        System.Diagnostics.Debug.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                    }
+                }
+
+                throw;
+            }
+        }
         public UserProfile GetUserProfileByUserId(Guid id)
         {
             var result = Context.UserProfile.Include(up => up.User).FirstOrDefault(up => up.User.Id == id.ToString());

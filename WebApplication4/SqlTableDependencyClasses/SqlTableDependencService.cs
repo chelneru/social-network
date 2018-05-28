@@ -41,7 +41,7 @@ namespace WebApplication4.SqlTableDependencyClasses
         
             _likesTableDependency = new SqlTableDependency<Like>(
                 ConfigurationManager.ConnectionStrings["defaultConnection"].ConnectionString,
-                "Likes",null,null,null,DmlTriggerType.All,true);
+                "Likes",null,null,null,null,DmlTriggerType.All,false);
 
             _likesTableDependency.OnChanged += SqlLikesTableDependencyChanged;
             _likesTableDependency.OnError += SqlLikesTableDependencyOnError;
@@ -51,7 +51,7 @@ namespace WebApplication4.SqlTableDependencyClasses
            
             _postsTableDependency = new SqlTableDependency<Post>(
                 ConfigurationManager.ConnectionStrings["defaultConnection"].ConnectionString,
-                "Posts",null,null,null,DmlTriggerType.All,true);
+                "Posts", null, null, null, null, DmlTriggerType.All, false);
 
             _postsTableDependency.OnChanged += SqlPostsTableDependencyChanged;
             _postsTableDependency.OnError += SqlLikesTableDependencyOnError;
@@ -61,7 +61,7 @@ namespace WebApplication4.SqlTableDependencyClasses
 
             _friendRequestsTableDependency = new SqlTableDependency<FriendRequest>(
                 ConfigurationManager.ConnectionStrings["defaultConnection"].ConnectionString,
-                "FriendRequests", null, null, null, DmlTriggerType.All, true);
+                "FriendRequests", null, null, null, null, DmlTriggerType.All, false);
 
             _friendRequestsTableDependency.OnChanged += SqlFriendRequestsTableDependencyChanged;
             _friendRequestsTableDependency.OnError += SqlLikesTableDependencyOnError;

@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using WebApplication4.DAL.Interfaces;
 using WebApplication4.ViewModels;
+using System.Data.Entity.Validation;
 
 namespace WebApplication4.Services
 {
@@ -124,7 +125,7 @@ namespace WebApplication4.Services
                 .Select(x => new SearchResultModel(){ Link ="/posts/"+ x.Id.ToString(), Content = x.Content})
                 .ToList();
         }
-        public  bool AddPost(UserProfile poster, string content, Post parentPost = null, string link = null,
+        public bool AddPost(UserProfile poster, string content, Post parentPost = null, string link = null,
             string imageLink = null, string videoLink = null)
         {
             var post = new Post
@@ -139,16 +140,29 @@ namespace WebApplication4.Services
                 ShareLink = link,
                 Id = Guid.NewGuid()
             };
-            var context = new ValidationContext(post, null, null);
-            var results = new List<ValidationResult>();
-            if (Validator.TryValidateObject(post, context, results, true))
-            {
+            try { 
                 Context.Post.Add(post);
-                Context.SaveChanges();
+            Context.SaveChanges();
                 return true;
+
+            }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    System.Diagnostics.Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        System.Diagnostics.Debug.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                    }
+                }
+                Context.Entry(post).State = EntityState.Detached;
+                throw;
+            }
             }
 
-            return false;
-        }
+        
     }
 }

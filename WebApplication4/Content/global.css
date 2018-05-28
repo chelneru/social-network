@@ -90,7 +90,26 @@ div.requests-list div.notification-item {
     float: right;
     cursor: pointer;
 }
-
+.chatbox-icon-close {
+    background-image: url("../Content/images/close.svg");
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin-right: 10px;
+}
+.chatbox-icon-mimize {
+    background-image: url(../Content/images/minimize-tab.svg);
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin-right: 10px;
+}
 #chat_box {
     height: 250px;
     background: #DFDFDF;

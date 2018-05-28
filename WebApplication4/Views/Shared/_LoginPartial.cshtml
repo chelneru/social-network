@@ -44,7 +44,7 @@
                 <span class="badge badge-danger" style="@if (requests == null || requests.Count() == 0)
                                                         {<text>display: none; </text>
                                                         }">
-                    @if (requests != null || requests.Count() > 0)
+                    @if (requests != null && requests.Count() > 0)
                     {
                         <text>@requests.Count</text>
                     }
@@ -79,7 +79,10 @@
         </ul>
     }
 </div>
+@*@Html.ActionLink("English", "ChangeCulture", "Account",  new { lang = "en", returnUrl = this.Request.RawUrl }, null)
+@Html.ActionLink("Română", "ChangeCulture", "Account",  new { lang = "ro", returnUrl = this.Request.RawUrl }, null)*@
 }
+                
 else
 {
     <ul class="nav navbar-nav navbar-right">

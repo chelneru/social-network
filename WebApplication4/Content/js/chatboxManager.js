@@ -24,8 +24,8 @@ $(document).ready(function () {
 
 
 function registerEvents(chatHub) {
-    var UserName = $("[id$=hdnCurrentUserName]").val();
-    var UserID = $("[id$=hdnCurrentUserID]").val();
+    var UserName = $("[id=hdnCurrentUserName]").val();
+    var UserID = $("[id=hdnCurrentUserProfileID]").val();
     chatHub.server.connect(UserName, UserID);
 }
 
@@ -127,6 +127,8 @@ function CheckHiddenWindow() {
 }
 
 function AddUser(chatHub, id, name, userid) {
+    console.log('adding user ' + name);
+
     var currentuserid = $("[id$=hdnCurrentUserID]").val();
     var connectionid = $('#hdId').val();
     var code = "";
@@ -158,12 +160,14 @@ function AddUser(chatHub, id, name, userid) {
 }
 
 function OpenPrivateChatWindow(chatHub, id, userName) {
+    console.log('opening private chat window for ' + userName);
     var ctrId = 'private_' + id;
     if ($('#' + ctrId).length > 0) return;
     createPrivateChatWindow(chatHub, id, ctrId, userName, userName);
 }
 
 function createPrivateChatWindow(chatHub, userId, ctrId, userName, chatTitle) {
+    console.log('creting private chat window for ' + userName);
     $("#chat_div").append("<div id=\"" + ctrId + "\"></div>")
     showList.push(ctrId);
     $('#' + ctrId).chatbox({
@@ -231,7 +235,8 @@ function ResetTypingFlag() {
 }
 
 function AddMessage(userName, message) {
-    //$('#divChatWindow').append('<div class="message"><span class="userName">' + userName + '</span>: ' + message + '</div>');
-    //var height = $('#divChatWindow')[0].scrollHeight;
-    //$('#divChatWindow').scrollTop(height);
+    console.log('adding message for' + userName);
+    $('#divChatWindow').append('<div class="message"><span class="userName">' + userName + '</span>: ' + message + '</div>');
+    var height = $('#divChatWindow')[0].scrollHeight;
+    $('#divChatWindow').scrollTop(height);
 }

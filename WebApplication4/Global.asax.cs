@@ -14,6 +14,8 @@ using Microsoft.AspNet.Identity;
 using WebApplication4.Modules;
 using WebApplication4.Services;
 using WebApplication4.SignalIR;
+using System.Globalization;
+using System.Threading;
 
 namespace WebApplication4
 {
@@ -50,7 +52,64 @@ namespace WebApplication4
             System.Data.SqlClient.SqlDependency.Stop(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 
         }
-        protected void Application_PreRequestHandlerExecute(object sender, EventArgs e)
+        protected void Application_AcquireRequestState(object sender, EventArgs e)
+
+     {
+
+          //It's important to check whether session object is ready
+
+          if (HttpContext.Current.Session != null)
+
+          {
+
+              CultureInfo ci = (CultureInfo)this.Session["Culture"];
+
+              //Checking first if there is no value in session 
+
+              //and set default language 
+
+              //this can happen for first user's request
+
+           if (ci == null)
+
+           {
+
+               //Sets default culture to english invariant
+
+               string langName = "en";
+
+  
+
+               //Try to get values from Accept lang HTTP header
+
+               if (HttpContext.Current.Request.UserLanguages != null && 
+
+           HttpContext.Current.Request.UserLanguages.Length != 0)
+
+               {
+
+                   //Gets accepted list 
+
+                   langName = HttpContext.Current.Request.UserLanguages[0].Substring(0, 2);
+
+               }
+
+               ci = new CultureInfo(langName);
+
+               this.Session["Culture"] = ci;
+
+           }
+
+           //Finally setting culture for each request
+
+           Thread.CurrentThread.CurrentUICulture = ci;
+
+           Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
+
+       }
+
+  }
+    protected void Application_PreRequestHandlerExecute(object sender, EventArgs e)
         {
             if (Request.IsAuthenticated)
             {
@@ -62,6 +121,7 @@ namespace WebApplication4
                 var notificationService = new NotificationService();
                 
                 var userProfile = userProfileService.GetUserProfileByUserId(new Guid(user));
+                    if(userProfile != null) { 
                 var notifications = notificationService.GetNewNotifications(userProfile.Id);
                 var notificationsTotal = notificationService.GetUnseenNotificationsCount(userProfile.Id);
                 var requests = notificationService.GetAllUnansweredRequests(userProfile.Id);
@@ -80,6 +140,7 @@ namespace WebApplication4
                 context.Session["userName"] = userProfile.Name;
                 context.Session["userId"] = userProfile.User.Id;
                 context.Session["userProfileId"] = userProfile.Id;
+                }
                 }
 
             }

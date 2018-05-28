@@ -139,10 +139,8 @@
                     return false;
                 })
                 .appendTo(uiChatboxTitlebar),
-            uiChatboxTitlebarCloseText = $('<span></span>')
-                .addClass('ui-icon ' +
-                          'ui-icon-closethick')
-                .text('close')
+            uiChatboxTitlebarCloseText = $('<img/>')
+                .addClass('chatbox-icon-close')
                 .appendTo(uiChatboxTitlebarClose),
             uiChatboxTitlebarMinimize = (self.uiChatboxTitlebarMinimize = $('<a href="#"></a>'))
                 .addClass('ui-corner-all ' +
@@ -156,10 +154,8 @@
                     return false;
                 })
                 .appendTo(uiChatboxTitlebar),
-            uiChatboxTitlebarMinimizeText = $('<span></span>')
-                .addClass('ui-icon ' +
-                          'ui-icon-minusthick')
-                .text('minimize')
+            uiChatboxTitlebarMinimizeText = $('<img/>')
+                .addClass('chatbox-icon-mimize')
                 .appendTo(uiChatboxTitlebarMinimize),
             // content
             uiChatboxContent = (self.uiChatboxContent = $('<div></div>'))

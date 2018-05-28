@@ -9,7 +9,7 @@ $(document).ready(function () {
     watcher.client.pushNotification = function (notification) {
         console.log(notification);
 
-        if (notification.IsRequest == false) {
+        if (notification.IsRequest === false) {
             //we have a normal notification
             $row = $(notifTemplate);
             $($row).attr('href', notification.Link);

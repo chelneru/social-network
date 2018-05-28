@@ -156,7 +156,9 @@ body {
         width: 95%;
         margin: 20px 10px;
     }
-.link-upload-panel {
+.link-upload-panel,
+.photo-upload-panel,
+.video-upload-panel{
     display:none;
 }
 .link-upload-panel .preview {

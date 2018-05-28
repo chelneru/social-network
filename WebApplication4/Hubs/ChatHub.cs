@@ -23,7 +23,7 @@ namespace WebApplication4.Hubs
 
             if (ConnectedUsers.Count(x => x.ConnectionId == id) == 0)
             {
-                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = userName + "-" + UserId, UserId = UserId });
+                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = userName, UserId = UserId });
             }
             UserDetail CurrentUser = ConnectedUsers.Where(u => u.ConnectionId == id).FirstOrDefault();
             // send to caller           

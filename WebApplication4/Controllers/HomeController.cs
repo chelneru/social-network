@@ -16,34 +16,50 @@ using WebApplication4.Services;
 
 namespace WebApplication4.Controllers
 {
+    [RequireHttps]
     public class HomeController : Controller
     {
         private readonly NotificationService _notificationService = new NotificationService();
         private readonly UserProfileService _userProfileService = new UserProfileService();
+        private readonly FriendsService _friendsService = new FriendsService();
+        private readonly UserService _userService = new UserService();
         private readonly PostService _postService = new PostService();
+        protected UserManager<ApplicationUser> UserManager { get; set; }
+        protected ApplicationDbContext ApplicationDbContext { get; set; }
 
 
         //protected ApplicationDbContext ApplicationDbContext { get; set; }
 
         //protected UserManager<ApplicationUser> UserManager { get; set; }
 
-        //public HomeController()
-        //{
-        //    this.ApplicationDbContext = new ApplicationDbContext();
-        //    this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ApplicationDbContext));
-        //}
+        public HomeController()
+        {
+            this.ApplicationDbContext = new ApplicationDbContext();
+            this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ApplicationDbContext));
+        }
         public ActionResult Index()
         {
 
-            var user = User.Identity.GetUserId();
-            if (user != null)
+            var userId = User.Identity.GetUserId();
+            if (userId != null)
             {
                 //an user is logged in
 
-                var userProfile = _userProfileService.GetUserProfileByUserId(new Guid(user));
-                
-                var posts = _postService.GetPosts(userProfile.Id);
+                var userProfile = _userProfileService.GetUserProfileByUserId(new Guid(userId));
+                if(userProfile == null)
+                {
+                    //new user so we create new UserProfile
+                    var user = _userService.GetUserById(userId);
+                    var newUserProfile = _userProfileService.CreateNewUserProfile(user);
+                    _friendsService.CreateEmptyFriendsEntity(newUserProfile);
 
+                    userProfile = newUserProfile;
+                }
+                List<HomeIndexPostViewModel> posts = null;
+                if (userProfile != null) { 
+                posts = _postService.GetPosts(userProfile.Id);
+                }
+                
                 var viewModel = new HomeIndexViewModel
                 {
                     Posts = posts,

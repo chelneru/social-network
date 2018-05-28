@@ -6,6 +6,7 @@ using WebApplication4.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApplication4.Services;
+using System.IO;
 
 namespace WebApplication4.Controllers
 {
@@ -74,8 +75,7 @@ namespace WebApplication4.Controllers
                 {
                     value = value > 0 ? 1 : -1;
                     var postId = new Guid(Request.Form["post_id"]);
-                    var currentUserProfile =
-                        _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+                    var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
                     var post = _postService.GetPost(postId);
                     var existingLike = _likeService.GetLike(postId, currentUserProfile.Id);
                     if (existingLike == null)
@@ -101,6 +101,116 @@ namespace WebApplication4.Controllers
             else
             {
                 return Json(new {Message = "invalid_parameter"});
+            }
+        }
+
+        [HttpPost, ActionName("create-video-post")]
+        [Route("create-video-post/", Name = "create-video-post")]
+        public JsonResult CreateVideoPost()
+        {
+            if(Request.Form["post-description"] != null  && Request.Files["file"] != null) { 
+            var content = Request.Form["post-description"];
+            var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+                if(currentUserProfile != null )
+                {
+                    var httpPostedFile = Request.Files["file"];
+                    if (httpPostedFile != null)
+                    {
+
+                        // Validate the uploaded file if you want like content length(optional)
+
+                        // Get the complete file path
+                        var uploadFilesDir = System.Web.HttpContext.Current.Server.MapPath("/Content/videos/");
+                        if (!Directory.Exists(uploadFilesDir))
+                        {
+                            Directory.CreateDirectory(uploadFilesDir);
+                        }
+                        var fileSavePath = Path.Combine(uploadFilesDir, httpPostedFile.FileName);
+                        var video_link = "/Content/videos/" + httpPostedFile.FileName;
+
+                        // Save the uploaded file to "UploadedFiles" folder
+                        httpPostedFile.SaveAs(fileSavePath);
+                        var result = _postService.AddPost(currentUserProfile, content, null, null, null, video_link);
+                        if (result == true)
+                        {
+                            return Json(new { Message = "post_added" });
+                        }
+                        else
+                        {
+                            return Json(new { Message = "error" });
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { Message = "invalid_video" });
+
+                    }
+
+
+                }
+                else
+                {
+                    return Json(new { Message = "invalid_userprofile" });
+                }
+            }
+            else
+            {
+                return Json(new { Message = "misssing_parameter" });
+            }
+        }
+
+        [HttpPost, ActionName("create-image-post")]
+        [Route("create-image-post/", Name = "create-image-post")]
+        public JsonResult CreateImagePost()
+        {
+            if (Request.Form["post-description"] != null && Request.Files["file"] != null)
+            {
+                var content = Request.Form["post-description"];
+                var currentUserProfile = _userProfileService.GetUserProfileByUserId(new Guid(User.Identity.GetUserId()));
+                if (currentUserProfile != null)
+                {
+                    var httpPostedFile = Request.Files["file"];
+                    if (httpPostedFile != null)
+                    {
+
+                        // Validate the uploaded file if you want like content length(optional)
+
+                        // Get the complete file path
+                        var uploadFilesDir = System.Web.HttpContext.Current.Server.MapPath("/Content/images/");
+                        if (!Directory.Exists(uploadFilesDir))
+                        {
+                            Directory.CreateDirectory(uploadFilesDir);
+                        }
+                        var fileSavePath = Path.Combine(uploadFilesDir, httpPostedFile.FileName);
+                        var image_link = "/Content/images/" + httpPostedFile.FileName;
+
+                        // Save the uploaded file to "UploadedFiles" folder
+                        httpPostedFile.SaveAs(fileSavePath);
+                        var result = _postService.AddPost(currentUserProfile, content, null, null,image_link);
+                        if (result == true)
+                        {
+                            return Json(new { Message = "post_added" });
+                        }
+                        else
+                        {
+                            return Json(new { Message = "error" });
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { Message = "invalid_video" });
+
+                    }
+
+                }
+                else
+                {
+                    return Json(new { Message = "invalid_userprofile" });
+                }
+            }
+            else
+            {
+                return Json(new { Message = "misssing_parameter" });
             }
         }
 

@@ -61,6 +61,7 @@ namespace WebApplication4.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+
             ViewBag.ReturnUrl = returnUrl;
             var viewModel = new LandingPageViewModel
             { loginModel = new LoginViewModel(),
@@ -164,40 +165,15 @@ namespace WebApplication4.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.registerModel.Name, Email = model.registerModel.Email };
-                try
-                {
-                    var userProfile = new UserProfile
-                    {
-                        Name = model.registerModel.Name,
-                        JoinDate = DateTime.Now,
-                        BirthDate = new DateTime(1995, 08, 30),
-                        User = user,
-                        UserAddress = user.Email.Substring(0, user.Email.IndexOf('@'))
-                    };
-                    var applicationDbContext = new ApplicationDbContext();
-                    applicationDbContext.UserProfile.Add(userProfile);
-                    _friendsService.CreateEmptyFriendsEntity(userProfile);
-                }
-                catch (DbEntityValidationException e)
-                {
-                    foreach (var eve in e.EntityValidationErrors)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                            eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                        foreach (var ve in eve.ValidationErrors)
-                        {
-                            System.Diagnostics.Debug.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                                ve.PropertyName, ve.ErrorMessage);
-                        }
-                    }
-                    throw;
-                }
+                
 
                 try
                 {
                     var result = await UserManager.CreateAsync(user, model.registerModel.Password);
                     if (result.Succeeded)
                     {
+                      
+               
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                         // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
@@ -222,6 +198,7 @@ namespace WebApplication4.Controllers
                                 ve.PropertyName, ve.ErrorMessage);
                         }
                     }
+
                     throw;
                 }
 
@@ -405,10 +382,18 @@ namespace WebApplication4.Controllers
                     return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
             }
         }
+        public ActionResult ChangeCulture(string lang, string returnUrl)
 
-        //
-        // POST: /Account/ExternalLoginConfirmation
-        [HttpPost]
+   {
+
+        Session["Culture"] = new CultureInfo(lang);
+
+        return Redirect(returnUrl);
+
+   }
+    //
+    // POST: /Account/ExternalLoginConfirmation
+    [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
@@ -427,9 +412,31 @@ namespace WebApplication4.Controllers
                     return View("ExternalLoginFailure");
                 }
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user);
+
+                
+                IdentityResult result = null;
+                try { 
+                result = await UserManager.CreateAsync(user);
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    // Retrieve the error messages as a list of strings.
+                    var errorMessages = ex.EntityValidationErrors
+                            .SelectMany(x => x.ValidationErrors)
+                            .Select(x => x.ErrorMessage);
+
+                    // Join the list to a single string.
+                    var fullErrorMessage = string.Join("; ", errorMessages);
+
+                    // Combine the original exception message with the new one.
+                    var exceptionMessage = string.Concat(ex.Message, " The validation errors are: ", fullErrorMessage);
+
+                    // Throw a new DbEntityValidationException with the improved exception message.
+                    throw new DbEntityValidationException(exceptionMessage, ex.EntityValidationErrors);
+                }
                 if (result.Succeeded)
                 {
+                    
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
