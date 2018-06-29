@@ -38,17 +38,17 @@ namespace WebApplication4.SqlTableDependencyClasses
             Clients = clients;
 
             //likes watcher
-        
+
             _likesTableDependency = new SqlTableDependency<Like>(
                 ConfigurationManager.ConnectionStrings["defaultConnection"].ConnectionString,
-                "Likes",null,null,null,null,DmlTriggerType.All,false);
+                "Likes", null, null, null, null, DmlTriggerType.All, false);
 
             _likesTableDependency.OnChanged += SqlLikesTableDependencyChanged;
             _likesTableDependency.OnError += SqlLikesTableDependencyOnError;
             _likesTableDependency.Start();
-            
+
             //posts watcher
-           
+
             _postsTableDependency = new SqlTableDependency<Post>(
                 ConfigurationManager.ConnectionStrings["defaultConnection"].ConnectionString,
                 "Posts", null, null, null, null, DmlTriggerType.All, false);
@@ -99,7 +99,8 @@ namespace WebApplication4.SqlTableDependencyClasses
                 var post = _postService.GetPost(e.Entity.PostId);
                 var userProfileTarget = _userProfileService.GetUserProfile(post.UserProfile.Id);
                 Notification notification = null;
-                if(e.Entity.Value == 1 ) {
+                if (e.Entity.Value == 1)
+                {
                     notification = _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " liked your post",
                     "", userProfileActor.Name + " liked your post. Click to see your post", "/posts/" + post.Id);
                 }
@@ -108,7 +109,7 @@ namespace WebApplication4.SqlTableDependencyClasses
                     notification = _notificationService.AddNotification(userProfileTarget.Id, userProfileActor.Name + " disliked your post",
                         "", userProfileActor.Name + " disliked your post. Click to see your post", "/posts/" + post.Id);
                 }
-                if(notification != null)
+                if (notification != null)
                 {
                     var test = GlobalHost.DependencyResolver.Resolve<IConnectionManager>()
                         .GetHubContext<LikeWatcherHub>();

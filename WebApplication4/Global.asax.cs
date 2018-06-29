@@ -109,38 +109,40 @@ namespace WebApplication4
        }
 
   }
-    protected void Application_PreRequestHandlerExecute(object sender, EventArgs e)
+        protected void Application_PreRequestHandlerExecute(object sender, EventArgs e)
         {
             if (Request.IsAuthenticated)
             {
                 HttpApplication application = (HttpApplication)sender;
                 HttpContext context = application.Context;
-                if(context.Session != null) {
-                var user = User.Identity.GetUserId();
-                var userProfileService = new UserProfileService();
-                var notificationService = new NotificationService();
-                
-                var userProfile = userProfileService.GetUserProfileByUserId(new Guid(user));
-                    if(userProfile != null) { 
-                var notifications = notificationService.GetNewNotifications(userProfile.Id);
-                var notificationsTotal = notificationService.GetUnseenNotificationsCount(userProfile.Id);
-                var requests = notificationService.GetAllUnansweredRequests(userProfile.Id);
-                
-                if (notifications != null)
+                if (context.Session != null)
                 {
-                    context.Session["notifications"] = notifications;
-                    context.Session["notificationsTotal"] = notificationsTotal;
-                }
+                    var user = User.Identity.GetUserId();
+                    var userProfileService = new UserProfileService();
+                    var notificationService = new NotificationService();
 
-                if (requests != null)
-                {
-                    context.Session["requests"] = requests;
-                }
-                context.Session["userAddress"] = userProfile.UserAddress;
-                context.Session["userName"] = userProfile.Name;
-                context.Session["userId"] = userProfile.User.Id;
-                context.Session["userProfileId"] = userProfile.Id;
-                }
+                    var userProfile = userProfileService.GetUserProfileByUserId(new Guid(user));
+                    if (userProfile != null)
+                    {
+                        var notifications = notificationService.GetNewNotifications(userProfile.Id);
+                        var notificationsTotal = notificationService.GetUnseenNotificationsCount(userProfile.Id);
+                        var requests = notificationService.GetAllUnansweredRequests(userProfile.Id);
+
+                        if (notifications != null)
+                        {
+                            context.Session["notifications"] = notifications;
+                            context.Session["notificationsTotal"] = notificationsTotal;
+                        }
+
+                        if (requests != null)
+                        {
+                            context.Session["requests"] = requests;
+                        }
+                        context.Session["userAddress"] = userProfile.UserAddress;
+                        context.Session["userName"] = userProfile.Name;
+                        context.Session["userId"] = userProfile.User.Id;
+                        context.Session["userProfileId"] = userProfile.Id;
+                    }
                 }
 
             }

@@ -39,7 +39,7 @@ namespace WebApplication4.Hubs
             }
         }
 
-        public static void  PushNotification(Notification notification, Guid userProfileId)
+        public static void PushNotification(Notification notification, Guid userProfileId)
         {
             UserDetail currentUser = null;
             foreach (var connectedUser in ConnectedUsers)
@@ -60,7 +60,7 @@ namespace WebApplication4.Hubs
             }
 
         }
-        
+
         public bool MarkSeenNotifications(List<string> notifIds)
         {
             var request = Context.Request;
