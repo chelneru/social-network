@@ -3,27 +3,7 @@
 This README would normally document whatever steps are necessary to get your application up and running.
 
 ### What is this repository for? ###
-
-* Social Network made with ASP.NET MVC 5
-* 0.01a
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+A simple implementation of a social network with all the major features from the top social networks.
 
 ### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+The project has been made with Visual Studio 2017.
